@@ -1,4 +1,8 @@
 # git ignore file
+
 #ignore user options for visual studio
 *.vcxproj.user
 *.suo
+
+# ignore intellisense database
+*.sdf
