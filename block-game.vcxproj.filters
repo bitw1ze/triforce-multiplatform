@@ -15,7 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="glut\glut.h">
+    <ClInclude Include="includes\2DGraphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\glut\glut.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
