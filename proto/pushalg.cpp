@@ -12,6 +12,7 @@ int bottom = NROW-1;
 
 using namespace std;
 
+// Generate the blocks in a row to be pushed up
 void generateRow () {
   bottom = (bottom + NROW - 1) % NROW;
   int ntypes = strlen(blockTypes);
@@ -19,13 +20,14 @@ void generateRow () {
     grid[bottom][i] = rand() % ntypes;
 }
 
+// Print an individual row
 void printRow(int row[]) {
-  for (int i=0; i<NCOL; ++i) {
+  for (int i=0; i<NCOL; ++i) 
     cout.put (row[i] == -1 ? ' ' : blockTypes [row [i]]);
-  }
   cout.put('\n');
 }
 
+// Print the entire grid in a (messy) circular-queue fashion
 void printGrid() {
     for ( int i=( (bottom + NROW - 1) % NROW ), j=0
         ; j < NROW
