@@ -6,6 +6,12 @@
 #define NCOL 10
 #define NROW 10
 
+#ifdef WIN32
+#define CLEAR "cls"
+#else
+#define CLEAR "clear"
+#endif
+
 static const char *blockTypes = "!X$+=@";
 int grid[NCOL][NROW];
 int bottom = NROW-1;
@@ -45,11 +51,12 @@ int main(void) {
   for (int i=NROW/2; i<NROW; ++i) 
     generateRow ();
 
-  system("clear");
+  system(CLEAR);
   while (1) {
     printGrid();
     sleep(1);
-    system("clear");
+    system(CLEAR);
+
     generateRow();
   }
 }
