@@ -27,14 +27,13 @@ public:
 	int current_frame;
 	int last_time;
 
-	GameEnv(int *, char **);
+	GameEnv();
 	void ComposeFrame();
 	void CreateObjects();
 	bool ProcessFrame();
 	bool LoadImages();
 };
 
-GameEnv *gameEnv;
+GameEnv *gameEnv = NULL;
 
 extern void init();
-

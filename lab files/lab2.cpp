@@ -68,7 +68,7 @@ void display()
    glutSwapBuffers();
 }
 
-GameEnv::GameEnv(int *argc, char **argv) { 
+GameEnv::GameEnv() { 
 	current_frame = 0; 
 	Timer = new CTimer(); 
 	Timer->start();
@@ -87,7 +87,7 @@ int main(int argc,char** argv)
 	glutInit(&argc, argv);
 
 	init();
-	gameEnv = new GameEnv(&argc, argv);
+	gameEnv = new GameEnv();
     glutDisplayFunc(display);
 
 	glutMainLoop();
