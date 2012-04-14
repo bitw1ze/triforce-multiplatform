@@ -18,6 +18,9 @@
     <ClInclude Include="2DGraphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Object Include="2DLibrary.obj" />

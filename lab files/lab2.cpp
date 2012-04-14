@@ -4,32 +4,9 @@
    Lab 02
    13 April 2012 */
 
-#include "2DGraphics.h"
-#include <string>
-#include <vector>
-#include <ctime>
+#include "game.h"
 
-void display();
-void ComposeFrame();
-
-int current_frame=0;
-
-int last_time;
-CTimer *Timer=new CTimer();
-
-string blockFiles[] = {"block-blue.bmp", "block-green.bmp", "block-purple.bmp", 
-	"block-red.bmp", "block-special.bmp", "block-teal.bmp", "block-yellow.bmp"};
-const int NBLOCKS = 7;
-
-BMPClass background; 
-//CBaseSprite *crowsprite=NULL;
-const unsigned int NCOLS = 6, NROWS = 10;
-CBaseSprite* blockSprites[NROWS][NCOLS];
-
-//CObject crow;
-CObject blocks[NROWS][NCOLS];
-
-void CreateObjects()
+void GameEnv::CreateObjects()
 {
   int x=64, y=background.getViewportHeight()-64, xspeed=0, yspeed=1;
   //crow.create(x, y, xspeed, yspeed, crowsprite, Timer);
@@ -40,7 +17,7 @@ void CreateObjects()
   }
 } 
 
-bool ProcessFrame()
+bool GameEnv::ProcessFrame()
 {
 	for (int i=0; i<NROWS; ++i)
 		for (int j=0; j<NCOLS; ++j)
@@ -48,7 +25,7 @@ bool ProcessFrame()
 	return true;
 }
 
-bool LoadImages()
+bool GameEnv::LoadImages()
 {
   background.load("bg.bmp");
   background.loadGLTextures();
@@ -66,27 +43,7 @@ bool LoadImages()
   return true;
 }
 
-extern void init();
-
-
-int main(int argc,char** argv)
-{
-	srand(time(NULL));
-	glutInit(&argc,argv);
-
-	init();
-    glutDisplayFunc(display);
-
-	Timer->start();
-	last_time=Timer->time();
-    LoadImages(); 
-    CreateObjects(); 
-
-	glutMainLoop();
-	return 0;
-}
-
-void ComposeFrame()
+void GameEnv::ComposeFrame()
 {
   if(Timer->elapsed(last_time,300))
   {
@@ -101,12 +58,41 @@ void ComposeFrame()
 
 void display()
 {
-   ComposeFrame();
-   background.drawGLbackground ();
+   gameEnv->ComposeFrame();
+   gameEnv->background.drawGLbackground ();
 
    for (int i=0; i<NROWS; ++i) 
 	   for (int j=0; j<NCOLS; ++j) 
-		   blocks[i][j].draw(0);
+		   gameEnv->blocks[i][j].draw(0);
 
    glutSwapBuffers();
 }
+
+GameEnv::GameEnv(int *argc, char **argv) { 
+	current_frame = 0; 
+	Timer = new CTimer(); 
+	Timer->start();
+	last_time=Timer->time();
+	LoadImages(); 
+	CreateObjects();
+
+	srand(time(NULL));
+	
+}
+
+extern void init();
+
+int main(int argc,char** argv)
+{
+	glutInit(&argc, argv);
+
+	init();
+	gameEnv = new GameEnv(&argc, argv);
+    glutDisplayFunc(display);
+
+	glutMainLoop();
+	
+
+	return 0;
+}
+

@@ -6,6 +6,7 @@
 
 # ignore intellisense database
 *.sdf
+*.opensdf
 
 # ignore a.out
 a.out
