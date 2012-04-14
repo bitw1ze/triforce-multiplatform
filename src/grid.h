@@ -1,4 +1,0 @@
-class Grid {
-public:
-	Grid();
-}
