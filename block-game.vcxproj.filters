@@ -15,11 +15,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="includes\2DGraphics.h">
+    <ClInclude Include="2DGraphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="includes\glut\glut.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="game.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="grid.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="2DLibrary.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
