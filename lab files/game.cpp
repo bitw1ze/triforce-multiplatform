@@ -4,9 +4,6 @@
    Lab 02
    13 April 2012 */
 
-#ifndef __GAME_CPP__
-#define __GAME_CPP__
-
 #include "game.h"
 
 const string GameEnv::blockFiles[] = {"block-blue.bmp", "block-green.bmp", "block-purple.bmp", 
@@ -72,5 +69,3 @@ GameEnv::GameEnv() {
 	srand(time(NULL));
 	
 }
-
-#endif
