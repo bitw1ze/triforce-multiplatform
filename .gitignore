@@ -8,5 +8,9 @@
 *.sdf
 *.opensdf
 
+# no need for this either
+src/Debug
+src/ipch
+
 # ignore a.out
 a.out
