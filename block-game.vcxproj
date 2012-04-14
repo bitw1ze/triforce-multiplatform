@@ -11,16 +11,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="2DGraphics.h" />
-    <ClInclude Include="game.h" />
-    <ClInclude Include="grid.h" />
-  </ItemGroup>
-  <ItemGroup>
     <Object Include="2DLibrary.obj" />
+    <Object Include="src\2DLibrary.obj" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="game.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\grid.cpp" />
+    <ClCompile Include="src\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="includes\2DGraphics.h" />
+    <ClInclude Include="includes\game.h" />
+    <ClInclude Include="includes\grid.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="themes\classic\block-blue.bmp" />
+    <None Include="themes\classic\block-green.bmp" />
+    <None Include="themes\classic\block-purple.bmp" />
+    <None Include="themes\classic\block-red.bmp" />
+    <None Include="themes\classic\block-special.bmp" />
+    <None Include="themes\classic\block-teal.bmp" />
+    <None Include="themes\classic\block-yellow.bmp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F55E7844-C13C-4D86-B797-130B3D09E6CD}</ProjectGuid>

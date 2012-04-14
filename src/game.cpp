@@ -1,9 +1,3 @@
-
-/* Gabe Pike
-   CMPS 335
-   Lab 02
-   13 April 2012 */
-
 #include "game.h"
 
 const string GameEnv::blockFiles[] = {"block-blue.bmp", "block-green.bmp", "block-purple.bmp", 

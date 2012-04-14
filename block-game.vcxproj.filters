@@ -13,27 +13,59 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="2DGraphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="grid.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
+    <Filter Include="Images">
+      <UniqueIdentifier>{ff2dffcb-c6b6-4a6c-8f9d-c7422cdd99a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Object Include="2DLibrary.obj" />
+    <Object Include="src\2DLibrary.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="game.cpp">
+    <ClCompile Include="src\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\grid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="includes\2DGraphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\grid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="themes\classic\block-blue.bmp">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="themes\classic\block-green.bmp">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="themes\classic\block-purple.bmp">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="themes\classic\block-red.bmp">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="themes\classic\block-special.bmp">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="themes\classic\block-teal.bmp">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="themes\classic\block-yellow.bmp">
+      <Filter>Images</Filter>
+    </None>
   </ItemGroup>
 </Project>
