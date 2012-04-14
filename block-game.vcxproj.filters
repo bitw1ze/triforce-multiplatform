@@ -20,14 +20,11 @@
   <ItemGroup>
     <Object Include="2DLibrary.obj" />
     <Object Include="src\2DLibrary.obj">
-      <Filter>Resource Files</Filter>
+      <Filter>Header Files</Filter>
     </Object>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\grid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
@@ -41,7 +38,7 @@
     <ClInclude Include="includes\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="includes\grid.h">
+    <ClInclude Include="includes\glut\glut.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

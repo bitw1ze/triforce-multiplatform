@@ -7,7 +7,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include "glut.h"
+#include "glut/glut.h"
 
 using namespace std;
 

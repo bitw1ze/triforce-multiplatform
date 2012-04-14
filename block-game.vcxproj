@@ -16,13 +16,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp" />
-    <ClCompile Include="src\grid.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\2DGraphics.h" />
     <ClInclude Include="includes\game.h" />
-    <ClInclude Include="includes\grid.h" />
+    <ClInclude Include="includes\glut\glut.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="themes\classic\block-blue.bmp" />

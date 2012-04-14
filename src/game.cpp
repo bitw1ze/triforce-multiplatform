@@ -1,14 +1,21 @@
-#include "game.h"
+#include "../includes/game.h"
 
-const string GameEnv::blockFiles[] = {"block-blue.bmp", "block-green.bmp", "block-purple.bmp", 
-		"block-red.bmp", "block-special.bmp", "block-teal.bmp", "block-yellow.bmp"};
+const string GameEnv::blockFiles[] = {"themes/classic/block-blue.bmp",
+	                                  "themes/classic/block-green.bmp",
+									  "themes/classic/block-purple.bmp",
+									  "themes/classic/block-red.bmp",
+									  "themes/classic/block-special.bmp",
+									  "themes/classic/block-teal.bmp",
+									  "themes/classic/block-yellow.bmp"};
 
 void GameEnv::CreateObjects()
 {
   int x=64, y=background.getViewportHeight()-64, xspeed=0, yspeed=1;
   for (int i=0; i<NROWS; ++i) {
 	  for (int j=0; j<NCOLS; ++j) {
-		  blocks[i][j].create(x+j*blockSprites[i][j]->GetWidth(), y-i*blockSprites[i][j]->GetHeight(), xspeed, yspeed, blockSprites[i][j], Timer);
+		  blocks[i][j].create(x+j*blockSprites[i][j]->GetWidth(),
+			                  y-i*blockSprites[i][j]->GetHeight(),
+							  xspeed, yspeed, blockSprites[i][j], Timer);
 	  }
   }
 } 
