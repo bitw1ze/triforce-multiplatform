@@ -1,9 +1,3 @@
-
-/* Gabe Pike
-   CMPS 335
-   Lab 02
-   13 April 2012 */
-
 #ifndef __GAME_H__
 #define __GAME_H__
 
