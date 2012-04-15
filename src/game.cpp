@@ -10,6 +10,17 @@ const string GameEnv::blockFiles[] = {"block-blue.bmp",
 									  "block-yellow.bmp"};
 const string GameEnv::bgFile = "bg.bmp";
 
+void GameEnv::display() {
+	ComposeFrame();
+	background.drawGLbackground ();
+
+	for (int i=0; i<nrows; ++i) 
+		for (int j=0; j<ncols; ++j) 
+			blocks[i][j].draw(0);
+
+	glutSwapBuffers();
+}
+
 void GameEnv::CreateObjects()
 {
 	grid_x = 64;
@@ -19,8 +30,8 @@ void GameEnv::CreateObjects()
 	block_w = blockSprites[0][0]->GetWidth();
 	block_h = blockSprites[0][0]->GetHeight();
 
-	for (int row=0; row<NROWS; ++row) {
-		for (int col=0; col<NCOLS; ++col) {
+	for (int row=0; row<nrows; ++row) {
+		for (int col=0; col<ncols; ++col) {
 			blocks[row][col].create(grid_x + col * block_w,
 									grid_y - row * block_h,
 									row_xvel, row_yvel, blockSprites[row][col], Timer);
@@ -29,7 +40,7 @@ void GameEnv::CreateObjects()
 } 
 
 void GameEnv::createBlockRow(int row) {
-	for (int col=0; col<NCOLS; ++col) {
+	for (int col=0; col<ncols; ++col) {
 		blocks[row][col].create(grid_x + col * block_w,
 			                    grid_y - row * block_h,
 							    row_xvel, row_yvel, blockSprites[row][col], Timer);
@@ -38,8 +49,8 @@ void GameEnv::createBlockRow(int row) {
 
 bool GameEnv::ProcessFrame()
 {
-	for (int i=0; i<NROWS; ++i)
-		for (int j=0; j<NCOLS; ++j)
+	for (int i=0; i<nrows; ++i)
+		for (int j=0; j<ncols; ++j)
 			blocks[i][j].move();
 	return true;
 }
@@ -51,10 +62,10 @@ bool GameEnv::LoadImages()
 
   int r=254, g=0, b=254, frameCount=1, frame=0;    // r,g,b is background color to be filtered, frameCount and frame number
   
-  for (int i=0; i<NROWS; ++i) {
-	  for (int j=0; j<NCOLS; ++j) {
+  for (int i=0; i<nrows; ++i) {
+	  for (int j=0; j<ncols; ++j) {
 		  blockSprites[i][j] = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
-		  blockSprites[i][j]->loadFrame(frame, GameEnv::themeDirectory + blockFiles[rand() % NBLOCKTYPES], r, g, b);
+		  blockSprites[i][j]->loadFrame(frame, GameEnv::themeDirectory + blockFiles[rand() % nblocktypes], r, g, b);
 		  blockSprites[i][j]->loadGLTextures();
 	  }
   }

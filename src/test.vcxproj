@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2DGraphics.h" />
+    <ClInclude Include="block.h" />
     <ClInclude Include="game.h" />
   </ItemGroup>
   <ItemGroup>

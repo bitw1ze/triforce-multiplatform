@@ -7,14 +7,7 @@ GameEnv *gameEnv;
 
 void display()
 {
-   gameEnv->ComposeFrame();
-   gameEnv->background.drawGLbackground ();
-
-   for (int i=0; i<NROWS; ++i) 
-	   for (int j=0; j<NCOLS; ++j) 
-		   gameEnv->blocks[i][j].draw(0);
-
-   glutSwapBuffers();
+   gameEnv->display();
 }
 
 extern void init();
