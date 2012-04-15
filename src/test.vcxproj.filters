@@ -23,16 +23,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="2DGraphics.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="game.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="2DGraphics.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Object Include="2DLibrary.obj">
-      <Filter>Source Files</Filter>
+      <Filter>Resource Files</Filter>
     </Object>
   </ItemGroup>
 </Project>

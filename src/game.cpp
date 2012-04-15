@@ -1,12 +1,13 @@
 #include "game.h"
 
-const string GameEnv::blockFiles[] = {"themes/classic/block-blue.bmp",
-	                                  "themes/classic/block-green.bmp",
-									  "themes/classic/block-purple.bmp",
-									  "themes/classic/block-red.bmp",
-									  "themes/classic/block-special.bmp",
-									  "themes/classic/block-teal.bmp",
-									  "themes/classic/block-yellow.bmp"};
+const string GameEnv::themeDirectory = "themes\\classic\\";
+const string GameEnv::blockFiles[] = {"block-blue.bmp",
+	                                  "block-green.bmp",
+									  "block-purple.bmp",
+									  "block-red.bmp",
+									  "block-special.bmp",
+									  "block-teal.bmp",
+									  "block-yellow.bmp"};
 
 void GameEnv::CreateObjects()
 {
@@ -38,7 +39,7 @@ bool GameEnv::LoadImages()
   for (int i=0; i<NROWS; ++i) {
 	  for (int j=0; j<NCOLS; ++j) {
 		  blockSprites[i][j] = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
-		  blockSprites[i][j]->loadFrame(frame, blockFiles[rand() % NBLOCKTYPES], r, g, b);
+		  blockSprites[i][j]->loadFrame(frame, GameEnv::themeDirectory + blockFiles[rand() % NBLOCKTYPES], r, g, b);
 		  blockSprites[i][j]->loadGLTextures();
 	  }
   }

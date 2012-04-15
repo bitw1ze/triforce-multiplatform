@@ -15,6 +15,7 @@ using namespace std;
 class GameEnv {
 protected:
 	static const string blockFiles[];
+	static const string themeDirectory;
 public:
 	CTimer *Timer;
 	BMPClass background;
