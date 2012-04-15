@@ -12,15 +12,29 @@ const string GameEnv::bgFile = "bg.bmp";
 
 void GameEnv::CreateObjects()
 {
-  int x=64, y=background.getViewportHeight()-64, xspeed=0, yspeed=1;
-  for (int i=0; i<NROWS; ++i) {
-	  for (int j=0; j<NCOLS; ++j) {
-		  blocks[i][j].create(x+j*blockSprites[i][j]->GetWidth(),
-			                  y-i*blockSprites[i][j]->GetHeight(),
-							  xspeed, yspeed, blockSprites[i][j], Timer);
-	  }
-  }
+	grid_x = 64;
+	grid_y = background.getViewportHeight() - 64;
+	row_xvel = 0;
+	row_yvel = 1;
+	block_w = blockSprites[0][0]->GetWidth();
+	block_h = blockSprites[0][0]->GetHeight();
+
+	for (int row=0; row<NROWS; ++row) {
+		for (int col=0; col<NCOLS; ++col) {
+			blocks[row][col].create(grid_x + col * block_w,
+									grid_y - row * block_h,
+									row_xvel, row_yvel, blockSprites[row][col], Timer);
+		}
+	}
 } 
+
+void GameEnv::createBlockRow(int row) {
+	for (int col=0; col<NCOLS; ++col) {
+		blocks[row][col].create(grid_x + col * block_w,
+			                    grid_y - row * block_h,
+							    row_xvel, row_yvel, blockSprites[row][col], Timer);
+	}
+}
 
 bool GameEnv::ProcessFrame()
 {
@@ -70,5 +84,4 @@ GameEnv::GameEnv() {
 	CreateObjects();
 
 	srand(time(NULL));
-	
 }

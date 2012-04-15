@@ -17,6 +17,10 @@ protected:
 	static const string blockFiles[];
 	static const string GameEnv::bgFile;
 	static const string themeDirectory;
+
+	int grid_x, grid_y, row_xvel, row_yvel, block_w, block_h;
+
+	void createBlockRow(int row);
 public:
 	CTimer *Timer;
 	BMPClass background;
