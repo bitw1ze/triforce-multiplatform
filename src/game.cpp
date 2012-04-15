@@ -8,6 +8,7 @@ const string GameEnv::blockFiles[] = {"block-blue.bmp",
 									  "block-special.bmp",
 									  "block-teal.bmp",
 									  "block-yellow.bmp"};
+const string GameEnv::bgFile = "bg.bmp";
 
 void GameEnv::CreateObjects()
 {
@@ -31,7 +32,7 @@ bool GameEnv::ProcessFrame()
 
 bool GameEnv::LoadImages()
 {
-  background.load("bg.bmp");
+  background.load( GameEnv::themeDirectory + GameEnv::bgFile );
   background.loadGLTextures();
 
   int r=254, g=0, b=254, frameCount=1, frame=0;    // r,g,b is background color to be filtered, frameCount and frame number
