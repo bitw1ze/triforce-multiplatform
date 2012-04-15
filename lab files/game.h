@@ -4,21 +4,23 @@
    Lab 02
    13 April 2012 */
 
+#ifndef __GAME_H__
+#define __GAME_H__
+
 #include "2DGraphics.h"
 #include <string>
 #include <vector>
 #include <ctime>
 
-string blockFiles[] = {"block-blue.bmp", "block-green.bmp", "block-purple.bmp", 
-	"block-red.bmp", "block-special.bmp", "block-teal.bmp", "block-yellow.bmp"};
+using namespace std;
 
-#define NBLOCKS 7
+#define NBLOCKTYPES 7
 #define NCOLS 6
 #define NROWS 10
 
 class GameEnv {
 protected:
-
+	static const string blockFiles[];
 public:
 	CTimer *Timer;
 	BMPClass background;
@@ -34,6 +36,4 @@ public:
 	bool LoadImages();
 };
 
-GameEnv *gameEnv = NULL;
-
-extern void init();
+#endif

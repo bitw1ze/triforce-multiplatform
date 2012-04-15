@@ -4,12 +4,17 @@
    Lab 02
    13 April 2012 */
 
+#ifndef __GAME_CPP__
+#define __GAME_CPP__
+
 #include "game.h"
+
+const string GameEnv::blockFiles[] = {"block-blue.bmp", "block-green.bmp", "block-purple.bmp", 
+		"block-red.bmp", "block-special.bmp", "block-teal.bmp", "block-yellow.bmp"};
 
 void GameEnv::CreateObjects()
 {
   int x=64, y=background.getViewportHeight()-64, xspeed=0, yspeed=1;
-  //crow.create(x, y, xspeed, yspeed, crowsprite, Timer);
   for (int i=0; i<NROWS; ++i) {
 	  for (int j=0; j<NCOLS; ++j) {
 		  blocks[i][j].create(x+j*blockSprites[i][j]->GetWidth(), y-i*blockSprites[i][j]->GetHeight(), xspeed, yspeed, blockSprites[i][j], Timer);
@@ -35,7 +40,7 @@ bool GameEnv::LoadImages()
   for (int i=0; i<NROWS; ++i) {
 	  for (int j=0; j<NCOLS; ++j) {
 		  blockSprites[i][j] = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
-		  blockSprites[i][j]->loadFrame(frame, blockFiles[rand() % NBLOCKS], r, g, b);
+		  blockSprites[i][j]->loadFrame(frame, blockFiles[rand() % NBLOCKTYPES], r, g, b);
 		  blockSprites[i][j]->loadGLTextures();
 	  }
   }
@@ -56,18 +61,6 @@ void GameEnv::ComposeFrame()
 }
 
 
-void display()
-{
-   gameEnv->ComposeFrame();
-   gameEnv->background.drawGLbackground ();
-
-   for (int i=0; i<NROWS; ++i) 
-	   for (int j=0; j<NCOLS; ++j) 
-		   gameEnv->blocks[i][j].draw(0);
-
-   glutSwapBuffers();
-}
-
 GameEnv::GameEnv() { 
 	current_frame = 0; 
 	Timer = new CTimer(); 
@@ -80,19 +73,4 @@ GameEnv::GameEnv() {
 	
 }
 
-extern void init();
-
-int main(int argc,char** argv)
-{
-	glutInit(&argc, argv);
-
-	init();
-	gameEnv = new GameEnv();
-    glutDisplayFunc(display);
-
-	glutMainLoop();
-	
-
-	return 0;
-}
-
+#endif
