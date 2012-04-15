@@ -9,6 +9,7 @@
 *.opensdf
 
 # no need for this either
+Release
 Debug
 ipch
 
