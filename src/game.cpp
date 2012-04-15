@@ -1,4 +1,4 @@
-#include "../includes/game.h"
+#include "game.h"
 
 const string GameEnv::blockFiles[] = {"themes/classic/block-blue.bmp",
 	                                  "themes/classic/block-green.bmp",

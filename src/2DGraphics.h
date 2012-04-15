@@ -1,4 +1,7 @@
 
+#ifndef __2DGRAPHICS_H__
+#define __2DGRAPHICS_H__
+
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -122,4 +125,5 @@ void playSound(string fname);
 void animateEyes(unsigned int eyesOpenPeriod, unsigned int eyesClosedPeriod);
 void animateMouth(int max_steps,DWORD a_steps[], char fileName[], unsigned int timeMouthOpen);
 
+#endif
 #endif

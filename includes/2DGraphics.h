@@ -1,3 +1,7 @@
+
+#ifndef __2DGRAPHICS_H__
+#define __2DGRAPHICS_H__
+
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -7,7 +11,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include "glut/glut.h"
+#include "glut.h"
 
 using namespace std;
 
@@ -15,28 +19,33 @@ class BMPClass
 {
 public:
 	BMPClass();
-    BMPClass(int n);
+    BMPClass(int w, int h, int vw, int vh);   // w, h -> full image width and height. vw, vh -> partial image width and heigh to be drawn
 	~BMPClass();
 	unsigned char& pixel(int x,int y,int c);
 	void allocateMem();
 	bool load(string fname);
-    int loadGLTextures();                     // Convert Bitmap To Texture
+    int loadGLTextures();                          // Convert Bitmap To Texture
     int drawGLbackground();
-	int getWidth(void);
-	int getHeight(void);
-	void setDelRoll (float droll);
-	float getDelRoll ();
-    void scroll (int dir);
-    void setKeyboardScroll ();
+	int getViewportWidth(void);
+	int getViewportHeight(void);
+	void setScrollDirection(int xd, int yd);             // set direction of scroll in x and y directions
+	void setDelRoll (float xdroll, float ydroll);  // set amount of scroll along x and y directions
+	void getDelRoll (float & xdroll, float & ydroll); 
+	void setKeyboardScrollTrue();                 // turns keyboard scroll on and auto scroll off
+	void setAutoScrollTrue();                     // turns auto scroll on and keyboard scroll off
+	void setScrollFalse();                        // turns both auto and keyboard scrolls off
+    void scroll (int xdir, int ydir);
+	void scroll ();
     bool BMPSave(basic_string<TCHAR> fname, int width1, int height1, unsigned char * Data);
     bool BMPSaveImageData(string fname);
     bool BMPSaveFrameBuffer(string fname, int x, int y, int width1, int height1);
 
 protected:
-	int width,height;
-	int numTiles, wdTiledBckd, htTiledBckd;
-	bool keyboardScroll;
-	float roll, delroll;
+	int width,height;     // full width and height of the background image
+	int viewportWd, viewportHt;   // partial width and height of the background image to be drawn
+	bool keyboardScroll, autoScroll, viewFullBackground;
+	float xroll, yroll, xdelroll, ydelroll, xdir, ydir;
+	float txStart, tyStart, txEnd, tyEnd;      // start and end coordinates (as a fraction of 1) of the background to be drawn 
 	unsigned char* imageData;
 	unsigned int	texture;
 };
@@ -116,4 +125,5 @@ void playSound(string fname);
 void animateEyes(unsigned int eyesOpenPeriod, unsigned int eyesClosedPeriod);
 void animateMouth(int max_steps,DWORD a_steps[], char fileName[], unsigned int timeMouthOpen);
 
+#endif
 #endif
