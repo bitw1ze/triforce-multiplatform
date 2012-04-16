@@ -39,7 +39,7 @@ void GameEnv::init()
 	block_w = blockSprites[0]->GetWidth();
 	block_h = blockSprites[0]->GetHeight();
 	grid_x = background.getViewportWidth()/2 - (block_w * ncols)/2;
-	grid_y = background.getViewportHeight() - block_h;
+	grid_y = background.getViewportHeight() - block_h * 2;
 
 	for (int row=0; row<nrows/2; ++row) {
 		pushRow(row);
@@ -47,14 +47,13 @@ void GameEnv::init()
 } 
 
 void GameEnv::pushRow(int row) {
-	if (blocks.size() == 20)
+	if (blocks.size() == nrows)
 		blocks.pop_back();
 
 	Block *blockRow = new Block[ncols];
 
 	for (int col=0; col<ncols; ++col) {
-		blockRow[col].create(grid_x + col * block_w, 
-							 grid_y - row_bottom * block_h,
+		blockRow[col].create(grid_x + col * block_w, -block_h * 2,
 							 row_xvel, row_yvel, 
 							 blockSprites[ rand() % nblocktypes ], 
 							 Timer);
