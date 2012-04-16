@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <ctime>
+#include <deque>
 
 #define nblocktypes 7
 #define nrows 10
@@ -35,14 +36,14 @@ protected:
 		row_bottom, row_top,
 
 		current_frame, 
-		last_time;
+		last_time,
+		last_pushtime;
 
 	bool showMenu;
 	CTimer *Timer;
 	BMPClass background;
 	CBaseSprite* blockSprites[nblocktypes];
-	Block blocks[nrows][ncols];
-	
+	deque<Block *> blocks;
 
 	void pushRow(int row);
 public:
@@ -73,10 +74,10 @@ void GameEnv::displayGame() {
 	ComposeFrame();
 	background.drawGLbackground ();
 
-	for (int i=0; i<nrows; ++i) 
+	for (deque<Block *>::iterator it = blocks.begin(); it < blocks.end(); ++it)
 		for (int j=0; j<ncols; ++j) 
-			if (blocks[i][j].enabled)
-				blocks[i][j].draw(0);
+			if ((*it)[j].enabled)
+				(*it)[j].draw(0);
 
 	glutSwapBuffers();
 }
@@ -84,22 +85,28 @@ void GameEnv::displayGame() {
 inline
 void GameEnv::ProcessFrame()
 {
-	for (int i=0; i<nrows; ++i)
-		for (int j=0; j<ncols; ++j)
-			if (blocks[i][j].enabled)
-				blocks[i][j].move();
+	int i = 0;
+	for (deque<Block *>::iterator it = blocks.begin(); it < blocks.end(); ++it, ++i) 
+		for (int j=0; j<ncols; ++j) 
+			if ((*it)[j].enabled) 
+				(*it)[j].setY(grid_y - i * block_h);
 }
 
 inline
 void GameEnv::ComposeFrame()
 {
-  if(Timer->elapsed(last_time,300))
-  {
-	  ProcessFrame();
+	if (Timer->elapsed(last_pushtime, 900)) {
+		pushRow(0);
+		last_pushtime = Timer->time();
+	}
+
+	if(Timer->elapsed(last_time,300))
+	{
+		ProcessFrame();
     last_time=Timer->time();
-    if(++current_frame>=1)
+	if(++current_frame>=1)
 		current_frame=0;
-  }
+	}
 
   glutPostRedisplay();
 }

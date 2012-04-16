@@ -1,13 +1,14 @@
 #include "game.h"
 
 const string GameEnv::themeDirectory = "themes\\classic\\";
-const string GameEnv::blockFiles[] = {"block-blue.bmp",
-	                                  "block-green.bmp",
-									  "block-purple.bmp",
-									  "block-red.bmp",
-									  "block-special.bmp",
-									  "block-teal.bmp",
-									  "block-yellow.bmp"};
+const string GameEnv::blockFiles[] = {
+	"block-blue.bmp",
+	"block-green.bmp",
+	"block-purple.bmp",
+	"block-red.bmp",
+	"block-special.bmp",
+	"block-teal.bmp",
+	"block-yellow.bmp"};
 const string GameEnv::bgFile = "bg.bmp";
 
 #define rowloop 
@@ -19,17 +20,18 @@ void GameEnv::Menu::display()
 GameEnv::GameEnv() { 
 	showMenu = false;
 	current_frame = 0; 
-	Timer = new CTimer(); 
-	Timer->start();
-	last_time=Timer->time();
 	LoadImages(); 
 	init();
-
 	srand(time(NULL));
 }
 
 void GameEnv::init()
 {
+	Timer = new CTimer(); 
+	Timer->start();
+	last_time=Timer->time();
+	last_pushtime = Timer->time();
+
 	row_bottom = 0;
 	row_top = 1;
 	row_xvel = 0;
@@ -44,16 +46,22 @@ void GameEnv::init()
 	}
 } 
 
-
 void GameEnv::pushRow(int row) {
+	if (blocks.size() == 20)
+		blocks.pop_back();
+
+	Block *blockRow = new Block[ncols];
+
 	for (int col=0; col<ncols; ++col) {
-		blocks[row][col].create(grid_x + col * block_w, 
-								grid_y - row * block_h,
-							    row_xvel, row_yvel, 
-								blockSprites[ rand() % nblocktypes ], 
-								Timer);
-		++row_bottom;
+		blockRow[col].create(grid_x + col * block_w, 
+							 grid_y - row_bottom * block_h,
+							 row_xvel, row_yvel, 
+							 blockSprites[ rand() % nblocktypes ], 
+							 Timer);
 	}
+	row_bottom = (row_bottom + 1) % nrows;
+
+	blocks.push_front(blockRow);
 }
 
 bool GameEnv::LoadImages()
