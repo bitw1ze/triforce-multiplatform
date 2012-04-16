@@ -13,5 +13,7 @@ Release
 Debug
 ipch
 
-# ignore a.out
 a.out
+
+# blender backup files
+*.blend[0-9]*
