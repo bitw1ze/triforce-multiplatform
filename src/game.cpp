@@ -31,15 +31,11 @@ void GameEnv::CreateObjects()
 	block_h = blockSprites[0][0]->GetHeight();
 
 	for (int row=0; row<nrows; ++row) {
-		for (int col=0; col<ncols; ++col) {
-			blocks[row][col].create(grid_x + col * block_w,
-									grid_y - row * block_h,
-									row_xvel, row_yvel, blockSprites[row][col], Timer);
-		}
+		pushRow(row);
 	}
 } 
 
-void GameEnv::createBlockRow(int row) {
+void GameEnv::pushRow(int row) {
 	for (int col=0; col<ncols; ++col) {
 		blocks[row][col].create(grid_x + col * block_w,
 			                    grid_y - row * block_h,

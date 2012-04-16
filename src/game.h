@@ -21,7 +21,7 @@ protected:
 
 	int grid_x, grid_y, row_xvel, row_yvel, block_w, block_h;
 
-	void createBlockRow(int row);
+	void pushRow(int row);
 public:
 	CTimer *Timer;
 	BMPClass background;
