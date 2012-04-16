@@ -10,8 +10,22 @@ const string GameEnv::blockFiles[] = {
 	"block-teal.bmp",
 	"block-yellow.bmp"};
 const string GameEnv::bgFile = "bg.bmp";
+const string GameEnv::Menu::bgFile = "bg.bmp";
 
 #define rowloop 
+
+GameEnv::Menu::Menu() { 
+	current_frame = 0; 
+	loadImages(); 
+}
+
+void GameEnv::Menu::loadImages()
+{
+  background.load( themeDirectory + bgFile );
+  background.loadGLTextures();
+
+//  int r=254, g=0, b=254, frameCount=1, frame=0;    // r,g,b is background color to be filtered, frameCount and frame number
+}
 
 GameEnv::GameEnv() { 
 	showMenu = false;

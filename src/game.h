@@ -17,15 +17,16 @@ using namespace std;
 class GameEnv {
 protected:
 	class Menu {
-	private:
+	public:
 		static const string bgFile;
 		BMPClass background;
-	public:
+		int current_frame;
+
+		Menu();
 		void display();
 		void composeFrame();
 		void processFrame();
 		void loadImages();
-		void init();
 	};
 	Menu menu;
 
