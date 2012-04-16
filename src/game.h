@@ -23,7 +23,7 @@ protected:
 	int grid_x, grid_y, 
 		row_xvel, row_yvel, 
 		block_w, block_h,
-		bottomRow, topRow,
+		row_bottom, row_top,
 
 		current_frame, 
 		last_time;

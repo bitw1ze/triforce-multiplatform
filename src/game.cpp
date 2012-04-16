@@ -25,7 +25,8 @@ GameEnv::GameEnv() {
 
 void GameEnv::init()
 {
-	
+	row_bottom = 0;
+	row_top = 1;
 	row_xvel = 0;
 	row_yvel = 1;
 	block_w = blockSprites[0]->GetWidth();
@@ -33,7 +34,7 @@ void GameEnv::init()
 	grid_x = background.getViewportWidth()/2 - (block_w * ncols)/2;
 	grid_y = background.getViewportHeight() - block_h;
 
-	for (int row=0; row<nrows; ++row) {
+	for (int row=0; row<nrows/2; ++row) {
 		pushRow(row);
 	}
 } 
@@ -41,9 +42,12 @@ void GameEnv::init()
 
 void GameEnv::pushRow(int row) {
 	for (int col=0; col<ncols; ++col) {
-		blocks[row][col].create(grid_x + col * block_w,
-			                    grid_y - row * block_h,
-							    row_xvel, row_yvel, blockSprites[rand() % nblocktypes], Timer);
+		blocks[row][col].create(grid_x + col * block_w, 
+								grid_y - row * block_h,
+							    row_xvel, row_yvel, 
+								blockSprites[ rand() % nblocktypes ], 
+								Timer);
+		++row_bottom;
 	}
 }
 
@@ -53,7 +57,8 @@ void GameEnv::display() {
 
 	for (int i=0; i<nrows; ++i) 
 		for (int j=0; j<ncols; ++j) 
-			blocks[i][j].draw(0);
+			if (blocks[i][j].enabled)
+				blocks[i][j].draw(0);
 
 	glutSwapBuffers();
 }
@@ -62,7 +67,8 @@ bool GameEnv::ProcessFrame()
 {
 	for (int i=0; i<nrows; ++i)
 		for (int j=0; j<ncols; ++j)
-			blocks[i][j].move();
+			if (blocks[i][j].enabled)
+				blocks[i][j].move();
 	return true;
 }
 
