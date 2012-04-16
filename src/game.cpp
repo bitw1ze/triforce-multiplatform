@@ -39,7 +39,7 @@ GameEnv::GameEnv() {
 void GameEnv::init()
 {
 
-	Timer = new CTimer(); 
+	menu.Timer = Timer = new CTimer(); 
 	Timer->start();
 	last_time=Timer->time();
 	last_pushtime = Timer->time();

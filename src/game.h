@@ -24,8 +24,7 @@ protected:
 			last_time;
 
 	public:
-		// FIXME: this is an alias to the GameEnv timer; there must be a better way
-
+		CTimer *Timer; // yuck: points to same Timer as parent
 		Menu();
 		void display();
 		void composeFrame();
@@ -91,14 +90,12 @@ void GameEnv::Menu::display()
 inline
 void GameEnv::Menu::composeFrame()
 {
-#if 0
-	if(GameEnv::Timer->elapsed(last_time,300))
+	if(Timer->elapsed(last_time,300))
 	{
 		//processFrame();
-		last_time=GameEnv::Timer->time();
+		last_time=Timer->time();
 	}
 	glutPostRedisplay();
-#endif
 }
 
 inline
