@@ -24,7 +24,8 @@ void GameEnv::Menu::loadImages()
   background.load( themeDirectory + bgFile );
   background.loadGLTextures();
 
-//  int r=254, g=0, b=254, frameCount=1, frame=0;    // r,g,b is background color to be filtered, frameCount and frame number
+  // r,g,b is background color to be filtered, frameCount and frame number
+  //  int r=254, g=0, b=254, frameCount=1, frame=0;
 }
 
 GameEnv::GameEnv() { 
@@ -37,6 +38,7 @@ GameEnv::GameEnv() {
 
 void GameEnv::init()
 {
+
 	Timer = new CTimer(); 
 	Timer->start();
 	last_time=Timer->time();
@@ -78,11 +80,14 @@ void GameEnv::loadImages()
   background.load( themeDirectory + bgFile );
   background.loadGLTextures();
 
-  int r=254, g=0, b=254, frameCount=1, frame=0;    // r,g,b is background color to be filtered, frameCount and frame number
+  // r,g,b is background color to be filtered, frameCount and frame number
+  int r=254, g=0, b=254, frameCount=1, frame=0;
   
   for (int i=0; i<nblocktypes; ++i) {
-	  blockSprites[i] = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
-	  blockSprites[i]->loadFrame(frame, GameEnv::themeDirectory + blockFiles[i], r, g, b);
+	  blockSprites[i] = new CBaseSprite(frameCount, background.getViewportWidth(),
+		                                background.getViewportHeight());
+	  blockSprites[i]->loadFrame(frame, GameEnv::themeDirectory + blockFiles[i],
+	                             r, g, b);
 	  blockSprites[i]->loadGLTextures();
   }
 }

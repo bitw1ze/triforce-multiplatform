@@ -17,10 +17,14 @@ using namespace std;
 class GameEnv {
 protected:
 	class Menu {
-	public:
+	private:
 		static const string bgFile;
 		BMPClass background;
-		int current_frame;
+		int current_frame,
+			last_time;
+
+	public:
+		// FIXME: this is an alias to the GameEnv timer; there must be a better way
 
 		Menu();
 		void display();
@@ -44,8 +48,8 @@ protected:
 		last_time,
 		last_pushtime;
 
-	bool showMenu;
 	CTimer *Timer;
+	bool showMenu;
 	BMPClass background;
 	CBaseSprite* blockSprites[nblocktypes];
 	deque<Block *> blocks;
@@ -77,6 +81,24 @@ void GameEnv::display() {
 inline
 void GameEnv::Menu::display()
 {
+	composeFrame();
+	background.drawGLbackground ();
+
+	glutSwapBuffers();
+}
+
+
+inline
+void GameEnv::Menu::composeFrame()
+{
+#if 0
+	if(GameEnv::Timer->elapsed(last_time,300))
+	{
+		//processFrame();
+		last_time=GameEnv::Timer->time();
+	}
+	glutPostRedisplay();
+#endif
 }
 
 inline
@@ -96,7 +118,7 @@ inline
 void GameEnv::processFrame()
 {
 	int i = 0;
-	for (deque<Block *>::iterator it = blocks.begin(); it < blocks.end(); ++it, ++i) 
+	for (deque<Block *>::iterator it = blocks.begin(); it < blocks.end(); ++it, ++i)
 		for (int j=0; j<ncols; ++j) 
 			if ((*it)[j].enabled) 
 				(*it)[j].setY(grid_y - i * block_h);
@@ -113,12 +135,11 @@ void GameEnv::composeFrame()
 	if(Timer->elapsed(last_time,300))
 	{
 		processFrame();
-    last_time=Timer->time();
-	if(++current_frame>=1)
-		current_frame=0;
+		last_time=Timer->time();
+		if(++current_frame>=1)
+			current_frame=0;
 	}
-
-  glutPostRedisplay();
+	glutPostRedisplay();
 }
 
 #endif
