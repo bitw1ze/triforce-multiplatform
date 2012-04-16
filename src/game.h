@@ -19,7 +19,10 @@ protected:
 	static const string bgFile;
 	static const string themeDirectory;
 
-	int grid_x, grid_y, row_xvel, row_yvel, block_w, block_h;
+	int grid_x, grid_y, 
+		row_xvel, row_yvel, 
+		block_w, block_h,
+		grid_bottomRow, grid_topRow;
 
 	void pushRow(int row);
 public:
@@ -32,10 +35,20 @@ public:
 
 	GameEnv();
 	void ComposeFrame();
-	void CreateObjects();
+	void init();
 	bool ProcessFrame();
 	bool LoadImages();
 	void display();
 };
+
+const string GameEnv::themeDirectory = "themes\\classic\\";
+const string GameEnv::blockFiles[] = {"block-blue.bmp",
+	                                  "block-green.bmp",
+									  "block-purple.bmp",
+									  "block-red.bmp",
+									  "block-special.bmp",
+									  "block-teal.bmp",
+									  "block-yellow.bmp"};
+const string GameEnv::bgFile = "bg.bmp";
 
 #endif

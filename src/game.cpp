@@ -1,14 +1,15 @@
 #include "game.h"
 
-const string GameEnv::themeDirectory = "themes\\classic\\";
-const string GameEnv::blockFiles[] = {"block-blue.bmp",
-	                                  "block-green.bmp",
-									  "block-purple.bmp",
-									  "block-red.bmp",
-									  "block-special.bmp",
-									  "block-teal.bmp",
-									  "block-yellow.bmp"};
-const string GameEnv::bgFile = "bg.bmp";
+GameEnv::GameEnv() { 
+	current_frame = 0; 
+	Timer = new CTimer(); 
+	Timer->start();
+	last_time=Timer->time();
+	LoadImages(); 
+	init();
+
+	srand(time(NULL));
+}
 
 void GameEnv::display() {
 	ComposeFrame();
@@ -21,7 +22,7 @@ void GameEnv::display() {
 	glutSwapBuffers();
 }
 
-void GameEnv::CreateObjects()
+void GameEnv::init()
 {
 	grid_x = 64;
 	grid_y = background.getViewportHeight() - 64;
@@ -79,16 +80,4 @@ void GameEnv::ComposeFrame()
   ProcessFrame();
 
   glutPostRedisplay();
-}
-
-
-GameEnv::GameEnv() { 
-	current_frame = 0; 
-	Timer = new CTimer(); 
-	Timer->start();
-	last_time=Timer->time();
-	LoadImages(); 
-	CreateObjects();
-
-	srand(time(NULL));
 }
