@@ -24,15 +24,15 @@ protected:
 		block_w, block_h,
 		grid_bottomRow, grid_topRow;
 
-	void pushRow(int row);
-public:
 	CTimer *Timer;
 	BMPClass background;
-	CBaseSprite* blockSprites[nrows][ncols];
+	CBaseSprite* blockSprites[nblocktypes];
 	Block blocks[nrows][ncols];
 	int current_frame;
 	int last_time;
 
+	void pushRow(int row);
+public:
 	GameEnv();
 	void ComposeFrame();
 	void init();
@@ -40,15 +40,5 @@ public:
 	bool LoadImages();
 	void display();
 };
-
-const string GameEnv::themeDirectory = "themes\\classic\\";
-const string GameEnv::blockFiles[] = {"block-blue.bmp",
-	                                  "block-green.bmp",
-									  "block-purple.bmp",
-									  "block-red.bmp",
-									  "block-special.bmp",
-									  "block-teal.bmp",
-									  "block-yellow.bmp"};
-const string GameEnv::bgFile = "bg.bmp";
 
 #endif
