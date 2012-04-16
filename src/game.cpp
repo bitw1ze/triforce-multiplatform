@@ -13,14 +13,10 @@ const string GameEnv::bgFile = "bg.bmp";
 
 #define rowloop 
 
-void GameEnv::Menu::display()
-{
-}
-
 GameEnv::GameEnv() { 
 	showMenu = false;
 	current_frame = 0; 
-	LoadImages(); 
+	loadImages(); 
 	init();
 	srand(time(NULL));
 }
@@ -63,7 +59,7 @@ void GameEnv::pushRow(int row) {
 	blocks.push_front(blockRow);
 }
 
-bool GameEnv::LoadImages()
+void GameEnv::loadImages()
 {
   background.load( themeDirectory + bgFile );
   background.loadGLTextures();
@@ -75,7 +71,5 @@ bool GameEnv::LoadImages()
 	  blockSprites[i]->loadFrame(frame, GameEnv::themeDirectory + blockFiles[i], r, g, b);
 	  blockSprites[i]->loadGLTextures();
   }
-
-  return true;
 }
 

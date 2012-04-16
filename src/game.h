@@ -22,6 +22,10 @@ protected:
 		BMPClass background;
 	public:
 		void display();
+		void composeFrame();
+		void processFrame();
+		void loadImages();
+		void init();
 	};
 	Menu menu;
 
@@ -50,10 +54,10 @@ public:
 	GameEnv();
 	void display();
 	void displayGame();
-	void ComposeFrame();
+	void composeFrame();
 	void init();
-	void ProcessFrame();
-	bool LoadImages();
+	void processFrame();
+	void loadImages();
 };
 
 /* These functions have been defined as inline since
@@ -70,8 +74,13 @@ void GameEnv::display() {
 }
 
 inline
+void GameEnv::Menu::display()
+{
+}
+
+inline
 void GameEnv::displayGame() {
-	ComposeFrame();
+	composeFrame();
 	background.drawGLbackground ();
 
 	for (deque<Block *>::iterator it = blocks.begin(); it < blocks.end(); ++it)
@@ -83,7 +92,7 @@ void GameEnv::displayGame() {
 }
 
 inline
-void GameEnv::ProcessFrame()
+void GameEnv::processFrame()
 {
 	int i = 0;
 	for (deque<Block *>::iterator it = blocks.begin(); it < blocks.end(); ++it, ++i) 
@@ -93,7 +102,7 @@ void GameEnv::ProcessFrame()
 }
 
 inline
-void GameEnv::ComposeFrame()
+void GameEnv::composeFrame()
 {
 	if (Timer->elapsed(last_pushtime, 900)) {
 		pushRow(0);
@@ -102,7 +111,7 @@ void GameEnv::ComposeFrame()
 
 	if(Timer->elapsed(last_time,300))
 	{
-		ProcessFrame();
+		processFrame();
     last_time=Timer->time();
 	if(++current_frame>=1)
 		current_frame=0;
