@@ -12,7 +12,12 @@ const string GameEnv::bgFile = "bg.bmp";
 
 #define rowloop 
 
+void GameEnv::Menu::display()
+{
+}
+
 GameEnv::GameEnv() { 
+	showMenu = false;
 	current_frame = 0; 
 	Timer = new CTimer(); 
 	Timer->start();
@@ -51,27 +56,6 @@ void GameEnv::pushRow(int row) {
 	}
 }
 
-void GameEnv::display() {
-	ComposeFrame();
-	background.drawGLbackground ();
-
-	for (int i=0; i<nrows; ++i) 
-		for (int j=0; j<ncols; ++j) 
-			if (blocks[i][j].enabled)
-				blocks[i][j].draw(0);
-
-	glutSwapBuffers();
-}
-
-bool GameEnv::ProcessFrame()
-{
-	for (int i=0; i<nrows; ++i)
-		for (int j=0; j<ncols; ++j)
-			if (blocks[i][j].enabled)
-				blocks[i][j].move();
-	return true;
-}
-
 bool GameEnv::LoadImages()
 {
   background.load( themeDirectory + bgFile );
@@ -88,16 +72,3 @@ bool GameEnv::LoadImages()
   return true;
 }
 
-void GameEnv::ComposeFrame()
-{
-  if(Timer->elapsed(last_time,300))
-  {
-	  ProcessFrame();
-    last_time=Timer->time();
-    if(++current_frame>=1)
-		current_frame=0;
-  }
-  
-
-  glutPostRedisplay();
-}

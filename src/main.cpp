@@ -7,7 +7,7 @@ GameEnv *gameEnv;
 
 void display()
 {
-   gameEnv->display();
+	gameEnv->display();
 }
 
 extern void init();

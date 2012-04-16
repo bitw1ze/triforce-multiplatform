@@ -15,6 +15,15 @@ using namespace std;
 
 class GameEnv {
 protected:
+	class Menu {
+	private:
+		static const string bgFile;
+		BMPClass background;
+	public:
+		void display();
+	};
+	Menu menu;
+
 	static const string 
 		blockFiles[],
 		bgFile,
@@ -28,6 +37,7 @@ protected:
 		current_frame, 
 		last_time;
 
+	bool showMenu;
 	CTimer *Timer;
 	BMPClass background;
 	CBaseSprite* blockSprites[nblocktypes];
@@ -37,11 +47,61 @@ protected:
 	void pushRow(int row);
 public:
 	GameEnv();
+	void display();
+	void displayGame();
 	void ComposeFrame();
 	void init();
-	bool ProcessFrame();
+	void ProcessFrame();
 	bool LoadImages();
-	void display();
 };
+
+/* These functions have been defined as inline since
+ * they are called many times per second. They must be in the
+ * header file because of this.
+ */
+
+inline
+void GameEnv::display() {
+	if (showMenu)
+		menu.display();
+	else
+		displayGame();
+}
+
+inline
+void GameEnv::displayGame() {
+	ComposeFrame();
+	background.drawGLbackground ();
+
+	for (int i=0; i<nrows; ++i) 
+		for (int j=0; j<ncols; ++j) 
+			if (blocks[i][j].enabled)
+				blocks[i][j].draw(0);
+
+	glutSwapBuffers();
+}
+
+inline
+void GameEnv::ProcessFrame()
+{
+	for (int i=0; i<nrows; ++i)
+		for (int j=0; j<ncols; ++j)
+			if (blocks[i][j].enabled)
+				blocks[i][j].move();
+}
+
+inline
+void GameEnv::ComposeFrame()
+{
+  if(Timer->elapsed(last_time,300))
+  {
+	  ProcessFrame();
+    last_time=Timer->time();
+    if(++current_frame>=1)
+		current_frame=0;
+  }
+
+  glutPostRedisplay();
+}
 
 #endif
