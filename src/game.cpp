@@ -30,7 +30,7 @@ void GameEnv::init()
 	row_yvel = 1;
 	block_w = blockSprites[0]->GetWidth();
 	block_h = blockSprites[0]->GetHeight();
-	grid_x = block_w;
+	grid_x = background.getViewportWidth()/2 - (block_w * ncols)/2;
 	grid_y = background.getViewportHeight() - block_h;
 
 	for (int row=0; row<nrows; ++row) {
@@ -86,11 +86,12 @@ void GameEnv::ComposeFrame()
 {
   if(Timer->elapsed(last_time,300))
   {
+	  ProcessFrame();
     last_time=Timer->time();
     if(++current_frame>=1)
 		current_frame=0;
   }
-  ProcessFrame();
+  
 
   glutPostRedisplay();
 }
