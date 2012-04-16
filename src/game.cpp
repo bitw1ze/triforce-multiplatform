@@ -10,6 +10,8 @@ const string GameEnv::blockFiles[] = {"block-blue.bmp",
 									  "block-yellow.bmp"};
 const string GameEnv::bgFile = "bg.bmp";
 
+#define rowloop 
+
 GameEnv::GameEnv() { 
 	current_frame = 0; 
 	Timer = new CTimer(); 
@@ -21,6 +23,30 @@ GameEnv::GameEnv() {
 	srand(time(NULL));
 }
 
+void GameEnv::init()
+{
+	
+	row_xvel = 0;
+	row_yvel = 1;
+	block_w = blockSprites[0]->GetWidth();
+	block_h = blockSprites[0]->GetHeight();
+	grid_x = block_w;
+	grid_y = background.getViewportHeight() - block_h;
+
+	for (int row=0; row<nrows; ++row) {
+		pushRow(row);
+	}
+} 
+
+
+void GameEnv::pushRow(int row) {
+	for (int col=0; col<ncols; ++col) {
+		blocks[row][col].create(grid_x + col * block_w,
+			                    grid_y - row * block_h,
+							    row_xvel, row_yvel, blockSprites[rand() % nblocktypes], Timer);
+	}
+}
+
 void GameEnv::display() {
 	ComposeFrame();
 	background.drawGLbackground ();
@@ -30,28 +56,6 @@ void GameEnv::display() {
 			blocks[i][j].draw(0);
 
 	glutSwapBuffers();
-}
-
-void GameEnv::init()
-{
-	grid_x = 64;
-	grid_y = background.getViewportHeight() - 64;
-	row_xvel = 0;
-	row_yvel = 1;
-	block_w = blockSprites[0]->GetWidth();
-	block_h = blockSprites[0]->GetHeight();
-
-	for (int row=0; row<nrows; ++row) {
-		pushRow(row);
-	}
-} 
-
-void GameEnv::pushRow(int row) {
-	for (int col=0; col<ncols; ++col) {
-		blocks[row][col].create(grid_x + col * block_w,
-			                    grid_y - row * block_h,
-							    row_xvel, row_yvel, blockSprites[rand() % nblocktypes], Timer);
-	}
 }
 
 bool GameEnv::ProcessFrame()

@@ -15,21 +15,24 @@ using namespace std;
 
 class GameEnv {
 protected:
-	static const string blockFiles[];
-	static const string bgFile;
-	static const string themeDirectory;
+	static const string 
+		blockFiles[],
+		bgFile,
+		themeDirectory;
 
 	int grid_x, grid_y, 
 		row_xvel, row_yvel, 
 		block_w, block_h,
-		grid_bottomRow, grid_topRow;
+		bottomRow, topRow,
+
+		current_frame, 
+		last_time;
 
 	CTimer *Timer;
 	BMPClass background;
 	CBaseSprite* blockSprites[nblocktypes];
 	Block blocks[nrows][ncols];
-	int current_frame;
-	int last_time;
+	
 
 	void pushRow(int row);
 public:
