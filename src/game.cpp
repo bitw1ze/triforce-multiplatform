@@ -68,7 +68,7 @@ bool GameEnv::ProcessFrame()
 
 bool GameEnv::LoadImages()
 {
-  background.load( GameEnv::themeDirectory + GameEnv::bgFile );
+  background.load( themeDirectory + bgFile );
   background.loadGLTextures();
 
   int r=254, g=0, b=254, frameCount=1, frame=0;    // r,g,b is background color to be filtered, frameCount and frame number
@@ -87,7 +87,8 @@ void GameEnv::ComposeFrame()
   if(Timer->elapsed(last_time,300))
   {
     last_time=Timer->time();
-    if(++current_frame>=1)current_frame=0;
+    if(++current_frame>=1)
+		current_frame=0;
   }
   ProcessFrame();
 
