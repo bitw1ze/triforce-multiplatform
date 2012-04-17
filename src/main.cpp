@@ -1,7 +1,7 @@
 #include "game.h"
 
-#define SCREEN_W 1400
-#define SCREEN_H 900
+#define SCREEN_W 1280
+#define SCREEN_H 720
 
 using namespace std;
 
