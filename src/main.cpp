@@ -18,9 +18,10 @@ void display()
 void initGame()
 {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	
+	glutCreateWindow("Block-Game");
 	glutKeyboardFunc(keyboard1);
 	glutReshapeFunc(reshape);
-	glutCreateWindow("Block-Game");
 	glutReshapeWindow(SCREEN_W, SCREEN_H);
     glutSwapBuffers();
 }
