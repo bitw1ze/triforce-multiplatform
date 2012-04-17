@@ -9,7 +9,7 @@
 #include <deque>
 
 #define nblocktypes 7
-#define nrows 10
+#define nrows 12
 #define ncols 6
 
 using namespace std;
