@@ -1,4 +1,10 @@
+#ifndef __BLOCK_H__
+#define __BLOCK_H__
+
 #include "2DGraphics.h"
+
+/* The Block class abstracts operations on a single block, such as getting and setting the x and y values 
+   and setting states */
 
 class Block : public CObject {
 /*
@@ -11,6 +17,7 @@ protected:
 	BlockSprite *blockSprite;
 */
 public:
+	// A block will only be displayed if it is enabled.
 	bool enabled;
 
 	Block() : CObject() { enabled = false; }
@@ -20,3 +27,5 @@ public:
 	void setX(int x) { Setxy((float)x, getY()); }
 	void setY(int y) { Setxy(getX(), (float)y); }
 };
+
+#endif

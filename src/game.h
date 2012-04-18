@@ -1,21 +1,27 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
-#include "2DGraphics.h"
-#include "block.h"
 #include <string>
 #include <vector>
 #include <ctime>
 #include <deque>
+#include "block.h"
 
-#define nblocktypes 7
 #define nrows 12
 #define ncols 6
+#define nblocktypes 7
+#define rowloop 
 
 using namespace std;
 
+class GameEnv;
+class Grid;
+
+/* GameEnv is the main interface for controlling everything else within the game. */
+
 class GameEnv {
 protected:
+	
 	class Menu {
 	private:
 		static const string bgFile;
@@ -31,29 +37,22 @@ protected:
 		void processFrame();
 		void loadImages();
 	};
+
 	Menu menu;
+	Grid *grid;
 
 	static const string 
 		blockFiles[],
 		bgFile,
 		themeDirectory;
 
-	int grid_x, grid_y, 
-		row_xvel, row_yvel, 
-		block_w, block_h,
-		row_bottom, row_top,
-
-		current_frame, 
+	int current_frame, 
 		last_time,
 		last_pushtime;
 
-	CTimer *Timer;
 	bool showMenu;
 	BMPClass background;
-	CBaseSprite* blockSprites[nblocktypes];
-	deque<Block *> blocks;
 
-	void pushRow(int row);
 public:
 	GameEnv();
 	void display();
@@ -62,81 +61,30 @@ public:
 	void init();
 	void processFrame();
 	void loadImages();
+	int getWidth() { return background.getViewportWidth();} 
+	int getHeight() { return background.getViewportHeight();} 
+
+	CBaseSprite* blockSprites[nblocktypes];
+	CTimer *Timer;
 };
 
-/* These functions have been defined as inline since
- * they are called many times per second. They must be in the
- * header file because of this.
- */
+/* Grid class holds abstracts all the operations on grid of blocks for a single player */
 
-inline
-void GameEnv::display() {
-	if (showMenu)
-		menu.display();
-	else
-		displayGame();
-}
-
-inline
-void GameEnv::Menu::display()
-{
-	composeFrame();
-	background.drawGLbackground ();
-
-	glutSwapBuffers();
-}
-
-
-inline
-void GameEnv::Menu::composeFrame()
-{
-	if(Timer->elapsed(last_time,300))
-	{
-		//processFrame();
-		last_time=Timer->time();
-	}
-	glutPostRedisplay();
-}
-
-inline
-void GameEnv::displayGame() {
-	composeFrame();
-	background.drawGLbackground ();
-
-	for (deque<Block *>::iterator it = blocks.begin(); it < blocks.end(); ++it)
-		for (int j=0; j<ncols; ++j) 
-			if ((*it)[j].enabled)
-				(*it)[j].draw(0);
-
-	glutSwapBuffers();
-}
-
-inline
-void GameEnv::processFrame()
-{
-	int i = 0;
-	for (deque<Block *>::iterator it = blocks.begin(); it < blocks.end(); ++it, ++i)
-		for (int j=0; j<ncols; ++j) 
-			if ((*it)[j].enabled) 
-				(*it)[j].setY(grid_y - i * block_h);
-}
-
-inline
-void GameEnv::composeFrame()
-{
-	if (Timer->elapsed(last_pushtime, 900)) {
-		pushRow(0);
-		last_pushtime = Timer->time();
-	}
-
-	if(Timer->elapsed(last_time,300))
-	{
-		processFrame();
-		last_time=Timer->time();
-		if(++current_frame>=1)
-			current_frame=0;
-	}
-	glutPostRedisplay();
-}
+class Grid {
+protected:
+	int grid_x, grid_y, 
+		row_xvel, row_yvel, 
+		block_w, block_h,
+		row_bottom, row_top;
+	deque<Block *> blocks;
+	CBaseSprite** blockSprites;
+public:
+	CTimer *Timer;
+	Grid(GameEnv *ge);
+	void pushRow();
+	void loadImages();
+	void display();
+	void setCoords();
+};
 
 #endif
