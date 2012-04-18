@@ -12,7 +12,7 @@
 Release
 Debug
 ipch
-src/ignore # stuff I don't want in the project
+ignore # stuff I don't want in the project
 
 a.out
 

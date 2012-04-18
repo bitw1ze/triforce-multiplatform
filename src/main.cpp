@@ -2,9 +2,8 @@
 
 using namespace std;
 
-extern void reshape(int, int);
-extern void keyboard1(unsigned char, int, int);
-void onKeyDown(int, int, int);
+extern void keyboard1(unsigned char key, int x, int y);
+extern void reshape(int x, int y);
 void display();
 GameEnv *gameEnv;
 CTimer *mainTimer;
@@ -44,7 +43,6 @@ void initGame()
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutCreateWindow("Block-Game");
 	glutReshapeFunc(reshape);
-	glutSpecialFunc(onKeyDown);
 	glutKeyboardFunc(keyboard1);
 	glutReshapeWindow(screen_w, screen_h);
     glutSwapBuffers();

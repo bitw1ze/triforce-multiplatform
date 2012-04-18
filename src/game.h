@@ -81,8 +81,9 @@ class Grid {
 protected:
 	int grid_x, grid_y, 
 		row_xvel, row_yvel,
-		row_top,
-		block_w, block_h;
+		row_bottom, row_top,
+		block_w, block_h,
+		speed;
 	deque<Block *> blocks;
 	CBaseSprite** blockSprites;
 
@@ -98,7 +99,7 @@ public:
 	int getY() { return grid_y; }
 	int getBlockWidth() { return block_w; }
 	int getBlockHeight() { return block_h; }
-	int getTopRow() { return row_top; }
+	int getSpeed() { return speed; }
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 
