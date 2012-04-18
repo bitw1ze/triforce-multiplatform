@@ -12,7 +12,6 @@
 Release
 Debug
 ipch
-ignore # stuff I don't want in the project
 
 a.out
 
