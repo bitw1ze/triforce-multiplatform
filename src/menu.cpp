@@ -22,13 +22,6 @@ void GameEnv::Menu::composeFrame()
 	glutPostRedisplay();
 }
 
-void GameEnv::display() {
-	if (showMenu)
-		menu.display();
-	else
-		displayGame();
-}
-
 void GameEnv::Menu::display()
 {
 	composeFrame();
