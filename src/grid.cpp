@@ -11,8 +11,6 @@ Grid::Grid(GameEnv *ge) {
 	block_h = blockSprites[0]->GetHeight();
 	grid_x = ge->getWidth()/2 - (block_w * ncols)/2;
 	grid_y = ge->getHeight() - block_h * 2;
-	
-	Timer = ge->Timer;
 
 	for (int row=0; row<nrows/2; ++row) {
 		pushRow();
@@ -26,13 +24,11 @@ void Grid::pushRow() {
 	Block *blockRow = new Block[ncols];
 
 	for (int col=0; col<ncols; ++col) {
-		blockRow[col].create(grid_x + col * block_w, - block_h * 2,
+		blockRow[col].create(grid_x + col * block_w, grid_y - block_h * 2,
 							 row_xvel, row_yvel, 
 							 blockSprites[ rand() % nblocktypes ], 
-							 Timer);
-		printf("(%d, %d) ", blockRow[col].getX(), blockRow[col].getY());
+							 mainTimer);
 	}
-	cout << endl;
 	row_bottom = (row_bottom + 1) % nrows;
 
 	blocks.push_front(blockRow);

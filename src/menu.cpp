@@ -14,10 +14,10 @@ GameEnv::Menu::Menu() {
 
 void GameEnv::Menu::composeFrame()
 {
-	if(Timer->elapsed(last_time,300))
+	if(mainTimer->elapsed(last_time,300))
 	{
 		//processFrame();
-		last_time=Timer->time();
+		last_time=mainTimer->time();
 	}
 	glutPostRedisplay();
 }

@@ -5,17 +5,17 @@
 #include <vector>
 #include <ctime>
 #include <deque>
-#include "block.h"
-
-#define nrows 12
-#define ncols 6
-#define nblocktypes 7
-#define rowloop 
+#include "2DGraphics.h"
+#include "globals.h"
 
 using namespace std;
+using namespace Globals;
 
 class GameEnv;
 class Grid;
+class Block;
+class Cursor;
+extern CTimer *mainTimer;
 
 /* GameEnv is the main interface for controlling everything else within the 
    game. Classes other than GameEnv declared in this header will be
@@ -33,7 +33,6 @@ protected:
 			last_time;
 
 	public:
-		CTimer *Timer; // yuck: points to same Timer as parent
 		Menu();
 		void display();
 		void composeFrame();
@@ -43,6 +42,7 @@ protected:
 
 	Menu menu;
 	Grid *grid;
+	Cursor *cursor;
 
 	static const string 
 		blockFiles[],
@@ -68,26 +68,63 @@ public:
 	int getHeight() { return background.getViewportHeight();} 
 
 	CBaseSprite* blockSprites[nblocktypes];
-	CTimer *Timer;
 };
 
-/* Grid class holds abstracts all the operations on grid of blocks for a single player */
+/* Grid class holds abstracts all the operations on grid of blocks for a 
+   single player */
 
 class Grid {
+
 protected:
 	int grid_x, grid_y, 
-		row_xvel, row_yvel, 
-		block_w, block_h,
-		row_bottom, row_top;
+		row_xvel, row_yvel,
+		row_bottom, row_top,
+		block_w, block_h;
 	deque<Block *> blocks;
 	CBaseSprite** blockSprites;
+
 public:
-	CTimer *Timer;
 	Grid(GameEnv *ge);
 	void pushRow();
 	void loadImages();
 	void display();
 	void setCoords();
+
+	/* set/get properties */
+	int getX() { return grid_x; }
+	int getY() { return grid_y; }
+};
+
+/* The Block class abstracts operations on a single block, such as getting and 
+   setting the x and y values and setting states */
+
+class Block : public CObject {
+public:
+	// A block will only be displayed if it is enabled.
+	bool enabled;
+
+	Block() : CObject() { enabled = false; }
+	void create(int x1, int y1, int xspeed1, int yspeed1, CBaseSprite *sprite, CTimer *timer);
+	int getX() { float x, y; Getxy(x, y); return (int)x; }
+	int getY() { float x, y; Getxy(x, y); return (int)y; }
+	void setX(int x) { Setxy((float)x, getY()); }
+	void setY(int y) { Setxy(getX(), (float)y); }
+};
+
+class Cursor {
+protected:
+	CObject *cursor;
+	int row, col;
+	Grid *grid;
+
+	static const string spriteFile;
+
+public:
+	Cursor(Grid *g);
+	void moveUp();
+	void moveDown();
+	void moveLeft();
+	void moveRight();
 };
 
 #endif

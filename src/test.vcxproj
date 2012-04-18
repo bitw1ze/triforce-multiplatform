@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="block.cpp" />
+    <ClCompile Include="cursor.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="main.cpp" />
@@ -19,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2DGraphics.h" />
-    <ClInclude Include="block.h" />
+    <ClInclude Include="globals.h" />
     <ClInclude Include="game.h" />
   </ItemGroup>
   <ItemGroup>

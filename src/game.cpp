@@ -20,10 +20,10 @@ GameEnv::GameEnv() {
 	current_frame = 0; 
 	loadImages(); 
 
-	menu.Timer = Timer = new CTimer(); 
-	Timer->start();
-	last_time=Timer->time();
-	last_pushtime = Timer->time();
+	mainTimer = new CTimer();
+	mainTimer->start();
+	last_time=mainTimer->time();
+	last_pushtime = mainTimer->time();
 
 	srand(time(NULL));
 
@@ -46,15 +46,15 @@ void GameEnv::processFrame()
 
 void GameEnv::composeFrame()
 {
-	if (Timer->elapsed(last_pushtime, 900)) {
+	if (mainTimer->elapsed(last_pushtime, 900)) {
 		grid->pushRow();
-		last_pushtime = Timer->time();
+		last_pushtime = mainTimer->time();
 	}
 
-	if(Timer->elapsed(last_time,300))
+	if(mainTimer->elapsed(last_time,300))
 	{
 		processFrame();
-		last_time=Timer->time();
+		last_time=mainTimer->time();
 		if(++current_frame>=1)
 			current_frame=0;
 	}
