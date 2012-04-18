@@ -17,7 +17,10 @@ using namespace std;
 class GameEnv;
 class Grid;
 
-/* GameEnv is the main interface for controlling everything else within the game. */
+/* GameEnv is the main interface for controlling everything else within the 
+   game. Classes other than GameEnv declared in this header will be
+   implemented in their own .cpp files to make things more modular. This
+   seems to be the best solution. */
 
 class GameEnv {
 protected:
