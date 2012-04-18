@@ -19,16 +19,16 @@ const string GameEnv::cursorFile = "cursor.bmp";
 GameEnv::GameEnv() { 
 	showMenu = false;
 	current_frame = 0; 
-	loadImages(); 
-
+	
 	mainTimer = new CTimer();
 	mainTimer->start();
 	last_time=mainTimer->time();
 	last_pushtime = mainTimer->time();
 
 	srand(time(NULL));
-
+	loadImages(); 
 	grid = new Grid(this);
+	cursor = new Cursor(grid, cursorSprite);
 }
 
 void GameEnv::displayGame() {
@@ -37,7 +37,7 @@ void GameEnv::displayGame() {
 
 	grid->display();
 	//printf("(%d, %d)\n", cursor->getX(), cursor->getY());
-	//cursor->draw(0);
+	cursor->draw(0);
 
 	glutSwapBuffers();
 }
@@ -80,8 +80,7 @@ void GameEnv::loadImages()
   }
 
   r = 255, g = 255, b = 255;
-  CBaseSprite *cursorSprite = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
+  cursorSprite = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
   cursorSprite->loadFrame(frame, themeDirectory + cursorFile, r, g, b);
   cursorSprite->loadGLTextures();
-  cursor = new Cursor(grid, cursorSprite);
 }

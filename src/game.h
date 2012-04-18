@@ -67,6 +67,7 @@ public:
 	int getHeight() { return background.getViewportHeight();} 
 
 	CBaseSprite* blockSprites[nblocktypes];
+	CBaseSprite *cursorSprite;
 	Menu menu;
 	Grid *grid;
 	Cursor *cursor;
@@ -128,6 +129,7 @@ public:
 	void moveDown();
 	void moveLeft();
 	void moveRight();
+	void setPos(int c, int r);
 };
 
 #endif

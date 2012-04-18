@@ -1,7 +1,5 @@
 #include "game.h"
 
-
-
 void Cursor::moveLeft() {
 	if (col > 0) {
 		--col;
@@ -39,11 +37,20 @@ void Cursor::moveUp() {
 	}
 }
 
+void Cursor::setPos(int c, int r) {
+	row = r;
+	col = c;
+	cursor_x = grid->getX() + col * grid->getBlockWidth();
+	cursor_y = grid->getY() - row * grid->getBlockHeight();
+	Setxy(cursor_x, cursor_y);
+}
+
 Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	grid = gr;
 
 	row = nrows / 2;
 	col = ncols / 2;
-	create(cursor_x, cursor_y, cursor_w * 2, cursor_h, sprite, mainTimer);
+	create(0, 0, 0, 0, sprite, mainTimer);
+	setPos(4, 4);
 	printf("dim: (%d, %d)\npos: (%d, %d)\n", cursor_w, cursor_h, cursor_x, cursor_y);
 }
