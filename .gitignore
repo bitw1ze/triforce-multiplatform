@@ -12,7 +12,7 @@
 Release
 Debug
 ipch
-
+ignore
 a.out
 
 # blender backup files

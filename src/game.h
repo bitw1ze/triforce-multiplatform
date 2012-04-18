@@ -81,7 +81,6 @@ class Grid {
 protected:
 	int grid_x, grid_y, 
 		row_xvel, row_yvel,
-		row_bottom, row_top,
 		block_w, block_h,
 		speed;
 	deque<Block *> blocks;
@@ -99,7 +98,7 @@ public:
 	int getY() { return grid_y; }
 	int getBlockWidth() { return block_w; }
 	int getBlockHeight() { return block_h; }
-	int getSpeed() { return speed; }
+	int getTopRow() { return blocks.size(); }
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 

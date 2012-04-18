@@ -3,8 +3,6 @@
 /* Grid methods */
 Grid::Grid(GameEnv *ge) {
 	blockSprites = ge->blockSprites;
-	row_bottom = 0;
-	row_top = 1;
 	block_w = blockSprites[0]->GetWidth();
 	block_h = blockSprites[0]->GetHeight();
 	speed = block_h / 4;
@@ -28,7 +26,6 @@ void Grid::pushRow() {
 							 blockSprites[ rand() % nblocktypes ], 
 							 mainTimer);
 	}
-	row_bottom = (row_bottom + 1) % nrows;
 
 	blocks.push_front(blockRow);
 }
