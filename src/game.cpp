@@ -31,6 +31,13 @@ GameEnv::GameEnv() {
 	cursor = new Cursor(grid, cursorSprite);
 }
 
+void GameEnv::display() {
+	if (showMenu)
+		menu.display();
+	else
+		displayGame();
+}
+
 void GameEnv::displayGame() {
 	composeFrame();
 	background.drawGLbackground ();
