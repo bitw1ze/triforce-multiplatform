@@ -5,10 +5,9 @@ Grid::Grid(GameEnv *ge) {
 	blockSprites = ge->blockSprites;
 	row_bottom = 0;
 	row_top = 1;
-	row_xvel = 0;
-	row_yvel = 1;
 	block_w = blockSprites[0]->GetWidth();
 	block_h = blockSprites[0]->GetHeight();
+	speed = block_h / 4;
 	grid_x = ge->getWidth()/2 - (block_w * ncols)/2;
 	grid_y = ge->getHeight() - block_h * 2;
 
@@ -25,7 +24,7 @@ void Grid::pushRow() {
 
 	for (int col=0; col<ncols; ++col) {
 		blockRow[col].create(grid_x + col * block_w, grid_y - block_h * 2,
-							 row_xvel, row_yvel, 
+							 0, speed, 
 							 blockSprites[ rand() % nblocktypes ], 
 							 mainTimer);
 	}

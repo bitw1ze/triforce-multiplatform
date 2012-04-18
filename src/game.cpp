@@ -1,6 +1,8 @@
 #include "game.h"
 
 // Constants
+const string GameEnv::bgFile = "bg.bmp";
+const string GameEnv::Menu::bgFile = "bg.bmp";
 const string GameEnv::blockFiles[] = {
 	"block-blue.bmp",
 	"block-green.bmp",
@@ -9,8 +11,8 @@ const string GameEnv::blockFiles[] = {
 	"block-special.bmp",
 	"block-teal.bmp",
 	"block-yellow.bmp"};
-const string GameEnv::bgFile = "bg.bmp";
-const string GameEnv::Menu::bgFile = "bg.bmp";
+const string GameEnv::cursorFile = "cursor.bmp";
+
 
 /* GameEnv methods */
 
@@ -34,6 +36,8 @@ void GameEnv::displayGame() {
 	background.drawGLbackground ();
 
 	grid->display();
+	//printf("(%d, %d)\n", cursor->getX(), cursor->getY());
+	//cursor->draw(0);
 
 	glutSwapBuffers();
 }
@@ -45,7 +49,7 @@ void GameEnv::processFrame()
 
 void GameEnv::composeFrame()
 {
-	if (mainTimer->elapsed(last_pushtime, 900)) {
+	if (mainTimer->elapsed(last_pushtime, 5000)) {
 		grid->pushRow();
 		last_pushtime = mainTimer->time();
 	}
@@ -70,10 +74,14 @@ void GameEnv::loadImages()
   int r=254, g=0, b=254, frameCount=1, frame=0;
   
   for (int i=0; i<nblocktypes; ++i) {
-	  blockSprites[i] = new CBaseSprite(frameCount, background.getViewportWidth(),
-		                                background.getViewportHeight());
-	  blockSprites[i]->loadFrame(frame, themeDirectory + blockFiles[i],
-	                             r, g, b);
+	  blockSprites[i] = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
+	  blockSprites[i]->loadFrame(frame, themeDirectory + blockFiles[i], r, g, b);
 	  blockSprites[i]->loadGLTextures();
   }
+
+  r = 255, g = 255, b = 255;
+  CBaseSprite *cursorSprite = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
+  cursorSprite->loadFrame(frame, themeDirectory + cursorFile, r, g, b);
+  cursorSprite->loadGLTextures();
+  cursor = new Cursor(grid, cursorSprite);
 }

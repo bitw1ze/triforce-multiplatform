@@ -41,14 +41,13 @@ protected:
 		void loadImages();
 	};
 
-	Menu menu;
-	Grid *grid;
-	Cursor *cursor;
-
+	/* bitmap files */
 	static const string 
 		blockFiles[],
+		cursorFile,
 		bgFile;
 
+	/* frame stuff */
 	int current_frame, 
 		last_time,
 		last_pushtime;
@@ -68,6 +67,9 @@ public:
 	int getHeight() { return background.getViewportHeight();} 
 
 	CBaseSprite* blockSprites[nblocktypes];
+	Menu menu;
+	Grid *grid;
+	Cursor *cursor;
 };
 
 /* Grid class holds abstracts all the operations on grid of blocks for a 
@@ -79,7 +81,8 @@ protected:
 	int grid_x, grid_y, 
 		row_xvel, row_yvel,
 		row_bottom, row_top,
-		block_w, block_h;
+		block_w, block_h,
+		speed;
 	deque<Block *> blocks;
 	CBaseSprite** blockSprites;
 
@@ -93,9 +96,9 @@ public:
 	/* set/get properties */
 	int getX() { return grid_x; }
 	int getY() { return grid_y; }
-
 	int getBlockWidth() { return block_w; }
 	int getBlockHeight() { return block_h; }
+	int getSpeed() { return speed; }
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 
@@ -106,17 +109,21 @@ public:
 	Block() : GObject() { }
 };
 
-class Cursor : public CObject {
+/* The Cursor class controls the operations on the player's cursor, liie moving
+   it around. */
+
+class Cursor : public GObject {
 protected:
 	int row, col,
 		cursor_w, cursor_h,
-		cursor_x, cursor_y;
+		cursor_x, cursor_y,
+		cursor_delta;
 	Grid *grid;
 
 	static const string spriteFile;
 
 public:
-	Cursor(Grid *g);
+	Cursor(Grid *, CBaseSprite *);
 	void moveUp();
 	void moveDown();
 	void moveLeft();
