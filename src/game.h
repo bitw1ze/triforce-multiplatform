@@ -5,11 +5,12 @@
 #include <vector>
 #include <ctime>
 #include <deque>
-#include "2DGraphics.h"
+#include "betterlib.h"
 #include "globals.h"
 
 using namespace std;
 using namespace Globals;
+using namespace BetterLib;
 
 class GameEnv;
 class Grid;
@@ -46,8 +47,7 @@ protected:
 
 	static const string 
 		blockFiles[],
-		bgFile,
-		themeDirectory;
+		bgFile;
 
 	int current_frame, 
 		last_time,
@@ -93,28 +93,24 @@ public:
 	/* set/get properties */
 	int getX() { return grid_x; }
 	int getY() { return grid_y; }
+
+	int getBlockWidth() { return block_w; }
+	int getBlockHeight() { return block_h; }
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 
    setting the x and y values and setting states */
 
-class Block : public CObject {
+class Block : public GObject {
 public:
-	// A block will only be displayed if it is enabled.
-	bool enabled;
-
-	Block() : CObject() { enabled = false; }
-	void create(int x1, int y1, int xspeed1, int yspeed1, CBaseSprite *sprite, CTimer *timer);
-	int getX() { float x, y; Getxy(x, y); return (int)x; }
-	int getY() { float x, y; Getxy(x, y); return (int)y; }
-	void setX(int x) { Setxy((float)x, getY()); }
-	void setY(int y) { Setxy(getX(), (float)y); }
+	Block() : GObject() { }
 };
 
-class Cursor {
+class Cursor : public CObject {
 protected:
-	CObject *cursor;
-	int row, col;
+	int row, col,
+		cursor_w, cursor_h,
+		cursor_x, cursor_y;
 	Grid *grid;
 
 	static const string spriteFile;

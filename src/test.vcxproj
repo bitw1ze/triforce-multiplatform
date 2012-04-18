@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="betterlib.cpp" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="game.cpp" />
@@ -22,6 +23,7 @@
     <ClInclude Include="2DGraphics.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="betterlib.h" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="2DLibrary.obj" />

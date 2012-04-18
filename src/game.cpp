@@ -1,7 +1,6 @@
 #include "game.h"
 
 // Constants
-const string GameEnv::themeDirectory = "themes\\classic\\";
 const string GameEnv::blockFiles[] = {
 	"block-blue.bmp",
 	"block-green.bmp",
