@@ -1,24 +1,27 @@
 #include "game.h"
 
 void Cursor::moveLeft() {
+	cout << "left\n";
 	if (col > 0) {
 		--col;
 		cursor_x -= cursor_delta;
-		setX(cursor_y);
+		setX(cursor_x);
 		draw(0);
 	}
 }
 
 void Cursor::moveRight() {
-	if (col < ncols - 1) {
+	cout << "right\n";
+	if (col < ncols - 2) {
 		++col;
 		cursor_x += cursor_delta;
-		setX(cursor_y);
+		setX(cursor_x);
 		draw(0);
 	}
 }
 
 void Cursor::moveDown() {
+	cout << "down\n";
 	if (row > 0) {
 		--row;
 		cursor_y += cursor_delta;
@@ -29,7 +32,9 @@ void Cursor::moveDown() {
 
 
 void Cursor::moveUp() {
-	if (row < nrows - 1) {
+	cout << "up\n";
+	if (row < grid->getTopRow() - 1) {
+		cout << row << " " << grid->getTopRow() << endl;
 		++row;
 		cursor_y -= cursor_delta;
 		setY(cursor_y);
@@ -47,10 +52,10 @@ void Cursor::setPos(int c, int r) {
 
 Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	grid = gr;
-
+	cursor_delta = sprite->GetHeight();
 	row = nrows / 2;
 	col = ncols / 2;
 	create(0, 0, 0, 0, sprite, mainTimer);
-	setPos(4, 4);
+	setPos(3, 3);
 	printf("dim: (%d, %d)\npos: (%d, %d)\n", cursor_w, cursor_h, cursor_x, cursor_y);
 }
