@@ -8,9 +8,6 @@ void onKeyDown(int, int, int);
 void display();
 GameEnv *gameEnv;
 CTimer *mainTimer;
-CTimer *keyTimer;
-int last_arrowkeypress, arrowkey_delay = 50;
-
 
 void display()
 {
@@ -18,11 +15,7 @@ void display()
 }
 
 void onKeyDown(int key, int x, int y) {
-	cout << last_arrowkeypress << endl;
-	if (!keyTimer->elapsed(last_arrowkeypress, arrowkey_delay))
-		return;
-	else
-		last_arrowkeypress = keyTimer->time();
+
 	
 	switch(key) {
 	case GLUT_KEY_LEFT:
@@ -64,10 +57,6 @@ int main(int argc,char** argv)
 	initGame();
 	gameEnv = new GameEnv();
     glutDisplayFunc(display);
-
-	keyTimer = new CTimer();
-	keyTimer->start();
-	last_arrowkeypress = keyTimer->time();
 	
 	glutMainLoop();
 	
