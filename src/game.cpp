@@ -81,6 +81,9 @@ void GameEnv::loadImages()
   int r=254, g=0, b=254, frameCount=1, frame=0;
   
   for (int i=0; i<nblocktypes; ++i) {
+	  // Block files are designed to not require a color filter. They aren't
+	  // guaranteed to work as expected when their bg's are filtered out and a
+	  // background image of a different color is used.
 	  blockSprites[i] = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
 	  blockSprites[i]->loadFrame(frame, themeDirectory + blockFiles[i], r, g, b);
 	  blockSprites[i]->loadGLTextures();
