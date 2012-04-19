@@ -11,8 +11,10 @@ class Button;
 class Buttons
 {
 protected:
-	list<Button> buttons;
+	typedef list<Button *> buttons_t;
+	buttons_t buttons;
 public:
+	~Buttons();
 	void display();
 	void add(Button *b);
 };

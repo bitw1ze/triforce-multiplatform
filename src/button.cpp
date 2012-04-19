@@ -1,5 +1,11 @@
 #include "buttons.h"
 
+Buttons::~Buttons()
+{
+	for (buttons_t::iterator i = buttons.begin(); i != buttons.end(); i)
+		delete *i;
+}
+
 void Buttons::display()
 {
 
