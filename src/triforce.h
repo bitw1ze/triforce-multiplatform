@@ -26,6 +26,7 @@ private:
 	int current_frame,
 		last_time;
 
+	void displayMenu();
 	void composeFrame();
 	void processFrame();
 	void loadImages();

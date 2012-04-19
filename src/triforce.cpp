@@ -39,23 +39,29 @@ void Triforce::changeState(gameState s)
 	state = s;
 }
 
+/**
+ * Main display driver for the program.
+ */
 void Triforce::display()
 {
 	switch (state)
 	{
 	case load:
-		composeFrame();
-		background.drawGLbackground ();
-		buttons.display();
-//		btnPlay.draw(0);
-		glutSwapBuffers();
+	case pause:
+		displayMenu();
 		break;
 	case play:
 		gameEnv->display();
 		break;
-	case pause:
-		break; // not yet implemented
 	}
+}
+
+void Triforce::displayMenu()
+{
+	composeFrame();
+	background.drawGLbackground ();
+	buttons.display();
+	glutSwapBuffers();
 }
 
 void Triforce::composeFrame()

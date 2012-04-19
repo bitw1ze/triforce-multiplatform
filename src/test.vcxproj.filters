@@ -33,7 +33,7 @@
     <ClCompile Include="gobjlib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="button.cpp">
+    <ClCompile Include="buttons.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
