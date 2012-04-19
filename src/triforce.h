@@ -20,13 +20,16 @@ private:
 	int current_frame,
 		last_time;
 
+	void composeFrame();
+	void processFrame();
+	void loadImages();
+
 public:
-	GameEnv *gameEnv; //Temporarily here so that keyboard stuff can work in main; this should be private
+	// Temporarily here so that keyboard stuff can work in main... but
+	// this should really be private
+	GameEnv *gameEnv; 
 
 	Triforce();
 	void changeState(gameState s);
 	void display();
-	void composeFrame();
-	void processFrame();
-	void loadImages();
 };

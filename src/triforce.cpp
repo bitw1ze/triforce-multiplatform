@@ -29,16 +29,6 @@ void Triforce::changeState(gameState s)
 	state = s;
 }
 
-void Triforce::composeFrame()
-{
-	if(mainTimer->elapsed(last_time, 300))
-	{
-		//processFrame();
-		last_time=mainTimer->time();
-	}
-	glutPostRedisplay();
-}
-
 void Triforce::display()
 {
 	switch (state)
@@ -52,6 +42,16 @@ void Triforce::display()
 	case pause:
 		;
 	}
+}
+
+void Triforce::composeFrame()
+{
+	if(mainTimer->elapsed(last_time, 300))
+	{
+		//processFrame();
+		last_time=mainTimer->time();
+	}
+	glutPostRedisplay();
 }
 
 void Triforce::loadImages()
