@@ -1,3 +1,4 @@
+#pragma once
 #include "2DGraphics.h"
 
 namespace BetterLib {

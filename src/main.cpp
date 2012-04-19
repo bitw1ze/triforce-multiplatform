@@ -1,4 +1,4 @@
-#include "game.h"
+#include "triforce.h"
 
 using namespace std;
 
@@ -7,36 +7,37 @@ using namespace std;
 
 // function declarations
 extern void reshape(int x, int y);
-void specialKeys(int key, int x, int y);
-void normalKeys(unsigned char key, int x, int y);
+//void specialKeys(int key, int x, int y);
+//void normalKeys(unsigned char key, int x, int y);
 void display();
 void initGlut();
 
 // globals
-GameEnv *gameEnv;
+Triforce *triforce;
 CTimer *mainTimer;
 
 void display()
 {
-	gameEnv->display();
+	triforce->display();
 }
 
+// Temporarily disable controls while Triforce class is being written
 void specialKeys(int key, int x, int y) {
 	switch(key) {
 	case GLUT_KEY_LEFT:
-		gameEnv->grid->cursor->moveLeft();
+		triforce->gameEnv->grid->cursor->moveLeft(); //FIXME: this really begs for refactoring
 		break;
 
 	case GLUT_KEY_RIGHT:
-		gameEnv->grid->cursor->moveRight();
+		triforce->gameEnv->grid->cursor->moveRight();
 		break;
 
 	case GLUT_KEY_UP:
-		gameEnv->grid->cursor->moveUp();
+		triforce->gameEnv->grid->cursor->moveUp();
 		break;
 
 	case GLUT_KEY_DOWN:
-		gameEnv->grid->cursor->moveDown();
+		triforce->gameEnv->grid->cursor->moveDown();
 		break;
 	}
 
@@ -50,7 +51,7 @@ void normalKeys(unsigned char key, int x, int y) {
 		break;
 	case 'z':
 	case 'Z':
-		gameEnv->grid->swapBlocks();
+		triforce->gameEnv->grid->swapBlocks();
 		break;
 	}
 }
@@ -73,10 +74,10 @@ int main(int argc,char** argv)
 	glutInit(&argc, argv);
 		
 	initGlut();
-	gameEnv = new GameEnv();
+	triforce = new Triforce();
 	glutDisplayFunc(display);
-	
 	glutMainLoop();
-	
+
+	delete triforce;
 	return 0;
 }

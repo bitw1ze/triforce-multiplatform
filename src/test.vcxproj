@@ -16,13 +16,14 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="menu.cpp" />
+    <ClCompile Include="triforce.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2DGraphics.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="betterlib.h" />
+    <ClInclude Include="triforce.h" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="2DLibrary.obj" />
