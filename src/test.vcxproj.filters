@@ -27,10 +27,10 @@
     <ClCompile Include="cursor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="betterlib.cpp">
+    <ClCompile Include="triforce.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="triforce.cpp">
+    <ClCompile Include="gobjlib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,10 +44,10 @@
     <ClInclude Include="globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="betterlib.h">
+    <ClInclude Include="triforce.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="triforce.h">
+    <ClInclude Include="gobjlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

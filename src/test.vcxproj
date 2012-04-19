@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="betterlib.cpp" />
+    <ClCompile Include="gobjlib.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="grid.cpp" />
@@ -22,7 +22,7 @@
     <ClInclude Include="2DGraphics.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="game.h" />
-    <ClInclude Include="betterlib.h" />
+    <ClInclude Include="gobjlib.h" />
     <ClInclude Include="triforce.h" />
   </ItemGroup>
   <ItemGroup>

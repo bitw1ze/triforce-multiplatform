@@ -4,7 +4,7 @@
 #include <vector>
 #include <ctime>
 #include <deque>
-#include "betterlib.h"
+#include "gobjlib.h"
 #include "globals.h"
 #include "game.h"
 

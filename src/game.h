@@ -5,12 +5,12 @@
 #include <vector>
 #include <ctime>
 #include <deque>
-#include "betterlib.h"
+#include "gobjlib.h"
 #include "globals.h"
 
 using namespace std;
 using namespace Globals;
-using namespace BetterLib;
+using namespace GObjLib;
 
 class GameEnv;
 class Grid;
