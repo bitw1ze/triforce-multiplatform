@@ -27,8 +27,7 @@ GameEnv::GameEnv() {
 
 	srand(time(NULL));
 	loadImages(); 
-	grid = new Grid(this);
-	cursor = new Cursor(grid, cursorSprite);
+	grid = new Grid(this, cursorSprite);
 }
 
 void GameEnv::display() {
@@ -44,7 +43,6 @@ void GameEnv::displayGame() {
 
 	grid->display();
 	//printf("(%d, %d)\n", cursor->getX(), cursor->getY());
-	cursor->draw(0);
 
 	glutSwapBuffers();
 }

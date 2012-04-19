@@ -70,7 +70,6 @@ public:
 	CBaseSprite *cursorSprite;
 	Menu menu;
 	Grid *grid;
-	Cursor *cursor;
 };
 
 /* Grid class holds abstracts all the operations on grid of blocks for a 
@@ -83,15 +82,16 @@ protected:
 		row_xvel, row_yvel,
 		block_w, block_h,
 		speed;
-	deque<Block *> blocks;
+	deque<Block **> blocks;
 	CBaseSprite** blockSprites;
 
 public:
-	Grid(GameEnv *ge);
+	Grid(GameEnv *ge, CBaseSprite *cursorSprite);
 	void pushRow();
 	void loadImages();
 	void display();
 	void setCoords();
+	void swapBlocks();
 
 	/* set/get properties */
 	int getX() { return grid_x; }
@@ -99,6 +99,8 @@ public:
 	int getBlockWidth() { return block_w; }
 	int getBlockHeight() { return block_h; }
 	int getTopRow() { return blocks.size(); }
+
+	Cursor *cursor;
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 
@@ -129,6 +131,8 @@ public:
 	void moveLeft();
 	void moveRight();
 	void setPos(int c, int r);
+	int getRow() const { return row; }
+	int getCol() const { return col; }
 };
 
 #endif

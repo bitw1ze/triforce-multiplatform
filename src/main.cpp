@@ -2,10 +2,13 @@
 
 using namespace std;
 
-extern void keyboard1(unsigned char key, int x, int y);
+#define ESC 27
+#define SPACE 32
+
 extern void reshape(int x, int y);
 
 void specialKeys(int key, int x, int y);
+void normalKeys(unsigned char key, int x, int y);
 void display();
 GameEnv *gameEnv;
 CTimer *mainTimer;
@@ -18,23 +21,35 @@ void display()
 void specialKeys(int key, int x, int y) {
 	switch(key) {
 	case GLUT_KEY_LEFT:
-		gameEnv->cursor->moveLeft();
+		gameEnv->grid->cursor->moveLeft();
 		break;
 
 	case GLUT_KEY_RIGHT:
-		gameEnv->cursor->moveRight();
+		gameEnv->grid->cursor->moveRight();
 		break;
 
 	case GLUT_KEY_UP:
-		gameEnv->cursor->moveUp();
+		gameEnv->grid->cursor->moveUp();
 		break;
 
 	case GLUT_KEY_DOWN:
-		gameEnv->cursor->moveDown();
+		gameEnv->grid->cursor->moveDown();
 		break;
 	}
 
 	glutPostRedisplay();
+}
+
+void normalKeys(unsigned char key, int x, int y) {
+	switch (key) { 
+	case ESC:
+		exit(0);
+		break;
+	case 'z':
+	case 'Z':
+		gameEnv->grid->swapBlocks();
+		break;
+	}
 }
 
 void initGame()
@@ -42,10 +57,10 @@ void initGame()
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutCreateWindow("Block-Game");
 	glutReshapeFunc(reshape);
-	glutKeyboardFunc(keyboard1);
+	glutKeyboardFunc(normalKeys);
 	glutSpecialFunc(specialKeys);
 	glutReshapeWindow(screen_w, screen_h);
-    glutSwapBuffers();
+	glutSwapBuffers();
 }
 
 int main(int argc,char** argv)
@@ -54,7 +69,7 @@ int main(int argc,char** argv)
 		
 	initGame();
 	gameEnv = new GameEnv();
-    glutDisplayFunc(display);
+	glutDisplayFunc(display);
 	
 	glutMainLoop();
 	
