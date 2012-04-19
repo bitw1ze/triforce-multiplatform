@@ -4,6 +4,7 @@
 #include <vector>
 #include <ctime>
 #include <deque>
+#include "buttons.h"
 #include "gobjlib.h"
 #include "globals.h"
 #include "game.h"
@@ -15,8 +16,13 @@ private:
 	enum gameState {load, play, pause};
 	gameState state;
 
-	static const string bgFile;
+	Buttons buttons;
+	static const string bgFile,
+		                btnPlayFile;
+	CBaseSprite *btnPlaySprite;
+	GObject btnPlay;
 	BMPClass background;
+
 	int current_frame,
 		last_time;
 

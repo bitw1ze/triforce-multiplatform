@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="button.cpp" />
     <ClCompile Include="gobjlib.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="game.cpp" />
@@ -20,6 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2DGraphics.h" />
+    <ClInclude Include="buttons.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gobjlib.h" />
