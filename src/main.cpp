@@ -21,7 +21,6 @@ void display()
 	triforce->display();
 }
 
-// Temporarily disable controls while Triforce class is being written
 void specialKeys(int key, int x, int y) {
 	switch(key) {
 	case GLUT_KEY_LEFT:

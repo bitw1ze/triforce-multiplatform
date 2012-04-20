@@ -1,23 +1,21 @@
-/*
-version 1:
-
-
-version 2:
-
-*/
-
 #include "triforce.h"
 
 const string Triforce::bgFile = "bg.bmp";
-const string Triforce::btnPlayFile = "block-special.bmp";
 
 Triforce::Triforce()
 { 
 	state = load; // initialize before using changeState
-	//changeState(play); // FIXME: this is temporily here until the load screen is ready
+	//changeState(play); // temp: this is temporily here until the load screen is ready
 	current_frame = 0; 
 	loadImages(); 
-	//btnPlay.create(0, 0, 0, 0, btnPlaySprite);
+	menuButtons = new Buttons(background.getViewportWidth(), background.getViewportHeight());
+	menuButtons->add("block-blue.bmp", 100, 100); // tmp, for testing buttons
+	menuButtons->add("block-special.bmp", 350, 350); // tmp, for testing buttons
+}
+
+Triforce::~Triforce()
+{
+	delete menuButtons;
 }
 
 void Triforce::changeState(gameState s)
@@ -59,8 +57,8 @@ void Triforce::display()
 void Triforce::displayMenu()
 {
 	composeFrame();
-	background.drawGLbackground ();
-	buttons.display();
+	background.drawGLbackground();
+	menuButtons->display();
 	glutSwapBuffers();
 }
 
@@ -78,10 +76,4 @@ void Triforce::loadImages()
 {
   background.load(themeDirectory + bgFile);
   background.loadGLTextures();
-  btnPlaySprite = new CBaseSprite(1, background.getViewportWidth(), background.getViewportHeight());
-
-  // r,g,b is background color to be filtered, frameCount and frame number
-  int r=254, g=0, b=254, frameCount=1, frame=0;
-  btnPlaySprite->loadFrame(frame, themeDirectory + btnPlayFile, r, g, b);
-  btnPlaySprite->loadGLTextures();
 }

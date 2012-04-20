@@ -4,6 +4,7 @@
 #include "gobjlib.h"
 #include "globals.h"
 
+using namespace Globals;
 using namespace GObjLib;
 using namespace std;
 
@@ -14,8 +15,11 @@ protected:
 	{
 	protected:
 		bool pressed;
+
 	public:
 		Button(CBaseSprite *sprite, int xpos, int ypos);
+		~Button();
+		CBaseSprite * sprite; // a *public* alias to the sprite ptr used by CObject
 		//	void press();
 		//	void unpress();
 	};
@@ -23,12 +27,15 @@ protected:
 	typedef list<Button *> Btns_t;
 	typedef Btns_t::iterator BtnIter_t;
 	Btns_t buttons;
-	int curFrame, lastFrame;
+
+	int r, g, b, // KISS: same color filters to be used by every button
+		vpWidth, vpHeight,
+		curFrame, lastFrame;
 
 public:
-	Buttons();
+	Buttons(int viewportWidth, int viewportHeight);
 	~Buttons();
 	void display();
-	void add(CBaseSprite * sprite, int xpos = 0, int ypos = 0);
+	void add(string btnFile, int xpos = 0, int ypos = 0);
 };
 

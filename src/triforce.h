@@ -9,6 +9,8 @@
 #include "globals.h"
 #include "game.h"
 
+using namespace Globals;
+
 extern CTimer *mainTimer;
 
 class Triforce {
@@ -16,11 +18,8 @@ private:
 	enum gameState {load, play, pause};
 	gameState state;
 
-	Buttons buttons;
-	static const string bgFile,
-		                btnPlayFile;
-	CBaseSprite *btnPlaySprite;
-	GObject btnPlay;
+	Buttons * menuButtons;
+	static const string bgFile;
 	BMPClass background;
 
 	int current_frame,
@@ -37,6 +36,7 @@ public:
 	GameEnv *gameEnv; 
 
 	Triforce();
+	~Triforce();
 	void changeState(gameState s);
 	void display();
 };
