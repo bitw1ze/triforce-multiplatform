@@ -14,14 +14,18 @@ protected:
 	class Button : public GObject
 	{
 	protected:
-		bool pressed;
+		bool hovering;
+		bool pressing;
 
 	public:
 		Button(CBaseSprite *sprite, int xpos, int ypos);
 		~Button();
 		CBaseSprite * sprite; // a *public* alias to the sprite ptr used by CObject
-		//	void press();
-		//	void unpress();
+		void hover();
+		void press();
+		void unpress();
+		void display();
+		int getFrameNum();
 	};
 
 	typedef list<Button *> Btns_t;
@@ -36,6 +40,6 @@ public:
 	Buttons(int viewportWidth, int viewportHeight);
 	~Buttons();
 	void display();
-	void add(string btnFile, int xpos = 0, int ypos = 0);
+	void add(string btnFiles[3], int xpos = 0, int ypos = 0);
 };
 

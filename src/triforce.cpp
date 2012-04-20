@@ -5,12 +5,15 @@ const string Triforce::bgFile = "bg.bmp";
 Triforce::Triforce()
 { 
 	state = load; // initialize before using changeState
-	changeState(play); // temp: this is temporily here until the load screen is ready
+	changeState(play); // this is temporily here until the load screen is ready
 	current_frame = 0; 
 	loadImages(); 
-	menuButtons = new Buttons(background.getViewportWidth(), background.getViewportHeight());
-	menuButtons->add("block-blue.bmp", 100, 100); // tmp, for testing buttons
-	menuButtons->add("block-special.bmp", 350, 350); // tmp, for testing buttons
+
+	string playBtns[] = {"playBtn_small.bmp", "playBtnHover_small.bmp", "playBtnPressed_small.bmp"};
+	int vpWidth = background.getViewportWidth(),
+ 	    vpHeight = background.getViewportHeight();
+	menuButtons = new Buttons(vpWidth, vpHeight);
+	menuButtons->add(playBtns, vpWidth*.5 - 64, vpHeight*.8);
 }
 
 Triforce::~Triforce()

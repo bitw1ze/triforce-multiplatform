@@ -16,12 +16,13 @@ Buttons::~Buttons()
 		delete *button;
 }
 
-void Buttons::add(string btnFile, int xpos, int ypos)
+void Buttons::add(string btnFiles[3], int xpos, int ypos)
 {
 	// load image
-	int frameCount = 1, frame = 0;
+	const int frameCount = 3;
     CBaseSprite * sprite = new CBaseSprite(frameCount, vpWidth, vpHeight);
-    sprite->loadFrame(frame, themeDirectory + btnFile, r, g, b);
+	for (int frame = 0; frame < frameCount; ++frame)
+		sprite->loadFrame(frame, themeDirectory + btnFiles[frame], r, g, b);
 	sprite->loadGLTextures();
 
 	// create button obj and push to container
@@ -32,20 +33,46 @@ void Buttons::add(string btnFile, int xpos, int ypos)
 
 void Buttons::display()
 {
+
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 		if ((*button)->enabled)
-			(*button)->draw(curFrame);
-	if (++curFrame > lastFrame)
-		curFrame = 0;
+			(*button)->draw((*button)->getFrameNum());
+}
+
+Buttons::Button::Button(CBaseSprite * sprite, int xpos, int ypos)
+{
+	unpress();
+	create(xpos, ypos, 0, 0, sprite);
+}
+
+void Buttons::Button::hover()
+{
+	pressing = false;
+	hovering = true;
+}
+
+void Buttons::Button::press()
+{
+	pressing = true;
+	hovering = false;
+}
+
+void Buttons::Button::unpress()
+{
+	pressing = false;
+	hovering = false;
+}
+
+int Buttons::Button::getFrameNum()
+{
+	if (hovering)
+		return 1;
+	else if (pressing)
+		return 2;
+	return 0;
 }
 
 Buttons::Button::~Button()
 {
 	delete sprite;
-}
-
-Buttons::Button::Button(CBaseSprite * sprite, int xpos, int ypos)
-{
-	pressed = false;
-	create(xpos, ypos, 0, 0, sprite);
 }
