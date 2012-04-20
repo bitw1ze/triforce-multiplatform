@@ -2,6 +2,8 @@
 
 namespace BetterLib {
 	class GObject : public CObject {
+	protected:
+		CBaseSprite *sprite;
 	
 	public:
 		bool enabled;
@@ -17,5 +19,7 @@ namespace BetterLib {
 		void offsetX(int x);
 		void offsetY(int y);
 		void offsetXY(int x, int y);
+		bool match(const GObject &right) const;
+		bool GObject::match(const CBaseSprite *right) const;
 	};
 };

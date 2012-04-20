@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="betterlib.cpp" />
+    <ClCompile Include="block.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="grid.cpp" />
