@@ -1,5 +1,4 @@
-#ifndef __GAME_H__
-#define __GAME_H__
+#pragma once
 
 #include <string>
 #include <vector>
@@ -114,5 +113,3 @@ public:
 	int getRow() const { return row; }
 	int getCol() const { return col; }
 };
-
-#endif
