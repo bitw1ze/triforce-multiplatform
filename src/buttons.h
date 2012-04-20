@@ -40,6 +40,6 @@ public:
 	Buttons(int viewportWidth, int viewportHeight);
 	~Buttons();
 	void display();
-	void add(string btnFiles[3], int xpos = 0, int ypos = 0);
+	void add(string btnFiles[3], int xpos = 0, int ypos = 0); // see def for desc. of btnFiles
 };
 

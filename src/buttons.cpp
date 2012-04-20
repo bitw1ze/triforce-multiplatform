@@ -16,6 +16,12 @@ Buttons::~Buttons()
 		delete *button;
 }
 
+/**
+ * Uses for each element of btnFiles:
+ *     regular: btnFiles[0]
+ *     hover: btnFiles[1]
+ *     pressed: btnFiles[2]
+ */
 void Buttons::add(string btnFiles[3], int xpos, int ypos)
 {
 	// load image
@@ -33,7 +39,6 @@ void Buttons::add(string btnFiles[3], int xpos, int ypos)
 
 void Buttons::display()
 {
-
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 		if ((*button)->enabled)
 			(*button)->draw((*button)->getFrameNum());
