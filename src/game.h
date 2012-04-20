@@ -117,8 +117,6 @@ public:
 class Cursor : public GObject {
 protected:
 	int row, col,
-		cursor_w, cursor_h,
-		cursor_x, cursor_y,
 		cursor_delta;
 	Grid *grid;
 

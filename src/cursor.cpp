@@ -3,8 +3,7 @@
 void Cursor::moveLeft() {
 	if (col > 0) {
 		--col;
-		cursor_x -= cursor_delta;
-		setX(cursor_x);
+		offsetX( -cursor_delta );
 		draw(0);
 	}
 }
@@ -12,8 +11,7 @@ void Cursor::moveLeft() {
 void Cursor::moveRight() {
 	if (col < ncols - 2) {
 		++col;
-		cursor_x += cursor_delta;
-		setX(cursor_x);
+		offsetX( cursor_delta );
 		draw(0);
 	}
 }
@@ -21,8 +19,7 @@ void Cursor::moveRight() {
 void Cursor::moveDown() {
 	if (row > 0) {
 		--row;
-		cursor_y += cursor_delta;
-		setY(cursor_y);
+		offsetY( cursor_delta );
 		draw(0);
 	}
 }
@@ -31,8 +28,7 @@ void Cursor::moveDown() {
 void Cursor::moveUp() {
 	if (row < grid->getTopRow() - 1) {
 		++row;
-		cursor_y -= cursor_delta;
-		setY(cursor_y);
+		offsetY( -cursor_delta );
 		draw(0);
 	}
 }
@@ -40,9 +36,7 @@ void Cursor::moveUp() {
 void Cursor::setPos(int c, int r) {
 	row = r;
 	col = c;
-	cursor_x = grid->getX() + col * grid->getBlockWidth();
-	cursor_y = grid->getY() - row * grid->getBlockHeight();
-	Setxy(cursor_x, cursor_y);
+	offsetXY( grid->getX() + col * cursor_delta, grid->getY() - row * cursor_delta );
 }
 
 Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
@@ -53,5 +47,4 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	col = ncols / 2;
 	create(0, 0, 0, 0, sprite, mainTimer);
 	setPos(3, 3);
-	printf("dim: (%d, %d)\npos: (%d, %d)\n", cursor_w, cursor_h, cursor_x, cursor_y);
 }

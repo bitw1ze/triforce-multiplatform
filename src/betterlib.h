@@ -14,5 +14,8 @@ namespace BetterLib {
 		int getY() { float x, y; Getxy(x, y); return (int)y; }
 		void setX(int x) { Setxy((float)x, getY()); }
 		void setY(int y) { Setxy(getX(), (float)y); }
+		void offsetX(int x);
+		void offsetY(int y);
+		void offsetXY(int x, int y);
 	};
 };
