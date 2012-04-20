@@ -5,7 +5,7 @@ const string Triforce::bgFile = "bg.bmp";
 Triforce::Triforce()
 { 
 	state = load; // initialize before using changeState
-	//changeState(play); // temp: this is temporily here until the load screen is ready
+	changeState(play); // temp: this is temporily here until the load screen is ready
 	current_frame = 0; 
 	loadImages(); 
 	menuButtons = new Buttons(background.getViewportWidth(), background.getViewportHeight());
