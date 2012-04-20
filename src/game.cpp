@@ -20,8 +20,6 @@ GameEnv::GameEnv() {
 	showMenu = false;
 	current_frame = 0; 
 	
-	mainTimer = new CTimer();
-	mainTimer->start();
 	last_time=mainTimer->time();
 	last_pushtime = mainTimer->time();
 

@@ -7,7 +7,7 @@ namespace BetterLib {
 		bool enabled;
 
 		GObject() : CObject() { enabled = false; }
-		void create(int x1, int y1, int xspeed1, int yspeed1, CBaseSprite *sprite, CTimer *timer);
+		void create(int x1, int y1, int xspeed1, int yspeed1, CBaseSprite *sprite);
 
 		/* get and set properties */
 		int getX() { float x, y; Getxy(x, y); return (int)x; }

@@ -45,6 +45,6 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	cursor_delta = sprite->GetHeight();
 	row = nrows / 2;
 	col = ncols / 2;
-	create(0, 0, 0, 0, sprite, mainTimer);
+	create(0, 0, 0, 0, sprite);
 	setPos(3, 3);
 }

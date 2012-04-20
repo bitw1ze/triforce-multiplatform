@@ -5,11 +5,14 @@ using namespace std;
 #define ESC 27
 #define SPACE 32
 
+// function declarations
 extern void reshape(int x, int y);
-
 void specialKeys(int key, int x, int y);
 void normalKeys(unsigned char key, int x, int y);
 void display();
+void initGlut();
+
+// globals
 GameEnv *gameEnv;
 CTimer *mainTimer;
 
@@ -52,7 +55,7 @@ void normalKeys(unsigned char key, int x, int y) {
 	}
 }
 
-void initGame()
+void initGlut()
 {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutCreateWindow("Block-Game");
@@ -61,13 +64,15 @@ void initGame()
 	glutSpecialFunc(specialKeys);
 	glutReshapeWindow(screen_w, screen_h);
 	glutSwapBuffers();
+	mainTimer = new CTimer();
+	mainTimer->start();
 }
 
 int main(int argc,char** argv)
 {
 	glutInit(&argc, argv);
 		
-	initGame();
+	initGlut();
 	gameEnv = new GameEnv();
 	glutDisplayFunc(display);
 	

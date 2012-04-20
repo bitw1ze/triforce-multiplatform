@@ -24,10 +24,7 @@ void Grid::pushRow() {
 
 	for (int col=0; col<ncols; ++col) {
 		blockRow[col] = new Block();
-		blockRow[col]->create(grid_x + col * block_w, grid_y - block_h * 2,
-							 0, speed, 
-							 blockSprites[ rand() % nblocktypes ], 
-							 mainTimer);
+		blockRow[col]->create(grid_x + col * block_w, grid_y - block_h * 2, 0, 0, blockSprites[ rand() % nblocktypes ]);
 	}
 
 	blocks.push_front(blockRow);
