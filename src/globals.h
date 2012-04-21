@@ -1,7 +1,6 @@
 /* This file contains constants that need to be accessed by several modules */
 
-#ifndef __GLOBALS_H__
-#define __GLOBALS_H__
+#pragma once
 
 typedef unsigned int uint32;
 typedef unsigned long uint64;
@@ -15,5 +14,3 @@ namespace Globals {
 		nblocktypes		= 7;
 	const string themeDirectory = "themes\\classic\\";
 };
-
-#endif

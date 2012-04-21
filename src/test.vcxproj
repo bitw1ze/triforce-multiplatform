@@ -11,18 +11,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="betterlib.cpp" />
+    <ClCompile Include="buttons.cpp" />
+    <ClCompile Include="gobjlib.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="menu.cpp" />
+    <ClCompile Include="triforce.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2DGraphics.h" />
+    <ClInclude Include="buttons.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="game.h" />
-    <ClInclude Include="betterlib.h" />
+    <ClInclude Include="gobjlib.h" />
+    <ClInclude Include="triforce.h" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="2DLibrary.obj" />

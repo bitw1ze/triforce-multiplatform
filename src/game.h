@@ -1,16 +1,15 @@
-#ifndef __GAME_H__
-#define __GAME_H__
+#pragma once
 
 #include <string>
 #include <vector>
 #include <ctime>
 #include <deque>
-#include "betterlib.h"
+#include "gobjlib.h"
 #include "globals.h"
 
 using namespace std;
 using namespace Globals;
-using namespace BetterLib;
+using namespace GObjLib;
 
 class GameEnv;
 class Grid;
@@ -25,21 +24,6 @@ extern CTimer *mainTimer;
 
 class GameEnv {
 protected:
-	
-	class Menu {
-	private:
-		static const string bgFile;
-		BMPClass background;
-		int current_frame,
-			last_time;
-
-	public:
-		Menu();
-		void display();
-		void composeFrame();
-		void processFrame();
-		void loadImages();
-	};
 
 	/* bitmap files */
 	static const string 
@@ -52,13 +36,11 @@ protected:
 		last_time,
 		last_pushtime;
 
-	bool showMenu;
 	BMPClass background;
 
 public:
 	GameEnv();
 	void display();
-	void displayGame();
 	void composeFrame();
 	void init();
 	void processFrame();
@@ -68,7 +50,6 @@ public:
 
 	CBaseSprite* blockSprites[nblocktypes];
 	CBaseSprite *cursorSprite;
-	Menu menu;
 	Grid *grid;
 };
 
@@ -132,5 +113,3 @@ public:
 	int getRow() const { return row; }
 	int getCol() const { return col; }
 };
-
-#endif

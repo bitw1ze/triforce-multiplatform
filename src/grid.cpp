@@ -20,11 +20,25 @@ void Grid::pushRow() {
 	if (blocks.size() == nrows)
 		blocks.pop_back();
 
+	bool combo;
+
 	Block **blockRow = new Block *[ncols];
 
 	for (int col=0; col<ncols; ++col) {
 		blockRow[col] = new Block();
-		blockRow[col]->create(grid_x + col * block_w, grid_y - block_h * 2, 0, 0, blockSprites[ rand() % nblocktypes ]);
+
+		combo = false;
+		CBaseSprite *newBlock;
+
+		/* Randomize the blocks without generating combos */
+		do {
+			newBlock = blockSprites[ rand() % nblocktypes ];
+			/* Really ugly but basically it is checking that there are no combos of three to the
+			   left or above. This would best be moved to another function later on. */
+			combo =  ( (col >= 2 && blockRow[col-1]->match(newBlock) && blockRow[col-2]->match(newBlock)) 
+				|| (blocks.size() >= 2 && blocks[0][col]->match(newBlock) && blocks[1][col]->match(newBlock)) );
+		} while (combo);
+		blockRow[col]->create(grid_x + col * block_w, grid_y - block_h * 2, 0, 0, newBlock);
 	}
 
 	blocks.push_front(blockRow);

@@ -2,7 +2,6 @@
 
 // Constants
 const string GameEnv::bgFile = "bg.bmp";
-const string GameEnv::Menu::bgFile = "bg.bmp";
 const string GameEnv::blockFiles[] = {
 	"block-blue.bmp",
 	"block-green.bmp",
@@ -17,7 +16,6 @@ const string GameEnv::cursorFile = "cursor.bmp";
 /* GameEnv methods */
 
 GameEnv::GameEnv() { 
-	showMenu = false;
 	current_frame = 0; 
 	
 	last_time=mainTimer->time();
@@ -29,13 +27,6 @@ GameEnv::GameEnv() {
 }
 
 void GameEnv::display() {
-	if (showMenu)
-		menu.display();
-	else
-		displayGame();
-}
-
-void GameEnv::displayGame() {
 	composeFrame();
 	background.drawGLbackground ();
 
