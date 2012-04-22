@@ -80,3 +80,25 @@ void Triforce::loadImages()
   background.load(themeDirectory + bgFile);
   background.loadGLTextures();
 }
+
+void Triforce::specialKeys(int key, int x, int y) {
+	if (state == play) {
+		gameEnv->specialKeys(key, x, y);
+	}
+	else if (state == menu) {
+		switch (key) {
+			/* handle keys */
+		}
+	}
+}
+
+void Triforce::normalKeys(unsigned char key, int x, int y) {
+	if (state == play) {
+		gameEnv->normalKeys(key, x, y);
+	}
+	else if (state == menu) {
+		switch (key) {
+			/* handle keys */
+		}
+	}
+}

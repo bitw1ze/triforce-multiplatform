@@ -2,9 +2,6 @@
 
 using namespace std;
 
-#define ESC 27
-#define SPACE 32
-
 // function declarations
 extern void reshape(int x, int y);
 //void specialKeys(int key, int x, int y);
@@ -22,37 +19,11 @@ void display()
 }
 
 void specialKeys(int key, int x, int y) {
-	switch(key) {
-	case GLUT_KEY_LEFT:
-		triforce->gameEnv->grid->cursor->moveLeft(); //FIXME: this really begs for refactoring
-		break;
-
-	case GLUT_KEY_RIGHT:
-		triforce->gameEnv->grid->cursor->moveRight();
-		break;
-
-	case GLUT_KEY_UP:
-		triforce->gameEnv->grid->cursor->moveUp();
-		break;
-
-	case GLUT_KEY_DOWN:
-		triforce->gameEnv->grid->cursor->moveDown();
-		break;
-	}
-
-	glutPostRedisplay();
+	triforce->specialKeys(key, x, y);
 }
 
 void normalKeys(unsigned char key, int x, int y) {
-	switch (key) { 
-	case ESC:
-		exit(0);
-		break;
-	case 'z':
-	case 'Z':
-		triforce->gameEnv->grid->swapBlocks();
-		break;
-	}
+	triforce->normalKeys(key, x, y);
 }
 
 void initGlut()
@@ -66,6 +37,7 @@ void initGlut()
 	glutSwapBuffers();
 	mainTimer = new CTimer();
 	mainTimer->start();
+	glutDisplayFunc(display);
 }
 
 int main(int argc,char** argv)
@@ -74,7 +46,6 @@ int main(int argc,char** argv)
 		
 	initGlut();
 	triforce = new Triforce();
-	glutDisplayFunc(display);
 	glutMainLoop();
 
 	delete triforce;
