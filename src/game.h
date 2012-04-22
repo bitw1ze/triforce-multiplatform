@@ -47,6 +47,8 @@ public:
 	void loadImages();
 	int getWidth() { return background.getViewportWidth();} 
 	int getHeight() { return background.getViewportHeight();} 
+	void specialKeys(int key, int x, int y);
+	void normalKeys(unsigned char key, int x, int y);
 
 	CBaseSprite* blockSprites[nblocktypes];
 	CBaseSprite *cursorSprite;

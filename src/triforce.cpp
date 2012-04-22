@@ -10,10 +10,12 @@ Triforce::Triforce()
 	loadImages(); 
 
 	string playBtns[] = {"playBtn_small.bmp", "playBtnHover_small.bmp", "playBtnPressed_small.bmp"};
+	string quitBtns[] = {"quitBtn_small.bmp", "quitBtnHover_small.bmp", "quitBtnPressed_small.bmp"};
 	int vpWidth = background.getViewportWidth(),
  	    vpHeight = background.getViewportHeight();
 	menuButtons = new Buttons(vpWidth, vpHeight);
 	menuButtons->add(playBtns, vpWidth*.5 - 64, vpHeight*.8);
+	menuButtons->add(quitBtns, vpWidth*.5 - 64, vpHeight*.9);
 }
 
 Triforce::~Triforce()
@@ -79,4 +81,26 @@ void Triforce::loadImages()
 {
   background.load(themeDirectory + bgFile);
   background.loadGLTextures();
+}
+
+void Triforce::specialKeys(int key, int x, int y) {
+	if (state == play) {
+		gameEnv->specialKeys(key, x, y);
+	}
+	else if (state == menu) {
+		switch (key) {
+			/* handle keys */
+		}
+	}
+}
+
+void Triforce::normalKeys(unsigned char key, int x, int y) {
+	if (state == play) {
+		gameEnv->normalKeys(key, x, y);
+	}
+	else if (state == menu) {
+		switch (key) {
+			/* handle keys */
+		}
+	}
 }

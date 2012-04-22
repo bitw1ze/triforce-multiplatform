@@ -15,7 +15,7 @@ extern CTimer *mainTimer;
 
 class Triforce {
 private:
-	enum gameState {load, play, pause};
+	enum gameState {load, play, pause, menu};
 	gameState state;
 
 	Buttons * menuButtons;
@@ -39,4 +39,6 @@ public:
 	~Triforce();
 	void changeState(gameState s);
 	void display();
+	void specialKeys(int key, int x, int y);
+	void normalKeys(unsigned char key, int x, int y);
 };

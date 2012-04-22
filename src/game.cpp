@@ -81,3 +81,37 @@ void GameEnv::loadImages()
   cursorSprite->loadFrame(frame, themeDirectory + cursorFile, r, g, b);
   cursorSprite->loadGLTextures();
 }
+
+void GameEnv::specialKeys(int key, int x, int y) {
+	switch(key) {
+	case GLUT_KEY_LEFT:
+		grid->cursor->moveLeft(); //FIXME: this really begs for refactoring
+		break;
+
+	case GLUT_KEY_RIGHT:
+		grid->cursor->moveRight();
+		break;
+
+	case GLUT_KEY_UP:
+		grid->cursor->moveUp();
+		break;
+
+	case GLUT_KEY_DOWN:
+		grid->cursor->moveDown();
+		break;
+	}
+
+	glutPostRedisplay();
+}
+
+void GameEnv::normalKeys(unsigned char key, int x, int y) {
+	switch (key) { 
+	case ESC:
+		exit(0);
+		break;
+	case 'z':
+	case 'Z':
+		grid->swapBlocks();
+		break;
+	}
+}

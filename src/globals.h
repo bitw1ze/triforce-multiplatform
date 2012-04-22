@@ -5,6 +5,9 @@
 typedef unsigned int uint32;
 typedef unsigned long uint64;
 
+#define ESC 27
+#define SPACE 32
+
 namespace Globals {
 	const uint32
 		screen_w		= 1024,
