@@ -64,13 +64,15 @@ protected:
 	int grid_x, grid_y, 
 		row_xvel, row_yvel,
 		block_w, block_h,
-		speed;
+		grid_yspeed, grid_yoff;
+	GameEnv *gameEnv;
 	deque<Block **> blocks;
 	CBaseSprite** blockSprites;
 
 public:
 	Grid(GameEnv *ge, CBaseSprite *cursorSprite);
 	void pushRow();
+	void addRow();
 	void loadImages();
 	void display();
 	void setCoords();
@@ -107,11 +109,12 @@ protected:
 
 public:
 	Cursor(Grid *, CBaseSprite *);
-	void moveUp();
-	void moveDown();
-	void moveLeft();
-	void moveRight();
+	void moveUp(bool doDraw=true);
+	void moveDown(bool doDraw=true);
+	void moveLeft(bool doDraw=true);
+	void moveRight(bool doDraw=true);
 	void setPos(int c, int r);
 	int getRow() const { return row; }
 	int getCol() const { return col; }
+	void shiftRow();
 };

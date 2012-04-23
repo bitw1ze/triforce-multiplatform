@@ -38,12 +38,12 @@ void GameEnv::display() {
 
 void GameEnv::processFrame()
 {
-	grid->setCoords();
+	//grid->setCoords();
 }
 
 void GameEnv::composeFrame()
 {
-	if (mainTimer->elapsed(last_pushtime, 5000)) {
+	if (mainTimer->elapsed(last_pushtime, 500)) {
 		grid->pushRow();
 		last_pushtime = mainTimer->time();
 	}

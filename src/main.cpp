@@ -4,8 +4,8 @@ using namespace std;
 
 // function declarations
 extern void reshape(int x, int y);
-//void specialKeys(int key, int x, int y);
-//void normalKeys(unsigned char key, int x, int y);
+void specialKeys(int key, int x, int y);
+void normalKeys(unsigned char key, int x, int y);
 void display();
 void initGlut();
 

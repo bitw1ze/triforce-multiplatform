@@ -2,33 +2,50 @@
 
 /* Grid methods */
 Grid::Grid(GameEnv *ge, CBaseSprite *cursorSprite) {
+	gameEnv = ge;
 	blockSprites = ge->blockSprites;
 	block_w = blockSprites[0]->GetWidth();
 	block_h = blockSprites[0]->GetHeight();
-	speed = block_h / 4;
+	grid_yspeed = block_h / 12;
+	grid_yoff = 0;
 	grid_x = ge->getWidth()/2 - (block_w * ncols)/2;
-	grid_y = ge->getHeight() - block_h * 2;
+	grid_y = ge->getHeight();
+	cursor = new Cursor(this, cursorSprite);
 
-	for (int row=0; row<nrows/2; ++row) {
+	for (int row=0; row< nrows/2 * 12; ++row) {
 		pushRow();
 	}
-
-	cursor = new Cursor(this, cursorSprite);
+	//cursor->setPos(3, 3);
 }
 
 void Grid::pushRow() {
+	grid_yoff += grid_yspeed;
+
+	cursor->offsetY(-grid_yspeed);
+	for (int i=0; i<blocks.size(); ++i) {
+		for (int j=0; j<ncols; ++j) {
+			blocks[i][j]->offsetY(-grid_yspeed);
+		}
+	}
+	if (grid_yoff >= block_h) {
+		grid_yoff = 0;
+		cursor->shiftRow();
+		addRow();
+	}
+}
+
+void Grid::addRow() {
 	if (blocks.size() == nrows)
 		blocks.pop_back();
 
 	bool combo;
-
 	Block **blockRow = new Block *[ncols];
 
 	for (int col=0; col<ncols; ++col) {
 		blockRow[col] = new Block();
 
 		combo = false;
-		CBaseSprite *newBlock;
+		CBaseSprite *newBlock = NULL;
 
 		/* Randomize the blocks without generating combos */
 		do {
@@ -40,6 +57,7 @@ void Grid::pushRow() {
 		} while (combo);
 		blockRow[col]->create(grid_x + col * block_w, grid_y - block_h * 2, 0, 0, newBlock);
 	}
+	printf("grid_y: %d\nscreen_h: %d\n", getY(), gameEnv->getHeight());
 
 	blocks.push_front(blockRow);
 }

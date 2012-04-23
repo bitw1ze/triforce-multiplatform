@@ -1,44 +1,5 @@
 #include "game.h"
 
-void Cursor::moveLeft() {
-	if (col > 0) {
-		--col;
-		offsetX( -cursor_delta );
-		draw(0);
-	}
-}
-
-void Cursor::moveRight() {
-	if (col < ncols - 2) {
-		++col;
-		offsetX( cursor_delta );
-		draw(0);
-	}
-}
-
-void Cursor::moveDown() {
-	if (row > 0) {
-		--row;
-		offsetY( cursor_delta );
-		draw(0);
-	}
-}
-
-
-void Cursor::moveUp() {
-	if (row < grid->getTopRow() - 1) {
-		++row;
-		offsetY( -cursor_delta );
-		draw(0);
-	}
-}
-
-void Cursor::setPos(int c, int r) {
-	row = r;
-	col = c;
-	offsetXY( grid->getX() + col * cursor_delta, grid->getY() - row * cursor_delta );
-}
-
 Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	grid = gr;
 
@@ -46,5 +7,58 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	row = nrows / 2;
 	col = ncols / 2;
 	create(0, 0, 0, 0, sprite);
-	setPos(3, 3);
+	setPos(0, 0);
+}
+
+void Cursor::moveLeft(bool doDraw) {
+	if (col > 0) {
+		--col;
+		offsetX( -cursor_delta );
+		if (doDraw)
+			draw(0);
+	}
+	printf("grid: (%d, %d)\ncursor: (%d, %d)\nrow: %d\n", grid->getX(), grid->getY(), getX(), getY(), row);
+}
+
+void Cursor::moveRight(bool doDraw) {
+	if (col < ncols - 2) {
+		++col;
+		offsetX( cursor_delta );
+		if (doDraw)
+			draw(0);
+	}
+	printf("grid: (%d, %d)\ncursor: (%d, %d)\nrow: %d\n", grid->getX(), grid->getY(), getX(), getY(), row);
+}
+
+void Cursor::moveDown(bool doDraw) {
+	if (row > 0) {
+		--row;
+		offsetY( cursor_delta );
+		if (doDraw)
+			draw(0);
+	}
+	printf("grid: (%d, %d)\ncursor: (%d, %d)\nrow: %d\n", grid->getX(), grid->getY(), getX(), getY(), row);
+}
+
+
+void Cursor::moveUp(bool doDraw) {
+	if (row < grid->getTopRow() - 1) {
+		++row;
+		offsetY( -cursor_delta );
+		if (doDraw)
+			draw(0);
+	}
+	printf("grid: (%d, %d)\ncursor: (%d, %d)\nrow: %d\n", grid->getX(), grid->getY(), getX(), getY(), row);
+}
+
+void Cursor::setPos(int c, int r) {
+	row = r;
+	col = c;
+	Setxy( grid->getX() + col * cursor_delta, grid->getY() - (row * cursor_delta) );
+	printf("row: %d\n", row);
+}
+
+void Cursor::shiftRow() {
+	if (row < grid->getTopRow() - 1)
+		++row;
 }
