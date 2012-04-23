@@ -5,7 +5,7 @@ const string Triforce::bgFile = "bg.bmp";
 Triforce::Triforce()
 { 
 	state = load; // initialize before using changeState
-	//changeState(play); // this is temporily here until the load screen is ready
+	changeState(play); // this is temporily here until the load screen is ready
 	current_frame = 0; 
 	loadImages(); 
 
@@ -100,7 +100,18 @@ void Triforce::specialKeys(int key, int x, int y) {
 	}
 	else if (state == menu) {
 		switch (key) {
-			/* handle keys */
+		case GLUT_KEY_LEFT:
+			menuButtons->hoverNext();
+			break;
+		case GLUT_KEY_RIGHT:
+			menuButtons->hoverNext();
+			break;
+		case GLUT_KEY_UP:
+			menuButtons->hoverNext();
+			break;
+		case GLUT_KEY_DOWN:
+			menuButtons->hoverNext();
+			break;
 		}
 	}
 }
@@ -110,8 +121,9 @@ void Triforce::normalKeys(unsigned char key, int x, int y) {
 		gamePlay->normalKeys(key, x, y);
 	}
 	else if (state == menu) {
-		switch (key) {
-			/* handle keys */
+		switch (toupper(key)) {
+		case 'A':
+			menuButtons->pressActive();
 		}
 	}
 }
