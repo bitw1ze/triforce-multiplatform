@@ -83,7 +83,7 @@ public:
 	int getY() { return grid_y; }
 	int getBlockWidth() { return block_w; }
 	int getBlockHeight() { return block_h; }
-	int getTopRow() { return blocks.size(); }
+	int getTopRow() { return blocks.size() - 1; }
 
 	Cursor *cursor;
 };

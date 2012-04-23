@@ -15,7 +15,6 @@ Grid::Grid(GameEnv *ge, CBaseSprite *cursorSprite) {
 	for (int row=0; row< nrows/2 * 12; ++row) {
 		pushRow();
 	}
-	//cursor->setPos(3, 3);
 }
 
 void Grid::pushRow() {
@@ -35,7 +34,7 @@ void Grid::pushRow() {
 }
 
 void Grid::addRow() {
-	if (blocks.size() == nrows)
+	if (blocks.size() >= nrows)
 		blocks.pop_back();
 
 	bool combo;

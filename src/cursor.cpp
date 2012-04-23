@@ -42,7 +42,7 @@ void Cursor::moveDown(bool doDraw) {
 
 
 void Cursor::moveUp(bool doDraw) {
-	if (row < grid->getTopRow() - 1) {
+	if (row < grid->getTopRow()) {
 		++row;
 		offsetY( -cursor_delta );
 		if (doDraw)
@@ -54,11 +54,13 @@ void Cursor::moveUp(bool doDraw) {
 void Cursor::setPos(int c, int r) {
 	row = r;
 	col = c;
-	Setxy( grid->getX() + col * cursor_delta, grid->getY() - (row * cursor_delta) );
+	Setxy( grid->getX() + col * cursor_delta, grid->getY() - (row * cursor_delta) - (2 * cursor_delta));
 	printf("row: %d\n", row);
 }
 
 void Cursor::shiftRow() {
-	if (row < grid->getTopRow() - 1)
+	if (row <= grid->getTopRow())
 		++row;
+	else
+		offsetY(cursor_delta);
 }
