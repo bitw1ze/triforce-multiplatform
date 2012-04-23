@@ -14,7 +14,7 @@ using namespace Globals;
 extern CTimer *mainTimer;
 
 class Triforce {
-public : enum gameState {load, play, pause, menu, quit};
+public : enum gameState {menu, play, pause, quit};
 private:
 	GamePlay *gamePlay; 
 	gameState state;

@@ -4,15 +4,14 @@ const string Triforce::bgFile = "bg.bmp";
 
 Triforce::Triforce()
 { 
-	state = load; // initialize before using changeState
-	changeState(play); // this is temporily here until the load screen is ready
+	state = menu; // initialize before using changeState
 	current_frame = 0; 
 	loadImages(); 
 
-	string playBtns[] = {"playBtn_small.bmp", "playBtnHover_small.bmp", "playBtnPressed_small.bmp"};
-	string quitBtns[] = {"quitBtn_small.bmp", "quitBtnHover_small.bmp", "quitBtnPressed_small.bmp"};
 	int vpWidth = background.getViewportWidth(),
  	    vpHeight = background.getViewportHeight();
+	string playBtns[] = {"playBtn_small.bmp", "playBtnHover_small.bmp", "playBtnPressed_small.bmp"};
+	string quitBtns[] = {"quitBtn_small.bmp", "quitBtnHover_small.bmp", "quitBtnPressed_small.bmp"};
 	menuButtons = new Buttons(vpWidth, vpHeight);
 	menuButtons->add(this, play, changeStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
 	menuButtons->add(this, quit, changeStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
@@ -27,16 +26,12 @@ void Triforce::changeState(gameState s)
 {
 	switch (s)
 	{
-	case load:
+	case menu:
 		if (state == play) // state change from play to load
 			delete gamePlay;
-		state = menu;
-		/* fall through */
-	case menu:
-		break; // nothing to do
+		break;
 	case play:
-		
-		if (state == load) // state change from load to play
+		if (state == menu) // state change from menu to play
 			gamePlay = new GamePlay;
 		break;
 	case pause:
@@ -60,7 +55,7 @@ void Triforce::display()
 {
 	switch (state)
 	{
-	case load:
+	case menu: // fall through
 	case pause:
 		displayMenu();
 		break;
@@ -101,13 +96,13 @@ void Triforce::specialKeys(int key, int x, int y) {
 	else if (state == menu) {
 		switch (key) {
 		case GLUT_KEY_LEFT:
-			menuButtons->hoverNext();
+			menuButtons->hoverPrev();
 			break;
 		case GLUT_KEY_RIGHT:
 			menuButtons->hoverNext();
 			break;
 		case GLUT_KEY_UP:
-			menuButtons->hoverNext();
+			menuButtons->hoverPrev();
 			break;
 		case GLUT_KEY_DOWN:
 			menuButtons->hoverNext();
@@ -121,8 +116,8 @@ void Triforce::normalKeys(unsigned char key, int x, int y) {
 		gamePlay->normalKeys(key, x, y);
 	}
 	else if (state == menu) {
-		switch (toupper(key)) {
-		case 'A':
+		switch (tolower(key)) {
+		case 'a':
 			menuButtons->pressActive();
 		}
 	}

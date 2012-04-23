@@ -33,14 +33,14 @@ void Buttons::add(void *classInstance, int actionArg,
 		sprite->loadFrame(frame, themeDirectory + btnFiles[frame], r, g, b);
 	sprite->loadGLTextures();
 
-	// create button obj and push to container
+	// create button obj
 	Button *b = new Button(sprite, xpos, ypos);
 	b->sprite = sprite; // create public alias
-	b->actionClassInstance; // set the callback function and its args
+	b->actionClassInstance = classInstance; // set the callback function and its args
 	b->action = action;
 	b->actionArg = actionArg;
 
-	// hover on the first button added
+	// push button to container, but hover on the first button added
 	if (buttons.empty())
 	{
 		b->hover();
@@ -53,11 +53,21 @@ void Buttons::add(void *classInstance, int actionArg,
 
 void Buttons::hoverNext()
 {
+	//FIXME: doesn't ignore disabled buttons
 	(*activeBtn)->unhover();
+	++activeBtn;
 	if (activeBtn == buttons.end())
 		activeBtn = buttons.begin();
-	else
-		++activeBtn;
+	(*activeBtn)->hover();
+}
+
+void Buttons::hoverPrev()
+{
+	//FIXME: doesn't ignore disabled buttons
+	(*activeBtn)->unhover();
+	if (activeBtn == buttons.begin())
+		activeBtn = buttons.end();
+	--activeBtn;
 	(*activeBtn)->hover();
 }
 
@@ -92,16 +102,10 @@ void Buttons::Button::hover()
 
 void Buttons::Button::press()
 {
-	pressing = true;
-}
-
-void Buttons::Button::unpress()
-{
-	// activate button once it has been pressed/released and is still active
-	if (pressing && hovering)
+	//pressing = true;
+	if (hovering)
 		action(actionClassInstance, actionArg);
-
-	pressing = false;
+	//pressing = false;
 }
 
 int Buttons::Button::getFrameNum() const

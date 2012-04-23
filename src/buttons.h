@@ -15,7 +15,7 @@ protected:
 	{
 	protected:
 		bool hovering;
-		bool pressing;
+		bool pressing; // not currently used
 
 	public:
 		// callback function to activate upon button press
@@ -29,7 +29,6 @@ protected:
 		void unhover();
 		void hover();
 		void press();
-		void unpress();
 		void display();
 		int getFrameNum() const;
 	};
@@ -50,6 +49,7 @@ public:
 	void add(void *classInstance, int actionArg,
 	         void (*action)(void *classInstance, int actionArg), 
  	         string btnFiles[3], int xpos = 0, int ypos = 0);
+	void hoverPrev();
 	void hoverNext();
 	void pressActive();
 };
