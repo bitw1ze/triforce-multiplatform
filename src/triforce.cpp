@@ -29,12 +29,12 @@ void Triforce::changeState(gameState s)
 	{
 	case load:
 		if (state == play) // state change from play to load
-			delete gameEnv;
+			delete gamePlay;
 		break;
 	case play:
 		
 		if (state == load) // state change from load to play
-			gameEnv = new GameEnv;
+			gamePlay = new GamePlay;
 		break;
 	case pause:
 		break; // not yet implemented
@@ -54,7 +54,7 @@ void Triforce::display()
 		displayMenu();
 		break;
 	case play:
-		gameEnv->display();
+		gamePlay->display();
 		break;
 	}
 }
@@ -85,7 +85,7 @@ void Triforce::loadImages()
 
 void Triforce::specialKeys(int key, int x, int y) {
 	if (state == play) {
-		gameEnv->specialKeys(key, x, y);
+		gamePlay->specialKeys(key, x, y);
 	}
 	else if (state == menu) {
 		switch (key) {
@@ -96,7 +96,7 @@ void Triforce::specialKeys(int key, int x, int y) {
 
 void Triforce::normalKeys(unsigned char key, int x, int y) {
 	if (state == play) {
-		gameEnv->normalKeys(key, x, y);
+		gamePlay->normalKeys(key, x, y);
 	}
 	else if (state == menu) {
 		switch (key) {

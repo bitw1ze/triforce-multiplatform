@@ -1,8 +1,8 @@
 #include "game.h"
 
 // Constants
-const string GameEnv::bgFile = "bg.bmp";
-const string GameEnv::blockFiles[] = {
+const string GamePlay::bgFile = "bg.bmp";
+const string GamePlay::blockFiles[] = {
 	"block-blue.bmp",
 	"block-green.bmp",
 	"block-purple.bmp",
@@ -10,12 +10,12 @@ const string GameEnv::blockFiles[] = {
 	"block-special.bmp",
 	"block-teal.bmp",
 	"block-yellow.bmp"};
-const string GameEnv::cursorFile = "cursor.bmp";
+const string GamePlay::cursorFile = "cursor.bmp";
 
 
-/* GameEnv methods */
+/* GamePlay methods */
 
-GameEnv::GameEnv() { 
+GamePlay::GamePlay() { 
 	current_frame = 0; 
 	
 	last_time=mainTimer->time();
@@ -26,7 +26,7 @@ GameEnv::GameEnv() {
 	grid = new Grid(this, cursorSprite);
 }
 
-void GameEnv::display() {
+void GamePlay::display() {
 	composeFrame();
 	background.drawGLbackground ();
 
@@ -36,12 +36,12 @@ void GameEnv::display() {
 	glutSwapBuffers();
 }
 
-void GameEnv::processFrame()
+void GamePlay::processFrame()
 {
 	//grid->setCoords();
 }
 
-void GameEnv::composeFrame()
+void GamePlay::composeFrame()
 {
 	if (mainTimer->elapsed(last_pushtime, 500)) {
 		grid->pushRow();
@@ -59,7 +59,7 @@ void GameEnv::composeFrame()
 }
 
 
-void GameEnv::loadImages()
+void GamePlay::loadImages()
 {
   background.load( themeDirectory + bgFile );
   background.loadGLTextures();
@@ -82,7 +82,7 @@ void GameEnv::loadImages()
   cursorSprite->loadGLTextures();
 }
 
-void GameEnv::specialKeys(int key, int x, int y) {
+void GamePlay::specialKeys(int key, int x, int y) {
 	switch(key) {
 	case GLUT_KEY_LEFT:
 		grid->cursor->moveLeft(); //FIXME: this really begs for refactoring
@@ -104,7 +104,7 @@ void GameEnv::specialKeys(int key, int x, int y) {
 	glutPostRedisplay();
 }
 
-void GameEnv::normalKeys(unsigned char key, int x, int y) {
+void GamePlay::normalKeys(unsigned char key, int x, int y) {
 	switch (key) { 
 	case ESC:
 		exit(0);

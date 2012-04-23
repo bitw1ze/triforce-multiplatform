@@ -11,18 +11,18 @@ using namespace std;
 using namespace Globals;
 using namespace GObjLib;
 
-class GameEnv;
+class GamePlay;
 class Grid;
 class Block;
 class Cursor;
 extern CTimer *mainTimer;
 
-/* GameEnv is the main interface for controlling everything else within the 
-   game. Classes other than GameEnv declared in this header will be
+/* GamePlay is the main interface for controlling everything else within the 
+   game. Classes other than GamePlay declared in this header will be
    implemented in their own .cpp files to make things more modular. This
    seems to be the best solution. */
 
-class GameEnv {
+class GamePlay {
 protected:
 
 	/* bitmap files */
@@ -39,7 +39,7 @@ protected:
 	BMPClass background;
 
 public:
-	GameEnv();
+	GamePlay();
 	void display();
 	void composeFrame();
 	void init();
@@ -65,12 +65,12 @@ protected:
 		row_xvel, row_yvel,
 		block_w, block_h,
 		grid_yspeed, grid_yoff;
-	GameEnv *gameEnv;
+	GamePlay *gamePlay;
 	deque<Block **> blocks;
 	CBaseSprite** blockSprites;
 
 public:
-	Grid(GameEnv *ge, CBaseSprite *cursorSprite);
+	Grid(GamePlay *ge, CBaseSprite *cursorSprite);
 	void pushRow();
 	void addRow();
 	void loadImages();

@@ -33,7 +33,7 @@ private:
 public:
 	// Temporarily here so that keyboard stuff can work in main... but
 	// this should really be private
-	GameEnv *gameEnv; 
+	GamePlay *gamePlay; 
 
 	Triforce();
 	~Triforce();

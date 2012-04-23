@@ -1,8 +1,8 @@
 #include "game.h"
 
 /* Grid methods */
-Grid::Grid(GameEnv *ge, CBaseSprite *cursorSprite) {
-	gameEnv = ge;
+Grid::Grid(GamePlay *ge, CBaseSprite *cursorSprite) {
+	gamePlay = ge;
 	blockSprites = ge->blockSprites;
 	block_w = blockSprites[0]->GetWidth();
 	block_h = blockSprites[0]->GetHeight();
@@ -56,7 +56,7 @@ void Grid::addRow() {
 		} while (combo);
 		blockRow[col]->create(grid_x + col * block_w, grid_y, 0, 0, newBlock);
 	}
-	printf("grid_y: %d\nscreen_h: %d\n", getY(), gameEnv->getHeight());
+	printf("grid_y: %d\nscreen_h: %d\n", getY(), gamePlay->getHeight());
 
 	blocks.push_front(blockRow);
 }
