@@ -38,27 +38,23 @@ void Grid::addRow() {
 		blocks.pop_back();
 
 	bool combo;
-	Block **blockRow = new Block *[ncols];
+	blocks.push_front(new Block *[ncols]);
 
 	for (int col=0; col<ncols; ++col) {
-		blockRow[col] = new Block();
+		blocks[0][col] = new Block();
 
 		combo = false;
 		CBaseSprite *newBlock = NULL;
-
 		/* Randomize the blocks without generating combos */
 		do {
 			newBlock = blockSprites[ rand() % nblocktypes ];
 			/* Really ugly but basically it is checking that there are no combos of three to the
 			   left or above. This would best be moved to another function later on. */
-			combo =  ( (col >= 2 && blockRow[col-1]->match(newBlock) && blockRow[col-2]->match(newBlock)) 
-				|| (blocks.size() >= 2 && blocks[0][col]->match(newBlock) && blocks[1][col]->match(newBlock)) );
+			combo =  ( (col >= 2 && blocks[0][col-1]->match(newBlock) && blocks[0][col-2]->match(newBlock)) 
+				|| (blocks.size() >= 2 && blocks[1][col]->match(newBlock) && blocks[2][col]->match(newBlock)) );
 		} while (combo);
-		blockRow[col]->create(grid_x + col * block_w, grid_y, 0, 0, newBlock);
+		blocks[0][col]->create(grid_x + col * block_w, grid_y, 0, 0, newBlock);
 	}
-	printf("grid_y: %d\nscreen_h: %d\n", getY(), gamePlay->getHeight());
-
-	blocks.push_front(blockRow);
 }
 
 void Grid::display() {
