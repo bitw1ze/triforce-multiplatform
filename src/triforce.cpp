@@ -5,7 +5,7 @@ const string Triforce::bgFile = "bg.bmp";
 Triforce::Triforce()
 { 
 	state = load; // initialize before using changeState
-	changeState(play); // this is temporily here until the load screen is ready
+	//changeState(play); // this is temporily here until the load screen is ready
 	current_frame = 0; 
 	loadImages(); 
 
@@ -14,8 +14,8 @@ Triforce::Triforce()
 	int vpWidth = background.getViewportWidth(),
  	    vpHeight = background.getViewportHeight();
 	menuButtons = new Buttons(vpWidth, vpHeight);
-	menuButtons->add(playBtns, vpWidth*.5 - 64, vpHeight*.8);
-	menuButtons->add(quitBtns, vpWidth*.5 - 64, vpHeight*.9);
+	menuButtons->add(this, play, changeStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
+	menuButtons->add(this, quit, changeStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
 }
 
 Triforce::~Triforce()
@@ -30,16 +30,27 @@ void Triforce::changeState(gameState s)
 	case load:
 		if (state == play) // state change from play to load
 			delete gamePlay;
-		break;
+		state = menu;
+		/* fall through */
+	case menu:
+		break; // nothing to do
 	case play:
 		
 		if (state == load) // state change from load to play
 			gamePlay = new GamePlay;
 		break;
 	case pause:
-		break; // not yet implemented
+		break; // TODO: not yet implemented
+	case quit:
+		exit(0);
 	}
 	state = s;
+}
+
+void Triforce::changeStateWrapper(void *tfInstance, int gameState)
+{
+	Triforce * t = (Triforce *)tfInstance;
+	t->changeState((enum gameState)gameState);
 }
 
 /**

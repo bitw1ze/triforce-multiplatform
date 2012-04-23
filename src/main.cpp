@@ -46,8 +46,5 @@ int main(int argc,char** argv)
 		
 	initGlut();
 	triforce = new Triforce();
-	glutMainLoop();
-
-	delete triforce;
-	return 0;
+	glutMainLoop(); // never returns!
 }

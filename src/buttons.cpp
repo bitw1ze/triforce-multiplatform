@@ -22,7 +22,9 @@ Buttons::~Buttons()
  *     hover: btnFiles[1]
  *     pressed: btnFiles[2]
  */
-void Buttons::add(string btnFiles[3], int xpos, int ypos)
+void Buttons::add(void *classInstance, int actionArg,
+				  void (*action)(void *classInstance, int actionArg), 
+			      string btnFiles[3], int xpos, int ypos)
 {
 	// load image
 	const int frameCount = 3;
@@ -34,7 +36,34 @@ void Buttons::add(string btnFiles[3], int xpos, int ypos)
 	// create button obj and push to container
 	Button *b = new Button(sprite, xpos, ypos);
 	b->sprite = sprite; // create public alias
-	buttons.push_back(b);
+	b->actionClassInstance; // set the callback function and its args
+	b->action = action;
+	b->actionArg = actionArg;
+
+	// hover on the first button added
+	if (buttons.empty())
+	{
+		b->hover();
+		buttons.push_back(b);
+		activeBtn = buttons.begin();
+	}
+	else
+		buttons.push_back(b);
+}
+
+void Buttons::hoverNext()
+{
+	(*activeBtn)->unhover();
+	if (activeBtn == buttons.end())
+		activeBtn = buttons.begin();
+	else
+		++activeBtn;
+	(*activeBtn)->hover();
+}
+
+void Buttons::pressActive()
+{
+	(*activeBtn)->press();
 }
 
 void Buttons::display()
@@ -46,29 +75,36 @@ void Buttons::display()
 
 Buttons::Button::Button(CBaseSprite * sprite, int xpos, int ypos)
 {
-	unpress();
+	pressing = false;
+	hovering = false;
 	create(xpos, ypos, 0, 0, sprite);
+}
+
+void Buttons::Button::unhover()
+{
+	hovering = false;
 }
 
 void Buttons::Button::hover()
 {
-	pressing = false;
 	hovering = true;
 }
 
 void Buttons::Button::press()
 {
 	pressing = true;
-	hovering = false;
 }
 
 void Buttons::Button::unpress()
 {
+	// activate button once it has been pressed/released and is still active
+	if (pressing && hovering)
+		action(actionClassInstance, actionArg);
+
 	pressing = false;
-	hovering = false;
 }
 
-int Buttons::Button::getFrameNum()
+int Buttons::Button::getFrameNum() const
 {
 	if (hovering)
 		return 1;
