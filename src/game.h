@@ -77,6 +77,10 @@ public:
 	void display();
 	void setCoords();
 	void swapBlocks();
+	int downMatch(CBaseSprite *block, int row, int col);
+	int upMatch(CBaseSprite *block, int row, int col);
+	int leftMatch(CBaseSprite *block, int row, int col);
+	int rightMatch(CBaseSprite *block, int row, int col);
 
 	/* set/get properties */
 	int getX() { return grid_x; }

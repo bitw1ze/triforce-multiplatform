@@ -21,7 +21,7 @@ void Grid::pushRow() {
 	grid_yoff += grid_yspeed;
 
 	cursor->offsetY(-grid_yspeed);
-	for (int i=0; i<blocks.size(); ++i) {
+	for (uint32 i=0; i<blocks.size(); ++i) {
 		for (int j=0; j<ncols; ++j) {
 			blocks[i][j]->offsetY(-grid_yspeed);
 		}
@@ -48,11 +48,7 @@ void Grid::addRow() {
 		/* Randomize the blocks without generating combos */
 		do {
 			newBlock = blockSprites[ rand() % nblocktypes ];
-			/* Really ugly but basically it is checking that there are no combos of three to the
-			   left or above. This would best be moved to another function later on. */
-			combo =  ( (col >= 2 && blocks[0][col-1]->match(newBlock) && blocks[0][col-2]->match(newBlock)) 
-				|| (blocks.size() >= 2 && blocks[1][col]->match(newBlock) && blocks[2][col]->match(newBlock)) );
-		} while (combo);
+		} while (leftMatch(newBlock, 0, col) >= 3 || upMatch(newBlock, 0, col) >= 3);
 		blocks[0][col]->create(grid_x + col * block_w, grid_y, 0, 0, newBlock);
 	}
 }
@@ -87,4 +83,69 @@ void Grid::swapBlocks() {
 	blocks[r][c2]->setX(getX() + c2 * 48);
 	blocks[r][c1]->draw(0);
 	blocks[r][c2]->draw(0);
+}
+
+int Grid::leftMatch(CBaseSprite *block, int row, int col) {
+	int matches = 1;
+
+	if (col <= 0)
+		return matches;
+	
+	for (int c=col-1; c >= 0; --c) {
+		if (blocks[row][c]->match(block)) 
+			++matches;
+		else
+			break;
+	}
+
+	return matches;
+}
+
+int Grid::rightMatch(CBaseSprite *block, int row, int col) {
+	int matches = 1;
+
+	if (col >= ncols - 1)
+		return matches;
+
+	for (int c=col+1; c < ncols; ++c) {
+		if (blocks[row][c]->match(block)) 
+			++matches;
+		else
+			break;
+	}
+
+	return matches;
+}
+
+
+int Grid::upMatch(CBaseSprite *block, int row, int col) {
+	int matches = 1;
+
+	if (row == getTopRow())
+		return matches;
+
+	for (int r=row+1; r<=getTopRow(); ++r) {
+		if (blocks[r][col]->match(block))
+			++matches;
+		else
+			break;
+	}
+
+	return matches;
+}
+
+int Grid::downMatch(CBaseSprite *block, int row, int col) {
+	int matches = 1;
+
+	if (row <= 0)
+		return matches;
+
+	for (int r=row-1; r>=0; --r) {
+		if (blocks[r][col]->match(block))
+			++matches;
+		else
+			break;
+	}
+
+	return matches;
 }
