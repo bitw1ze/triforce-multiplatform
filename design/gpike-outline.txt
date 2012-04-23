@@ -1,0 +1,46 @@
+Gabe Pike
+CMPS 335
+Project Outline
+11 April 2012
+
+We will be remaking the classic SNES game Tetris Attack. Our working title is
+"Block-Game", but we plan to change it. In the game, a player controls a cursor
+that lets him swap two adjacent blocks horizontally. Combinations of 3 or more
+blocks in a row will break the blocks. The game mechanics allow the player to
+use their skills and reaction time to gain great rewards. The game mechanics
+are flexible and allow for several fun modes of play. 
+
+The project will be managed using Git as our version control system and using 
+Github as our host. Github was chosen because of its many rich features for
+developers, such its bug/enhancement ticket system, commit tracking tools,
+wiki, and online code viewing. Richard has had success in the past with the 
+SCUM agile software development method, so we will be using that. 
+
+We want to keep true to the way the original game plays, but we want to update 
+the classic with modern graphics, sound, and perhaps some new gameplay
+mechanics. We plan to leave out artificial intelligence because of time 
+constraints, but the game will be designed so it could be easily added in the
+future. At a minimum, we will implement player versus player and "endurance
+mode", where a player plays for as long as he can while the difficult of the
+game gradually increases.
+
+My teammates are much betted suited to handle frontend features such as
+graphics and sound, so I will be doing the backend interface. I will design
+this interface to be as generic as possible, so that it can be used by multiple
+frontends. I will design the algorithms for the critical game mechanics, such 
+as pushing blocks into the gameplay area, moving the cursor, combos and chains
+of blocks, player vs. player dynamics, score system and other subprograms that
+must exist in the game environment. 
+
+There must be an class for the Gameplay itself. In this class will be the
+interface to the algorithms described above. This class will be instantiated
+with a reference to a GenericGrid. The GenericGrid will be an abstract class
+containing functions to be called by Gameplay. These functions will be
+overloaded by the a Grid class that inherits from GenericGrid. The Grid class
+will deal with the specifics of how the Grid reacts to events (i.e. the graphic
+events displayed when an event happens). We feel this is a good design because 
+it adheres to the principles of low coupling and high cohesion.
+
+I have begun working on prototypes for the algorithms. My first prototype is of
+the algorithm to push blocks onto the gameplay area (Grid). It is simple and
+rough, but prototypes will help us implement the actual game.
