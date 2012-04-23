@@ -112,6 +112,11 @@ void Triforce::specialKeys(int key, int x, int y) {
 }
 
 void Triforce::normalKeys(unsigned char key, int x, int y) {
+	// global bindings
+	if (key == ESC)
+		exit(0);
+
+	// context-sensetive bindings
 	if (state == play) {
 		gamePlay->normalKeys(key, x, y);
 	}
