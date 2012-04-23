@@ -1,12 +1,34 @@
-These are the requirements for a game that borrows aspects from Tetris Attack and the Japaenese version, Panel de Pon. The behavior of the game in the project should be as close as possible to Tetris Attack. This means that the "feel" of the game should be almost identical to experienced players. The game should support virtually unlimited players, whereas Tetris Attack only supported 2, and Panel de Pon only supported 4. There won't be time for AI players, although it should be coded in such a way that AI could be added later without major revisions. The same goes for networking support; it is not required, but should be possible to add in without majorly rewriting code.
+These are the requirements for a game that borrows aspects from Tetris Attack
+and the Japaenese version, Panel de Pon. The behavior of the game in the
+project should be as close as possible to Tetris Attack. This means that the
+"feel" of the game should be almost identical to experienced players. The game
+should support virtually unlimited players, whereas Tetris Attack only
+supported 2, and Panel de Pon only supported 4. There won't be time for AI
+players, although it should be coded in such a way that AI could be added later
+without major revisions. The same goes for networking support; it is not
+required, but should be possible to add in without majorly rewriting code.
 
-The graphics should be entirely different and original, as well as the music and sound effects. It should run quickly, even on modest hardware with many players. An emphasis should be placed on the game being quick-to-start and restart by default, meaning that multiple menus should not have to be navigated to start playing. It should take no more than 2 button presses to start a game with reasonable defaults.
+The graphics should be entirely different and original, as well as the music
+and sound effects. It should run quickly, even on modest hardware with many
+players. An emphasis should be placed on the game being quick-to-start and
+restart by default, meaning that multiple menus should not have to be navigated
+to start playing. It should take no more than 2 button presses to start a game
+with reasonable defaults.
 
-There should be a settings page, with a far larger set of configurable options than the original games. The defaults should NOT be hard coded, allowing for users to specify their custom options to be the default. One setting that should be provided is to allow the number of options that are configurable to be anywhere from 2-6 (rather than 3). Delays from clearing blocks or from coming too close to the top (nearly losing) should be configurable. Even the size of the grid (normally 6x12), should be resizable. The number of different classes of blocks should be customizable; there are normally around 5.
+There should be a settings page, with a far larger set of configurable options
+than the original games. The defaults should NOT be hard coded, allowing for
+users to specify their custom options to be the default. One setting that
+should be provided is to allow the number of options that are configurable to
+be anywhere from 2-6 (rather than 3). Delays from clearing blocks or from
+coming too close to the top (nearly losing) should be configurable. Even the
+size of the grid (normally 6x12), should be resizable. The number of different
+classes of blocks should be customizable; there are normally around 5.
 
 ** Comments by Gabe Pike **
 What do you mean by delays from nearly losing being configurable?
 How much configuration for the player is too much?
-Go into more detail about the modules that will be required. What module is the entry point? How is control passed from one module to another? Describe the Has-A and Is-A relationships. 
+Go into more detail about the modules that will be required. What module is the
+entry point? How is control passed from one module to another? Describe the
+Has-A and Is-A relationships. 
 How will the scoring system work?
 Describe the modes of play.
