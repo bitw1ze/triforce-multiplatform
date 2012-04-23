@@ -17,7 +17,6 @@ void Cursor::moveLeft(bool doDraw) {
 		if (doDraw)
 			draw(0);
 	}
-	printf("grid: (%d, %d)\ncursor: (%d, %d)\nrow: %d\n", grid->getX(), grid->getY(), getX(), getY(), row);
 }
 
 void Cursor::moveRight(bool doDraw) {
@@ -27,7 +26,6 @@ void Cursor::moveRight(bool doDraw) {
 		if (doDraw)
 			draw(0);
 	}
-	printf("grid: (%d, %d)\ncursor: (%d, %d)\nrow: %d\n", grid->getX(), grid->getY(), getX(), getY(), row);
 }
 
 void Cursor::moveDown(bool doDraw) {
@@ -37,7 +35,6 @@ void Cursor::moveDown(bool doDraw) {
 		if (doDraw)
 			draw(0);
 	}
-	printf("grid: (%d, %d)\ncursor: (%d, %d)\nrow: %d\n", grid->getX(), grid->getY(), getX(), getY(), row);
 }
 
 
@@ -48,19 +45,22 @@ void Cursor::moveUp(bool doDraw) {
 		if (doDraw)
 			draw(0);
 	}
-	printf("grid: (%d, %d)\ncursor: (%d, %d)\nrow: %d\n", grid->getX(), grid->getY(), getX(), getY(), row);
+	printf("row: %d\ntoprow: %d\n", row, grid->getTopRow());
 }
 
 void Cursor::setPos(int c, int r) {
 	row = r;
 	col = c;
-	Setxy( grid->getX() + col * cursor_delta, grid->getY() - (row * cursor_delta) - (2 * cursor_delta));
-	printf("row: %d\n", row);
+	Setxy( grid->getX() + col * cursor_delta, grid->getY() - (row * cursor_delta));
 }
 
 void Cursor::shiftRow() {
-	if (row <= grid->getTopRow())
+	if (row < grid->getTopRow())
 		++row;
+	else if (row == nrows - 1)
+		this->setPos(getCol(), grid->getTopRow());
 	else
-		offsetY(cursor_delta);
+		this->setPos(getCol(), grid->getTopRow()+1);
+	
+	printf("row: %d\ntoprow: %d\n", row, grid->getTopRow());
 }

@@ -9,7 +9,7 @@ Grid::Grid(GameEnv *ge, CBaseSprite *cursorSprite) {
 	grid_yspeed = block_h / 12;
 	grid_yoff = 0;
 	grid_x = ge->getWidth()/2 - (block_w * ncols)/2;
-	grid_y = ge->getHeight();
+	grid_y = ge->getHeight() - (block_h * 2);
 	cursor = new Cursor(this, cursorSprite);
 
 	for (int row=0; row< nrows/2 * 12; ++row) {
@@ -54,7 +54,7 @@ void Grid::addRow() {
 			combo =  ( (col >= 2 && blockRow[col-1]->match(newBlock) && blockRow[col-2]->match(newBlock)) 
 				|| (blocks.size() >= 2 && blocks[0][col]->match(newBlock) && blocks[1][col]->match(newBlock)) );
 		} while (combo);
-		blockRow[col]->create(grid_x + col * block_w, grid_y - block_h * 2, 0, 0, newBlock);
+		blockRow[col]->create(grid_x + col * block_w, grid_y, 0, 0, newBlock);
 	}
 	printf("grid_y: %d\nscreen_h: %d\n", getY(), gameEnv->getHeight());
 
