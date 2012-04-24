@@ -127,4 +127,5 @@ public:
 	int getRow() const { return row; }
 	int getCol() const { return col; }
 	void shiftRow();
+	void passiveMouseHover(int x, int y);
 };

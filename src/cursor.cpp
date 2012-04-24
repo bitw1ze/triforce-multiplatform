@@ -60,5 +60,32 @@ void Cursor::shiftRow() {
 		setPos(getCol(), grid->getTopRow());
 	else
 		setPos(getCol(), grid->getTopRow()+1);
-	
+}
+
+void Cursor::passiveMouseHover(int x, int y) {
+	static const float y_threshold = 0.05, // necessary to avoid twitchy movements
+	                   x_threshold = 0.5;
+
+	// hide/set cursor type
+	static const int margin = 1; // number of blocks away from cursor to hide mouse
+	if (getX() - margin*cursor_delta < x && getX() + (margin+2)*cursor_delta > x
+		&& getY() - margin*cursor_delta < y && getY() + (margin+2)*cursor_delta > y)
+		//glutSetCursor(GLUT_CURSOR_NONE);
+		glutSetCursor(GLUT_CURSOR_FULL_CROSSHAIR);
+	else
+		glutSetCursor(GLUT_CURSOR_INHERIT);
+
+	if (getX() < x)
+		while (getX() + 2*cursor_delta < x && col < ncols - 2)
+			moveRight();
+	else
+		while (x < getX() && col > 0)
+			moveLeft();
+
+	if (getY() > y)
+		while (getY() - cursor_delta*y_threshold > y && row < grid->getTopRow())
+			moveUp();
+	else
+		while (y > getY() + cursor_delta*(1+y_threshold) && row > 0) 
+			moveDown();
 }
