@@ -115,6 +115,7 @@ class CObject //class for a moving object
     void move(float x1, float y1); 
     void Setxy(float x1, float y1); 
     void Getxy(float & x1, float & y1);
+	void doNothing() { cout << x << y << endl; }
 };
 
 bool BMPSaveFrameBuffer(string fname, int x, int y, int width1, int height1);

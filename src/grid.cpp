@@ -149,3 +149,11 @@ int Grid::downMatch(CBaseSprite *block, int row, int col) {
 
 	return matches;
 }
+
+Grid::~Grid() {
+	delete cursor;
+	for (uint32 i=0; i<blocks.size(); ++i)
+		for (uint32 j=0; j<ncols; ++j)
+			if (blocks[i][j] != NULL)
+				delete blocks[i][j];
+}

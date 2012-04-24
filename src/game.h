@@ -71,6 +71,7 @@ protected:
 
 public:
 	Grid(GamePlay *ge, CBaseSprite *cursorSprite);
+	virtual ~Grid();
 	void pushRow();
 	void addRow();
 	void loadImages();

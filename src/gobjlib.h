@@ -21,6 +21,6 @@ namespace GObjLib {
 		void offsetY(int y);
 		void offsetXY(int x, int y);
 		bool match(const GObject &right) const;
-		bool GObject::match(const CBaseSprite *right) const;
+		bool match(const CBaseSprite *right) const;
 	};
 };

@@ -31,7 +31,6 @@ void GamePlay::display() {
 	background.drawGLbackground ();
 
 	grid->display();
-	//printf("(%d, %d)\n", cursor->getX(), cursor->getY());
 
 	glutSwapBuffers();
 }
