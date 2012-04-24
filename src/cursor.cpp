@@ -63,7 +63,7 @@ void Cursor::shiftRow() {
 }
 
 void Cursor::passiveMouseHover(int x, int y) {
-	static const float y_threshold = 0.05, // necessary to avoid twitchy movements
+	static const float y_threshold = 0,
 	                   x_threshold = 0.48;
 
 	// hide/set cursor type
