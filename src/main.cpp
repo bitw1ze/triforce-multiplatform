@@ -26,11 +26,21 @@ void normalKeys(unsigned char key, int x, int y) {
 	triforce->normalKeys(key, x, y);
 }
 
+void mouseButtons(int button, int state, int x, int y) {
+	triforce->mouseButtons(button, state, x, y);
+}
+
+void mousePassiveMotion(int x, int y) {
+	triforce->mousePassiveMotion(x, y);
+}
+
 void initGlut()
 {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutCreateWindow("Block-Game");
 	glutReshapeFunc(reshape);
+	glutMouseFunc(mouseButtons);
+	glutPassiveMotionFunc(mousePassiveMotion);
 	glutKeyboardFunc(normalKeys);
 	glutSpecialFunc(specialKeys);
 	glutReshapeWindow(screen_w, screen_h);

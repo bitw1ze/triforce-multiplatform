@@ -127,3 +127,23 @@ void Triforce::normalKeys(unsigned char key, int x, int y) {
 		}
 	}
 }
+
+void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
+	if (state == menu)
+	{
+		switch (button) {
+		case GLUT_LEFT_BUTTON:
+			if (mouseState == GLUT_DOWN)
+				menuButtons->clickDown(x, y);
+			else // implicit (state == GLUT_UP)
+				menuButtons->clickUp(x, y);
+		}
+	}
+}
+
+void Triforce::mousePassiveMotion(int x, int y) {
+	if (state == menu)
+	{
+		menuButtons->passiveMouseHover(x, y);
+	}
+}

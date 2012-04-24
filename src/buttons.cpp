@@ -1,7 +1,6 @@
 #include "buttons.h"
 
-Buttons::Buttons(int viewportWidth, int viewportHeight)
-{
+Buttons::Buttons(int viewportWidth, int viewportHeight) {
 	curFrame = 0;
 	r = 3;
 	g = 7;
@@ -10,10 +9,15 @@ Buttons::Buttons(int viewportWidth, int viewportHeight)
 	vpHeight = viewportHeight;
 }
 
-Buttons::~Buttons()
-{
+Buttons::~Buttons() {
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 		delete *button;
+}
+
+void Buttons::display() {
+	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
+		if ((*button)->enabled)
+			(*button)->draw((*button)->getFrameNum());
 }
 
 /**
@@ -51,73 +55,104 @@ void Buttons::add(void *classInstance, int actionArg,
 		buttons.push_back(b);
 }
 
-void Buttons::hoverNext()
-{
-	//FIXME: doesn't ignore disabled buttons
-	(*activeBtn)->unhover();
-	++activeBtn;
-	if (activeBtn == buttons.end())
-		activeBtn = buttons.begin();
-	(*activeBtn)->hover();
-}
-
-void Buttons::hoverPrev()
-{
-	//FIXME: doesn't ignore disabled buttons
-	(*activeBtn)->unhover();
+void Buttons::hoverPrev() {
+	unhoverAll();
 	if (activeBtn == buttons.begin())
 		activeBtn = buttons.end();
 	--activeBtn;
 	(*activeBtn)->hover();
 }
 
-void Buttons::pressActive()
-{
+void Buttons::hoverNext() {
+	unhoverAll();
+	++activeBtn;
+	if (activeBtn == buttons.end())
+		activeBtn = buttons.begin();
+	(*activeBtn)->hover();
+}
+
+void Buttons::unhoverAll() {
+	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
+		(*button)->unhover();
+}
+
+void Buttons::unpressAll() {
+	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
+		(*button)->pressing = false;
+}
+
+void Buttons::pressActive() {
 	(*activeBtn)->press();
 }
 
-void Buttons::display()
-{
+Buttons::Button * Buttons::whichBtnClicked(int x, int y) {
+	float minX, minY, maxX, maxY;
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 		if ((*button)->enabled)
-			(*button)->draw((*button)->getFrameNum());
+		{
+			(*button)->Getxy(minX, minY);
+			maxX = minX + (*button)->sprite->GetWidth();
+			maxY = minY + (*button)->sprite->GetHeight();
+			if (x >= minX && x <= maxX && y >= minY && y <= maxY)
+				return (*button);
+		}
+	return (Button *)0;
 }
 
-Buttons::Button::Button(CBaseSprite * sprite, int xpos, int ypos)
-{
+void Buttons::clickDown(int x, int y) {
+	Button * button = whichBtnClicked(x, y);
+	if (button)
+		button->pressing = true;
+}
+
+void Buttons::clickUp(int x, int y) {
+	// disable pressing for all, since we don't necessarily know which was clicked down on
+	unpressAll();
+	Button * button = whichBtnClicked(x, y);
+	if (button)
+		button->press(); // mouse is still on btn; take action
+}
+
+void Buttons::passiveMouseHover(int x, int y) {
+	float minX, minY, maxX, maxY;
+	unhoverAll();
+	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
+		if ((*button)->enabled)
+		{
+			(*button)->Getxy(minX, minY);
+			maxX = minX + (*button)->sprite->GetWidth();
+			maxY = minY + (*button)->sprite->GetHeight();
+			if (x >= minX && x <= maxX && y >= minY && y <= maxY)
+				(*button)->hover();
+		}
+}
+
+Buttons::Button::Button(CBaseSprite * sprite, int xpos, int ypos) {
 	pressing = false;
 	hovering = false;
 	create(xpos, ypos, 0, 0, sprite);
 }
 
-void Buttons::Button::unhover()
-{
+void Buttons::Button::unhover() {
 	hovering = false;
 }
 
-void Buttons::Button::hover()
-{
+void Buttons::Button::hover() {
 	hovering = true;
 }
 
-void Buttons::Button::press()
-{
-	//pressing = true;
-	if (hovering)
-		action(actionClassInstance, actionArg);
-	//pressing = false;
+void Buttons::Button::press() {
+	action(actionClassInstance, actionArg);
 }
 
-int Buttons::Button::getFrameNum() const
-{
-	if (hovering)
-		return 1;
-	else if (pressing)
+int Buttons::Button::getFrameNum() const {
+	if (pressing) // pressing state takes precedence
 		return 2;
+	else if (hovering)
+		return 1;
 	return 0;
 }
 
-Buttons::Button::~Button()
-{
+Buttons::Button::~Button() {
 	delete sprite;
 }

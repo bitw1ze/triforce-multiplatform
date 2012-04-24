@@ -13,11 +13,10 @@ class Buttons
 protected:
 	class Button : public GObject
 	{
-	protected:
-		bool hovering;
-		bool pressing; // not currently used
-
 	public:
+		bool hovering;
+		bool pressing;
+
 		// callback function to activate upon button press
 		void * actionClassInstance;
 		int actionArg;
@@ -36,7 +35,7 @@ protected:
 	typedef list<Button *> Btns_t;
 	typedef Btns_t::iterator BtnIter_t;
 	Btns_t buttons;
-	BtnIter_t activeBtn;
+	BtnIter_t activeBtn; // button hilighted by keyboard
 
 	int r, g, b, // KISS: same color filters to be used by every button
 		vpWidth, vpHeight,
@@ -51,6 +50,12 @@ public:
  	         string btnFiles[3], int xpos = 0, int ypos = 0);
 	void hoverPrev();
 	void hoverNext();
+	void unhoverAll();
+	void unpressAll();
 	void pressActive();
+	Button * whichBtnClicked(int x, int y);
+	void clickDown(int x, int y);
+	void clickUp(int x, int y);
+	void passiveMouseHover(int x, int y);
 };
 

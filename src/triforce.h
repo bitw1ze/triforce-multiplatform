@@ -36,8 +36,10 @@ public:
 	Triforce();
 	~Triforce();
 	void changeState(gameState s);
-	static void changeStateWrapper(void *tfInstance, int gameState); // for callbacks
 	void display();
+	static void changeStateWrapper(void *tfInstance, int gameState); // for callbacks
 	void specialKeys(int key, int x, int y);
 	void normalKeys(unsigned char key, int x, int y);
+	void mouseButtons(int button, int mouseState, int x, int y);
+	void mousePassiveMotion(int x, int y);
 };
