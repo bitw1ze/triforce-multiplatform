@@ -46,7 +46,7 @@ void Grid::addRow() {
 		combo = false;
 		/* Randomize the blocks without generating combos */
 		do    ( blocks[0][col]->init(blockSprites[ rand() % nblocktypes ], gridPos.x + col * block_w, gridPos.y) );
-		while ( leftMatch(0, col) >= 3 || upMatch(0, col) >= 3 );
+		while ( leftMatch(0, col) >= 2 || upMatch(0, col) >= 2 );
 		
 	}
 }
@@ -77,15 +77,86 @@ void Grid::swapBlocks() {
 	blocks[r][c1]->setSprite( blocks[r][c2]->getSprite() );
 	blocks[r][c2]->setSprite( temp );
 
-	//checkMatches(r, c1);
+	bool enabled = blocks[r][c1]->enabled;
+	blocks[r][c1]->enabled = blocks[r][c2]->enabled;
+	blocks[r][c2]->enabled = enabled;
+
+	detectCombos(r, c1);
+	detectCombos(r, c2);
 }
 
-void Grid::checkMatches(int r, int c) {
-	//int left, right, up, down;
+void Grid::detectCombos(int r, int c) {
+	int left, right, up, down;
+	Cell cells[4];
+	for (int i=0; i<4; ++i)
+		cells[i].col = cells[i].row = -1;
+
+	left = leftMatch(r, c);
+	right = rightMatch(r, c);
+
+	if ( left + right >= 2) {
+		cells[0].row = cells[1].row = r;
+		cells[0].col = c - left;
+		cells[1].col = c + right;
+
+		for (int i=cells[0].col; i < cells[1].col; ++i) {
+			up = upMatch(cells[0].row, i);
+			down = downMatch(cells[0].row, i);
+			if (up + down > 2) {
+				cells[2].col = cells[3].col = i;
+				cells[2].row = cells[0].row - down;
+				cells[3].row = cells[0].row + up;
+				break;
+			}
+		}
+
+		killRows(cells);
+	}
+	else {
+		down = downMatch(r, c);
+		up = upMatch(r, c);
+		if ( up + down >= 2) {
+			cells[2].col = cells[3].col = c;
+			cells[2].row = r - down;
+			cells[3].row = r + up;
+
+			for (int i=cells[2].row; i < cells[3].row; ++i) {
+				left = leftMatch(i, cells[2].col);
+				right = rightMatch(i, cells[2].col);
+				if (left + right > 2) {
+					cells[0].row = cells[1].row = i;
+					cells[0].col = cells[2].col - left;
+					cells[1].col = cells[2].col + right;
+					break;
+				}
+			}
+		
+			killRows(cells);
+		}
+	}
+}
+
+void Grid::killRows(Cell cells[4]) {
+	int _row, _col;
+
+	for (int i=0; i<4; ++i) 
+		printf("(%d, %d) ", cells[i].row, cells[i].col);
+	printf("\n");
+
+	_row = cells[0].row;
+	if (cells[0].col != -1) {
+		for (_col = cells[0].col; _col <= cells[1].col; ++_col)
+			blocks[_row][_col]->enabled = false;
+	}
+	_col = cells[2].col;
+	if (cells[2].col != -1) {
+		for (_row = cells[2].row; _row <= cells[3].row; ++_row)
+			blocks[_row][_col]->enabled = false;
+	}
 }
 
 int Grid::leftMatch(int row, int col) {
-	int matches = 1;
+	int matches = 0;
 
 	if (col <= 0)
 		return matches;
@@ -101,7 +172,7 @@ int Grid::leftMatch(int row, int col) {
 }
 
 int Grid::rightMatch(int row, int col) {
-	int matches = 1;
+	int matches = 0;
 
 	if (col >= ncols - 1)
 		return matches;
@@ -118,7 +189,7 @@ int Grid::rightMatch(int row, int col) {
 
 
 int Grid::upMatch(int row, int col) {
-	int matches = 1;
+	int matches = 0;
 
 	if (row == getTopRow())
 		return matches;
@@ -134,7 +205,7 @@ int Grid::upMatch(int row, int col) {
 }
 
 int Grid::downMatch(int row, int col) {
-	int matches = 1;
+	int matches = 0;
 
 	if (row <= 0)
 		return matches;
