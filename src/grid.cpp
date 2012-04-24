@@ -8,8 +8,8 @@ Grid::Grid(GamePlay *ge, CBaseSprite *cursorSprite) {
 	block_h = blockSprites[0]->GetHeight();
 	grid_yspeed = block_h / 12;
 	grid_yoff = 0;
-	grid_x = ge->getWidth()/2 - (block_w * ncols)/2;
-	grid_y = ge->getHeight() - (block_h * 2);
+	gridPos.x = ge->getWidth()/2 - (block_w * ncols)/2;
+	gridPos.y = ge->getHeight() - (block_h * 2);
 	cursor = new Cursor(this, cursorSprite);
 
 	for (int row=0; row< nrows/2 * 12; ++row) {
@@ -48,7 +48,7 @@ void Grid::addRow() {
 		/* Randomize the blocks without generating combos */
 		do    ( newBlock = blockSprites[ rand() % nblocktypes ] );
 		while ( leftMatch(newBlock, 0, col) >= 3 || upMatch(newBlock, 0, col) >= 3 );
-		blocks[0][col]->create(grid_x + col * block_w, grid_y, 0, 0, newBlock);
+		blocks[0][col]->create(gridPos.x + col * block_w, gridPos.y, 0, 0, newBlock);
 	}
 }
 
@@ -65,7 +65,7 @@ void Grid::setCoords() {
 	for (deque<Block **>::iterator it = blocks.begin(); it < blocks.end(); ++it, ++i)
 		for (int j=0; j<ncols; ++j) 
 			if ((*it)[j]->enabled) 
-				(*it)[j]->setY(grid_y - i * block_h);
+				(*it)[j]->setY(gridPos.y - i * block_h);
 }
 
 void Grid::swapBlocks() {

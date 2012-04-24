@@ -22,6 +22,10 @@ extern CTimer *mainTimer;
    implemented in their own .cpp files to make things more modular. This
    seems to be the best solution. */
 
+struct Point {
+	int x, y;
+};
+
 class GamePlay {
 protected:
 
@@ -61,10 +65,10 @@ public:
 class Grid {
 
 protected:
-	int grid_x, grid_y, 
-		row_xvel, row_yvel,
+	int row_xvel, row_yvel,
 		block_w, block_h,
 		grid_yspeed, grid_yoff;
+	Point gridPos;
 	GamePlay *gamePlay;
 	deque<Block **> blocks;
 	CBaseSprite** blockSprites;
@@ -84,8 +88,8 @@ public:
 	int rightMatch(CBaseSprite *block, int row, int col);
 
 	/* set/get properties */
-	int getX() { return grid_x; }
-	int getY() { return grid_y; }
+	int getX() { return gridPos.x; }
+	int getY() { return gridPos.y; }
 	int getBlockWidth() { return block_w; }
 	int getBlockHeight() { return block_h; }
 	int getTopRow() { return blocks.size() - 1; }
