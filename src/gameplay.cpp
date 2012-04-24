@@ -104,9 +104,8 @@ void GamePlay::specialKeys(int key, int x, int y) {
 }
 
 void GamePlay::normalKeys(unsigned char key, int x, int y) {
-	switch (key) { 
-	case 'z':
-	case 'Z':
+	switch (toupper(key)) { 
+	case 'A':
 		grid->swapBlocks();
 		break;
 	}
