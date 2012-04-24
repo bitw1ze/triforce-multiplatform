@@ -36,6 +36,7 @@ protected:
 	static const string 
 		blockFiles[],
 		cursorFile,
+		gridBorderFile,
 		bgFile;
 
 	/* frame stuff */
@@ -57,8 +58,9 @@ public:
 	void specialKeys(int key, int x, int y);
 	void normalKeys(unsigned char key, int x, int y);
 
-	CBaseSprite* blockSprites[nblocktypes];
-	CBaseSprite *cursorSprite;
+	CBaseSprite *blockSprites[nblocktypes],
+	            *cursorSprite,
+				*gridBorderSprite;
 	Grid *grid;
 };
 

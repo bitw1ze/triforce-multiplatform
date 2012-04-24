@@ -2,6 +2,7 @@
 
 // Constants
 const string GamePlay::bgFile = "bg.bmp";
+const string GamePlay::gridBorderFile = "gridborder.bmp";
 const string GamePlay::blockFiles[] = {
 	"block-blue.bmp",
 	"block-green.bmp",
@@ -31,6 +32,7 @@ void GamePlay::display() {
 	background.drawGLbackground ();
 
 	grid->display();
+    gridBorderSprite->draw(0, grid->getX() - 6, grid->getY() - 12 - (grid->getBlockHeight() * nrows));
 
 	glutSwapBuffers();
 }
@@ -65,6 +67,11 @@ void GamePlay::loadImages()
 
   // r,g,b is background color to be filtered, frameCount and frame number
   int r=254, g=0, b=254, frameCount=1, frame=0;
+
+  // load grid border
+  gridBorderSprite = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
+  gridBorderSprite->loadFrame(frame, themeDirectory + gridBorderFile, r, g, b);
+  gridBorderSprite->loadGLTextures();
   
   for (int i=0; i<nblocktypes; ++i) {
 	  // Block files are designed to not require a color filter. They aren't
