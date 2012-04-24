@@ -82,7 +82,12 @@ void Buttons::unpressAll() {
 }
 
 void Buttons::pressActive() {
-	(*activeBtn)->press();
+	if ((*activeBtn)->hovering)
+		(*activeBtn)->press();
+	else
+		for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
+			if ((*button)->enabled && (*button)->hovering)
+				(*button)->press();
 }
 
 Buttons::Button * Buttons::whichBtnClicked(int x, int y) {
@@ -115,7 +120,6 @@ void Buttons::clickUp(int x, int y) {
 
 void Buttons::passiveMouseHover(int x, int y) {
 	float minX, minY, maxX, maxY;
-	unhoverAll();
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 		if ((*button)->enabled)
 		{
@@ -123,7 +127,10 @@ void Buttons::passiveMouseHover(int x, int y) {
 			maxX = minX + (*button)->sprite->GetWidth();
 			maxY = minY + (*button)->sprite->GetHeight();
 			if (x >= minX && x <= maxX && y >= minY && y <= maxY)
+			{
+				unhoverAll();
 				(*button)->hover();
+			}
 		}
 }
 
