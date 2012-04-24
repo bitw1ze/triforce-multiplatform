@@ -145,7 +145,7 @@ void Buttons::passiveMouseHover(int x, int y) {
 Buttons::Button::Button(CBaseSprite * sprite, int xpos, int ypos) {
 	pressing = false;
 	hovering = false;
-	create(xpos, ypos, 0, 0, sprite);
+	init(sprite, xpos, ypos, 0, 0, NULL);
 }
 
 void Buttons::Button::unhover() {

@@ -6,7 +6,7 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	cursor_delta = sprite->GetHeight();
 	row = nrows / 2;
 	col = ncols / 2;
-	create(0, 0, 0, 0, sprite);
+	init(sprite, 0, 0, 0, 0, NULL);
 	setPos(0, 0);
 }
 

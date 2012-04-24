@@ -74,7 +74,7 @@ class CBaseSprite //simplest sprite
     int GetHtBckd(); //return backgrounf height
     int GetWdBckd(); //return background width
     int loadGLTextures();               // Convert Bitmaps To Textures
-    int drawGLSprite(int frame);	
+    int drawGLSprite(int frame);
 };
 
 
@@ -107,24 +107,25 @@ class CObject //class for a moving object
     CBaseSprite *pSprite; //pointer to sprite
 	CTimer *pTimer;
   public:
+	CBaseSprite *sprite;
     CObject(); //constructor
     void draw(int frame); //draw
-    void create(int x1,int y1,int xspeed1,int yspeed1, CBaseSprite *sprite, CTimer *timer = NULL); //create instance
+    void create(int x1,int y1,int xspeed1,int yspeed1, CBaseSprite *sprite, CTimer *timer); //create instance
     void accelerate(int xdelta,int ydelta); //change speed
     void move(); //make a move depending on time and speed
     void move(float x1, float y1); 
     void Setxy(float x1, float y1); 
     void Getxy(float & x1, float & y1);
-	CBaseSprite *getSprite() const { return pSprite; }
+	CBaseSprite *getSprite() const { cout << "getSprite(): " << sprite << endl; return sprite; }
 	void setSprite(CBaseSprite *sprite) { pSprite = sprite; }
-	void init(CBaseSprite *spr = NULL, int x1 = 0, int y1 = 0, int xspeed1 = 0,int yspeed1 = 0, CTimer *ct = NULL) { 
+	void init(CBaseSprite *spr, int x1, int y1, int xspeed1,int yspeed1, CTimer *ct) { 
 		create(x1, y1, xspeed1, yspeed1, spr, ct); 
+		sprite = spr;
 		enabled = true;
 	}
 	void offsetX(int _x) { x += (float)_x; }
 	void offsetY(int _y) { y += (float)_y; }
 	void offsetXY(int _x, int _y) { x += (float)_x; y += (float)_y; }
-	bool match(const CObject &right) const { return pSprite == right.pSprite; }
 	int getX() { return (int)x; }
 	int getY() { return (int)y; }
 	void setX(int _x) { x = (float)x; }
