@@ -109,7 +109,7 @@ class CObject //class for a moving object
   public:
     CObject(); //constructor
     void draw(int frame); //draw
-    void create(int x1,int y1,int xspeed1,int yspeed1, CBaseSprite *sprite, CTimer *timer); //create instance
+    void create(int x1,int y1,int xspeed1,int yspeed1, CBaseSprite *sprite, CTimer *timer = NULL); //create instance
     void accelerate(int xdelta,int ydelta); //change speed
     void move(); //make a move depending on time and speed
     void move(float x1, float y1); 
@@ -117,6 +117,19 @@ class CObject //class for a moving object
     void Getxy(float & x1, float & y1);
 	CBaseSprite *getSprite() const { return pSprite; }
 	void setSprite(CBaseSprite *sprite) { pSprite = sprite; }
+	void init(CBaseSprite *spr = NULL, int x1 = 0, int y1 = 0, int xspeed1 = 0,int yspeed1 = 0, CTimer *ct = NULL) { 
+		create(x1, y1, xspeed1, yspeed1, spr, ct); 
+		enabled = true;
+	}
+	void offsetX(int _x) { x += (float)_x; }
+	void offsetY(int _y) { y += (float)_y; }
+	void offsetXY(int _x, int _y) { x += (float)_x; y += (float)_y; }
+	bool match(const CObject &right) const { return pSprite == right.pSprite; }
+	int getX() { return (int)x; }
+	int getY() { return (int)y; }
+	void setX(int _x) { x = (float)x; }
+	void setY(int _y) { y = (float)y; }
+	bool enabled;
 };
 
 bool BMPSaveFrameBuffer(string fname, int x, int y, int width1, int height1);

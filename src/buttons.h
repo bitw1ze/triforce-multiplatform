@@ -1,17 +1,16 @@
 #pragma once
 
 #include <list>
-#include "gobjlib.h"
+#include "2DGraphics.h"
 #include "globals.h"
 
 using namespace Globals;
-using namespace GObjLib;
 using namespace std;
 
 class Buttons
 {
 protected:
-	class Button : public GObject
+	class Button : public CObject
 	{
 	public:
 		bool hovering;

@@ -13,7 +13,6 @@
   <ItemGroup>
     <ClCompile Include="buttons.cpp" />
     <ClCompile Include="gameplay.cpp" />
-    <ClCompile Include="gobjlib.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="main.cpp" />
@@ -24,7 +23,6 @@
     <ClInclude Include="buttons.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="game.h" />
-    <ClInclude Include="gobjlib.h" />
     <ClInclude Include="triforce.h" />
   </ItemGroup>
   <ItemGroup>

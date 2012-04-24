@@ -4,12 +4,11 @@
 #include <vector>
 #include <ctime>
 #include <deque>
-#include "gobjlib.h"
+#include "2DGraphics.h"
 #include "globals.h"
 
 using namespace std;
 using namespace Globals;
-using namespace GObjLib;
 
 class GamePlay;
 class Grid;
@@ -101,15 +100,15 @@ public:
 /* The Block class abstracts operations on a single block, such as getting and 
    setting the x and y values and setting states */
 
-class Block : public GObject {
+class Block : public CObject {
 public:
-	Block() : GObject() { }
+	Block() : CObject() { }
 };
 
 /* The Cursor class controls the operations on the player's cursor, liie moving
    it around. */
 
-class Cursor : public GObject {
+class Cursor : public CObject {
 protected:
 	int row, col,
 		cursor_delta;

@@ -5,7 +5,7 @@
 #include <ctime>
 #include <deque>
 #include "buttons.h"
-#include "gobjlib.h"
+#include "2DGraphics.h"
 #include "globals.h"
 #include "game.h"
 

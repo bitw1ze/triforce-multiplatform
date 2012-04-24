@@ -27,9 +27,6 @@
     <ClCompile Include="triforce.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gobjlib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="buttons.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,9 +45,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="triforce.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gobjlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="buttons.h">
