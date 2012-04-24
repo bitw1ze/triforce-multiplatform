@@ -70,8 +70,7 @@ void Cursor::passiveMouseHover(int x, int y) {
 	static const int margin = 1; // number of blocks away from cursor to hide mouse
 	if (getX() - margin*cursor_delta < x && getX() + (margin+2)*cursor_delta > x
 		&& getY() - margin*cursor_delta < y && getY() + (margin+2)*cursor_delta > y)
-		//glutSetCursor(GLUT_CURSOR_NONE);
-		glutSetCursor(GLUT_CURSOR_FULL_CROSSHAIR);
+		glutSetCursor(GLUT_CURSOR_NONE);
 	else
 		glutSetCursor(GLUT_CURSOR_INHERIT);
 
