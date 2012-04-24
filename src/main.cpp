@@ -37,7 +37,7 @@ void mousePassiveMotion(int x, int y) {
 void initGlut()
 {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-	glutCreateWindow("Block-Game");
+	glutCreateWindow("<^> TRIFORCE <^>");
 	glutReshapeFunc(reshape);
 	glutMouseFunc(mouseButtons);
 	glutPassiveMotionFunc(mousePassiveMotion);
