@@ -7,7 +7,7 @@ extern void reshape(int x, int y);
 void specialKeys(int key, int x, int y);
 void normalKeys(unsigned char key, int x, int y);
 void display();
-void initGlut();
+void gameInit();
 
 // globals
 Triforce *triforce;
@@ -26,10 +26,10 @@ void normalKeys(unsigned char key, int x, int y) {
 	triforce->normalKeys(key, x, y);
 }
 
-void initGlut()
+void gameInit()
 {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-	glutCreateWindow("Block-Game");
+	glutCreateWindow("<^> TRIFORCE <^>");
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(normalKeys);
 	glutSpecialFunc(specialKeys);
@@ -44,7 +44,7 @@ int main(int argc,char** argv)
 {
 	glutInit(&argc, argv);
 		
-	initGlut();
+	gameInit();
 	triforce = new Triforce();
 	glutMainLoop(); // never returns!
 }

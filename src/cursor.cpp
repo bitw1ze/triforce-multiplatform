@@ -45,7 +45,6 @@ void Cursor::moveUp(bool doDraw) {
 		if (doDraw)
 			draw(0);
 	}
-	printf("row: %d\ntoprow: %d\n", row, grid->getTopRow());
 }
 
 void Cursor::setPos(int c, int r) {
@@ -58,9 +57,8 @@ void Cursor::shiftRow() {
 	if (row < grid->getTopRow())
 		++row;
 	else if (row == nrows - 1)
-		this->setPos(getCol(), grid->getTopRow());
+		setPos(getCol(), grid->getTopRow());
 	else
-		this->setPos(getCol(), grid->getTopRow()+1);
+		setPos(getCol(), grid->getTopRow()+1);
 	
-	printf("row: %d\ntoprow: %d\n", row, grid->getTopRow());
 }
