@@ -78,6 +78,7 @@ void Grid::swapBlocks() {
 	blocks[r][c2]->setSprite( temp );
 
 	detectCombos(r, c1);
+	detectCombos(r, c2);
 }
 
 void Grid::detectCombos(int r, int c) {
@@ -86,40 +87,88 @@ void Grid::detectCombos(int r, int c) {
 	for (int i=0; i<4; ++i)
 		cells[i].col = cells[i].row = -1;
 
-	cells[0].row = r;
-	cells[0].col = c;
-	left = leftMatch(r, c);
-
-	if (left >= 2) {
-		cells[0].row = r;
-		cells[0].col = c  - left;
-		cells[1].row = r;
+	if ( (left = leftMatch(r, c)) >= 2) {
+		cells[0].row = cells[1].row = r;
+		cells[0].col = c - left;
 		cells[1].col = c;
+	}
+	else if ( (right = rightMatch(r, c)) >= 2) {
+		cells[0].row = cells[1].row = r;
+		cells[0].col = c;
+		cells[1].col = c + right;
+	}
 
+	if ( left >= 2 || right >= 2) {
 		for (int i=cells[0].col; i < cells[1].col; ++i) {
 			up = upMatch(cells[0].row, i);
 			down = downMatch(cells[0].row, i);
 			if (up >= 2 && down > 2) {
+				cells[2].col = cells[3].col = i;
 				cells[2].row = cells[0].row - down;
-				cells[2].col = i;
 				cells[3].row = cells[0].row + up;
-				cells[3].col = i;
+				break;
 			}
 			else if (down >= 2) {
+				cells[2].col = cells[3].col = i;
 				cells[2].row = cells[0].row - down;
-				cells[2].col = i;
+				cells[3].row = cells[0].row;
+				break;
 			}
 			else if (up >= 2) {
+				cells[2].col = cells[3].col = i;
+				cells[2].row = cells[0].row;
 				cells[3].row = cells[0].row + up;
-				cells[3].col = i;
+				break;
 			}
 		}
-		
+
 		for (int i=0; i<4; ++i)
 			printf("(%d, %d) ", cells[i].row, cells[i].col);
 		printf("\n");
+
+		return;
+	}
+	
+	if ( (down = downMatch(r, c)) >= 2 ) {
+		cells[2].col = cells[3].col = c;
+		cells[2].row = r - down;
+		cells[3].row = r;
+	}
+	else if ( (up = upMatch(r, c)) >= 2) {
+		cells[2].col = cells[3].col = c;
+		cells[2].row = r;
+		cells[3].row = r + up;
 	}
 
+	if ( down >= 2 || up >= 2) {
+		for (int i=cells[2].row; i < cells[3].row; ++i) {
+			left = leftMatch(i, cells[2].col);
+			right = rightMatch(i, cells[2].col);
+			if (left >= 2 && right > 2) {
+				cells[0].row = cells[1].row = i;
+				cells[0].col = cells[2].col - left;
+				cells[1].col = cells[2].col + right;
+				break;
+			}
+			else if (left >= 2) {
+				cells[0].row = cells[3].row = i;
+				cells[0].col = cells[2].col - left;
+				cells[1].col = cells[2].col;
+				break;
+			}
+			else if (right >= 2) {
+				cells[0].row = cells[3].row = i;
+				cells[0].col = cells[2].col;
+				cells[1].col = cells[2].col + right;
+				break;
+			}
+		}
+		for (int i=0; i<4; ++i) 
+			printf("(%d, %d) ", cells[i].row, cells[i].col);
+		printf("\n");
+
+		return;
+	}
 }
 
 int Grid::leftMatch(int row, int col) {
