@@ -107,7 +107,6 @@ class CObject //class for a moving object
     CBaseSprite *pSprite; //pointer to sprite
 	CTimer *pTimer;
   public:
-	CBaseSprite *sprite;
     CObject(); //constructor
     void draw(int frame); //draw
     void create(int x1,int y1,int xspeed1,int yspeed1, CBaseSprite *sprite, CTimer *timer); //create instance
@@ -116,11 +115,10 @@ class CObject //class for a moving object
     void move(float x1, float y1); 
     void Setxy(float x1, float y1); 
     void Getxy(float & x1, float & y1);
-	CBaseSprite *getSprite() const { cout << "getSprite(): " << sprite << endl; return sprite; }
+	CBaseSprite *getSprite() const { return pSprite; }
 	void setSprite(CBaseSprite *sprite) { pSprite = sprite; }
-	void init(CBaseSprite *spr, int x1, int y1, int xspeed1,int yspeed1, CTimer *ct) { 
+	void init(CBaseSprite *spr, int x1 = 0, int y1 = 0, int xspeed1 = 0,int yspeed1 = 0, CTimer *ct = NULL) { 
 		create(x1, y1, xspeed1, yspeed1, spr, ct); 
-		sprite = spr;
 		enabled = true;
 	}
 	void offsetX(int _x) { x += (float)_x; }

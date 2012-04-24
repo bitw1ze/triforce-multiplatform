@@ -48,7 +48,7 @@ void Grid::addRow() {
 		/* Randomize the blocks without generating combos */
 		do    ( newBlock = blockSprites[ rand() % nblocktypes ] );
 		while ( leftMatch(0, col) >= 3 || upMatch(0, col) >= 3 );
-		blocks[0][col]->init(newBlock, gridPos.x + col * block_w, gridPos.y, 0, 0, NULL);
+		blocks[0][col]->init(newBlock, gridPos.x + col * block_w, gridPos.y);
 	}
 }
 
