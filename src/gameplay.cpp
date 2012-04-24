@@ -12,7 +12,6 @@ const string GamePlay::blockFiles[] = {
 	"block-yellow.bmp"};
 const string GamePlay::cursorFile = "cursor.bmp";
 
-
 /* GamePlay methods */
 
 GamePlay::GamePlay() { 

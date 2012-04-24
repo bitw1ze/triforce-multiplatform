@@ -16,7 +16,7 @@ Buttons::~Buttons() {
 
 void Buttons::display() {
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
-		if ((*button)->enabled)
+		//if ((*button)->getState() == Block::enabled)
 			(*button)->draw((*button)->getFrameNum());
 }
 
@@ -94,14 +94,14 @@ void Buttons::pressActive() {
 		(*activeBtn)->press();
 	else
 		for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
-			if ((*button)->enabled && (*button)->hovering)
+//			if ((*button)->enabled && (*button)->hovering)
 				(*button)->press();
 }
 
 Buttons::Button * Buttons::getBtnUnderCursor(int x, int y) {
 	float minX, minY, maxX, maxY;
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
-		if ((*button)->enabled)
+		//if ((*button)->enabled)
 		{
 			(*button)->Getxy(minX, minY);
 			maxX = minX + (*button)->sprite->GetWidth();
@@ -129,7 +129,7 @@ void Buttons::clickUp(int x, int y) {
 void Buttons::passiveMouseHover(int x, int y) {
 	float minX, minY, maxX, maxY;
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
-		if ((*button)->enabled)
+		//if ((*button)->enabled)
 		{
 			(*button)->Getxy(minX, minY);
 			maxX = minX + (*button)->sprite->GetWidth();
