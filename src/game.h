@@ -47,6 +47,12 @@ protected:
 	BMPClass background;
 
 public:
+	enum gameState {play, pause, quit, combo, fall};
+	CBaseSprite *blockSprites[nblocktypes],
+	            *cursorSprite,
+				*gridBorderSprite;
+	Grid *grid;
+
 	GamePlay();
 	void display();
 	void composeFrame();
@@ -58,10 +64,8 @@ public:
 	void specialKeys(int key, int x, int y);
 	void normalKeys(unsigned char key, int x, int y);
 
-	CBaseSprite *blockSprites[nblocktypes],
-	            *cursorSprite,
-				*gridBorderSprite;
-	Grid *grid;
+	void changeState(gameState gs);
+	gameState getState();
 };
 
 /* Grid class holds abstracts all the operations on grid of blocks for a 
@@ -108,11 +112,16 @@ public:
    setting the x and y values and setting states */
 
 class Block : public CObject {
+public: enum gameState { enabled, disabled, combo, fall };
+protected:
+	gameState state;
 public:
-	Block() : CObject() { }
-	bool match(const Block *right) { 
-		return getSprite() == right->getSprite() && enabled == right->enabled; 
-	}
+
+	Block() : CObject() { state = enabled; }
+	
+	bool match(const Block *right) const;
+	void changeState(gameState gs);
+	gameState getState() const { return state; }
 };
 
 /* The Cursor class controls the operations on the player's cursor, liie moving

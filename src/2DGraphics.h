@@ -119,7 +119,6 @@ class CObject //class for a moving object
 	void setSprite(CBaseSprite *sprite) { pSprite = sprite; }
 	void init(CBaseSprite *spr, int x1 = 0, int y1 = 0, int xspeed1 = 0,int yspeed1 = 0, CTimer *ct = NULL) { 
 		create(x1, y1, xspeed1, yspeed1, spr, ct); 
-		enabled = true;
 	}
 	void offsetX(int _x) { x += (float)_x; }
 	void offsetY(int _y) { y += (float)_y; }
@@ -128,7 +127,6 @@ class CObject //class for a moving object
 	int getY() { return (int)y; }
 	void setX(int _x) { x = (float)x; }
 	void setY(int _y) { y = (float)y; }
-	bool enabled;
 };
 
 bool BMPSaveFrameBuffer(string fname, int x, int y, int width1, int height1);

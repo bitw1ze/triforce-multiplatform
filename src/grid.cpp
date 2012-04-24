@@ -54,7 +54,7 @@ void Grid::addRow() {
 void Grid::display() {
 	for (deque<Block **>::iterator it = blocks.begin(); it < blocks.end(); ++it)
 		for (int j=0; j<ncols; ++j) 
-			if ((*it)[j]->enabled)
+			if ((*it)[j]->getState() == Block::enabled)
 				(*it)[j]->draw(0);
 	cursor->draw(0);
 }
@@ -63,7 +63,7 @@ void Grid::setCoords() {
 	int i = 0;
 	for (deque<Block **>::iterator it = blocks.begin(); it < blocks.end(); ++it, ++i)
 		for (int j=0; j<ncols; ++j) 
-			if ((*it)[j]->enabled) 
+			if ((*it)[j]->getState() == Block::enabled) 
 				(*it)[j]->setY(gridPos.y - i * block_h);
 }
 
@@ -77,9 +77,9 @@ void Grid::swapBlocks() {
 	blocks[r][c1]->setSprite( blocks[r][c2]->getSprite() );
 	blocks[r][c2]->setSprite( temp );
 
-	bool enabled = blocks[r][c1]->enabled;
-	blocks[r][c1]->enabled = blocks[r][c2]->enabled;
-	blocks[r][c2]->enabled = enabled;
+	Block::gameState status = blocks[r][c1]->getState();
+	blocks[r][c1]->changeState( blocks[r][c2]->getState() );
+	blocks[r][c2]->changeState( status );
 
 	detectCombos(r, c1);
 	detectCombos(r, c2);
@@ -147,12 +147,12 @@ void Grid::killRows(Cell cells[4]) {
 	_row = cells[0].row;
 	if (cells[0].col != -1) {
 		for (_col = cells[0].col; _col <= cells[1].col; ++_col)
-			blocks[_row][_col]->enabled = false;
+			blocks[_row][_col]->changeState( Block::disabled );
 	}
 	_col = cells[2].col;
 	if (cells[2].col != -1) {
 		for (_row = cells[2].row; _row <= cells[3].row; ++_row)
-			blocks[_row][_col]->enabled = false;
+			blocks[_row][_col]->changeState( Block::disabled );
 	}
 }
 
