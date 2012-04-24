@@ -99,9 +99,10 @@ void Grid::detectCombos(int r, int c) {
 		cells[0].col = c - left;
 		cells[1].col = c + right;
 
-		for (int i=cells[0].col; i < cells[1].col; ++i) {
+		for (int i=cells[0].col; i <= cells[1].col; ++i) {
 			up = upMatch(cells[0].row, i);
 			down = downMatch(cells[0].row, i);
+			printf("up+down = %d + %d\n", up, down);
 			if (up + down >= 2) {
 				cells[2].col = cells[3].col = i;
 				cells[2].row = cells[0].row - down;
@@ -120,7 +121,7 @@ void Grid::detectCombos(int r, int c) {
 			cells[2].row = r - down;
 			cells[3].row = r + up;
 
-			for (int i=cells[2].row; i < cells[3].row; ++i) {
+			for (int i=cells[2].row; i <= cells[3].row; ++i) {
 				left = leftMatch(i, cells[2].col);
 				right = rightMatch(i, cells[2].col);
 				if (left + right >= 2) {

@@ -42,7 +42,7 @@ void GamePlay::processFrame()
 
 void GamePlay::composeFrame()
 {
-	if (mainTimer->elapsed(last_pushtime, 500)) {
+	if (mainTimer->elapsed(last_pushtime, 200)) {
 		grid->pushRow();
 		last_pushtime = mainTimer->time();
 	}
