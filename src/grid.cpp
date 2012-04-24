@@ -46,9 +46,8 @@ void Grid::addRow() {
 		combo = false;
 		CBaseSprite *newBlock = NULL;
 		/* Randomize the blocks without generating combos */
-		do {
-			newBlock = blockSprites[ rand() % nblocktypes ];
-		} while (leftMatch(newBlock, 0, col) >= 3 || upMatch(newBlock, 0, col) >= 3);
+		do    ( newBlock = blockSprites[ rand() % nblocktypes ] );
+		while ( leftMatch(newBlock, 0, col) >= 3 || upMatch(newBlock, 0, col) >= 3 );
 		blocks[0][col]->create(grid_x + col * block_w, grid_y, 0, 0, newBlock);
 	}
 }
