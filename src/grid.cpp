@@ -74,21 +74,15 @@ void Grid::swapBlocks() {
 	c2 = c1 + 1;
 	r = cursor->getRow();
 
-	Block *temp = blocks[r][c1];
-	blocks[r][c1] = blocks[r][c2];
-	blocks[r][c2] = temp;
+	CBaseSprite *temp = blocks[r][c1]->getSprite();
+	blocks[r][c1]->setSprite( blocks[r][c2]->getSprite() );
+	blocks[r][c2]->setSprite( temp );
 
-	blocks[r][c1]->setX(getX() + c1 * 48);
-	blocks[r][c2]->setX(getX() + c2 * 48);
-	blocks[r][c1]->draw(0);
-	blocks[r][c2]->draw(0);
-
-	checkMatches(r, c1);
+	//checkMatches(r, c1);
 }
 
 void Grid::checkMatches(int r, int c) {
-	int left, right, up, down;
-	
+	//int left, right, up, down;
 }
 
 int Grid::leftMatch(int row, int col) {
