@@ -77,6 +77,10 @@ void Grid::swapBlocks() {
 	blocks[r][c1]->setSprite( blocks[r][c2]->getSprite() );
 	blocks[r][c2]->setSprite( temp );
 
+	bool enabled = blocks[r][c1]->enabled;
+	blocks[r][c1]->enabled = blocks[r][c2]->enabled;
+	blocks[r][c2]->enabled = enabled;
+
 	detectCombos(r, c1);
 	detectCombos(r, c2);
 }
@@ -87,87 +91,67 @@ void Grid::detectCombos(int r, int c) {
 	for (int i=0; i<4; ++i)
 		cells[i].col = cells[i].row = -1;
 
-	if ( (left = leftMatch(r, c)) >= 2) {
+	left = leftMatch(r, c);
+	right = rightMatch(r, c);
+
+	if ( left + right >= 2) {
 		cells[0].row = cells[1].row = r;
 		cells[0].col = c - left;
-		cells[1].col = c;
-	}
-	else if ( (right = rightMatch(r, c)) >= 2) {
-		cells[0].row = cells[1].row = r;
-		cells[0].col = c;
 		cells[1].col = c + right;
-	}
 
-	if ( left >= 2 || right >= 2) {
 		for (int i=cells[0].col; i < cells[1].col; ++i) {
 			up = upMatch(cells[0].row, i);
 			down = downMatch(cells[0].row, i);
-			if (up >= 2 && down > 2) {
+			if (up + down > 2) {
 				cells[2].col = cells[3].col = i;
 				cells[2].row = cells[0].row - down;
 				cells[3].row = cells[0].row + up;
 				break;
 			}
-			else if (down >= 2) {
-				cells[2].col = cells[3].col = i;
-				cells[2].row = cells[0].row - down;
-				cells[3].row = cells[0].row;
-				break;
-			}
-			else if (up >= 2) {
-				cells[2].col = cells[3].col = i;
-				cells[2].row = cells[0].row;
-				cells[3].row = cells[0].row + up;
-				break;
-			}
 		}
 
-		for (int i=0; i<4; ++i)
-			printf("(%d, %d) ", cells[i].row, cells[i].col);
-		printf("\n");
+		killRows(cells);
+	}
+	else {
+		down = downMatch(r, c);
+		up = upMatch(r, c);
+		if ( up + down >= 2) {
+			cells[2].col = cells[3].col = c;
+			cells[2].row = r - down;
+			cells[3].row = r + up;
 
-		return;
-	}
-	
-	if ( (down = downMatch(r, c)) >= 2 ) {
-		cells[2].col = cells[3].col = c;
-		cells[2].row = r - down;
-		cells[3].row = r;
-	}
-	else if ( (up = upMatch(r, c)) >= 2) {
-		cells[2].col = cells[3].col = c;
-		cells[2].row = r;
-		cells[3].row = r + up;
-	}
-
-	if ( down >= 2 || up >= 2) {
-		for (int i=cells[2].row; i < cells[3].row; ++i) {
-			left = leftMatch(i, cells[2].col);
-			right = rightMatch(i, cells[2].col);
-			if (left >= 2 && right > 2) {
-				cells[0].row = cells[1].row = i;
-				cells[0].col = cells[2].col - left;
-				cells[1].col = cells[2].col + right;
-				break;
+			for (int i=cells[2].row; i < cells[3].row; ++i) {
+				left = leftMatch(i, cells[2].col);
+				right = rightMatch(i, cells[2].col);
+				if (left + right > 2) {
+					cells[0].row = cells[1].row = i;
+					cells[0].col = cells[2].col - left;
+					cells[1].col = cells[2].col + right;
+					break;
+				}
 			}
-			else if (left >= 2) {
-				cells[0].row = cells[3].row = i;
-				cells[0].col = cells[2].col - left;
-				cells[1].col = cells[2].col;
-				break;
-			}
-			else if (right >= 2) {
-				cells[0].row = cells[3].row = i;
-				cells[0].col = cells[2].col;
-				cells[1].col = cells[2].col + right;
-				break;
-			}
+		
+			killRows(cells);
 		}
-		for (int i=0; i<4; ++i) 
-			printf("(%d, %d) ", cells[i].row, cells[i].col);
-		printf("\n");
+	}
+}
 
-		return;
+void Grid::killRows(Cell cells[4]) {
+	int _row, _col;
+
+	for (int i=0; i<4; ++i) 
+		printf("(%d, %d) ", cells[i].row, cells[i].col);
+	printf("\n");
+
+	_row = cells[0].row;
+	if (cells[0].col != -1) {
+		for (_col = cells[0].col; _col <= cells[1].col; ++_col)
+			blocks[_row][_col]->enabled = false;
+	}
+	_col = cells[2].col;
+	if (cells[2].col != -1) {
+		for (_row = cells[2].row; _row <= cells[3].row; ++_row)
+			blocks[_row][_col]->enabled = false;
 	}
 }
 

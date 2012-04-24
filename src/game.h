@@ -90,6 +90,7 @@ public:
 	int leftMatch(int row, int col);
 	int rightMatch(int row, int col);
 	void detectCombos(int r, int c);
+	void killRows(Cell cells[4]);
 
 	/* set/get properties */
 	int getX() { return gridPos.x; }
@@ -107,7 +108,9 @@ public:
 class Block : public CObject {
 public:
 	Block() : CObject() { }
-	bool match(const Block *right) { return getSprite() == right->getSprite(); }
+	bool match(const Block *right) { 
+		return getSprite() == right->getSprite() && enabled == right->enabled; 
+	}
 };
 
 /* The Cursor class controls the operations on the player's cursor, liie moving
