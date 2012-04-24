@@ -139,11 +139,20 @@ void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
 				menuButtons->clickUp(x, y);
 		}
 	}
+	else if (state == play)
+	{
+		switch (button) {
+		case GLUT_LEFT_BUTTON:
+			if (mouseState == GLUT_UP)
+				gamePlay->grid->swapBlocks();
+		}
+	}
 }
 
 void Triforce::mousePassiveMotion(int x, int y) {
 	if (state == menu)
-	{
 		menuButtons->passiveMouseHover(x, y);
+	else if (state == play)
+	{
 	}
 }
