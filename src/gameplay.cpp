@@ -23,7 +23,7 @@ GamePlay::GamePlay() {
 
 	srand(time(NULL));
 	loadImages(); 
-	grid = new Grid(this, cursorSprite);
+	grid = new Grid(this);
 }
 
 void GamePlay::display() {

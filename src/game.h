@@ -73,7 +73,7 @@ protected:
 	CBaseSprite** blockSprites;
 
 public:
-	Grid(GamePlay *ge, CBaseSprite *cursorSprite);
+	Grid(GamePlay *ge);
 	virtual ~Grid();
 	void pushRow();
 	void addRow();
@@ -103,7 +103,7 @@ public:
 class Block : public CObject {
 public:
 	Block() : CObject() { }
-	bool match(const Block &right) { cout << getSprite() << " " << right.getSprite() << endl; return getSprite() == right.getSprite(); }
+	bool match(const Block *right) { cout << getSprite() << " " << right->getSprite() << endl; return getSprite() == right->getSprite(); }
 };
 
 /* The Cursor class controls the operations on the player's cursor, liie moving

@@ -1,7 +1,7 @@
 #include "game.h"
 
 /* Grid methods */
-Grid::Grid(GamePlay *ge, CBaseSprite *cursorSprite) {
+Grid::Grid(GamePlay *ge) {
 	gamePlay = ge;
 	blockSprites = ge->blockSprites;
 	block_w = blockSprites[0]->GetWidth();
@@ -10,7 +10,7 @@ Grid::Grid(GamePlay *ge, CBaseSprite *cursorSprite) {
 	grid_yoff = 0;
 	gridPos.x = ge->getWidth()/2 - (block_w * ncols)/2;
 	gridPos.y = ge->getHeight() - (block_h * 2);
-	cursor = new Cursor(this, cursorSprite);
+	cursor = new Cursor(this, ge->cursorSprite);
 
 	for (int row=0; row< nrows/2 * 12; ++row) {
 		pushRow();
@@ -44,11 +44,10 @@ void Grid::addRow() {
 		blocks[0][col] = new Block();
 
 		combo = false;
-		CBaseSprite *newBlock = NULL;
 		/* Randomize the blocks without generating combos */
-		do    ( newBlock = blockSprites[ rand() % nblocktypes ] );
+		do    ( blocks[0][col]->init(blockSprites[ rand() % nblocktypes ], gridPos.x + col * block_w, gridPos.y) );
 		while ( leftMatch(0, col) >= 3 || upMatch(0, col) >= 3 );
-		blocks[0][col]->init(newBlock, gridPos.x + col * block_w, gridPos.y);
+		
 	}
 }
 
@@ -92,7 +91,7 @@ int Grid::leftMatch(int row, int col) {
 		return matches;
 	
 	for (int c=col-1; c >= 0; --c) {
-		if (blocks[row][c]->match(*blocks[row][col])) 
+		if (blocks[row][c]->match(blocks[row][col])) 
 			++matches;
 		else
 			break;
@@ -108,7 +107,7 @@ int Grid::rightMatch(int row, int col) {
 		return matches;
 
 	for (int c=col+1; c < ncols; ++c) {
-		if (blocks[row][c]->match(*blocks[row][col])) 
+		if (blocks[row][c]->match(blocks[row][col])) 
 			++matches;
 		else
 			break;
@@ -125,7 +124,7 @@ int Grid::upMatch(int row, int col) {
 		return matches;
 
 	for (int r=row+1; r<=getTopRow(); ++r) {
-		if (blocks[r][col]->match(*blocks[row][col]))
+		if (blocks[r][col]->match(blocks[row][col]))
 			++matches;
 		else
 			break;
@@ -141,7 +140,7 @@ int Grid::downMatch(int row, int col) {
 		return matches;
 
 	for (int r=row-1; r>=0; --r) {
-		if (blocks[r][col]->match(*blocks[row][col]))
+		if (blocks[r][col]->match(blocks[row][col]))
 			++matches;
 		else
 			break;
