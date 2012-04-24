@@ -15,7 +15,7 @@ Triforce *triforce;
 CTimer *mainTimer;
 
 void reshape2(int w, int h) {
-	if (w != screen_w && h != screen_h) {
+	if (w != screen_w || h != screen_h) {
 		glutReshapeWindow(screen_w, screen_h);
 	}
 	reshape(w, h);
