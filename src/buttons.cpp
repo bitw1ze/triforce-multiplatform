@@ -56,18 +56,26 @@ void Buttons::add(void *classInstance, int actionArg,
 }
 
 void Buttons::hoverPrev() {
-	unhoverAll();
+	if (!(*activeBtn)->hovering) // currently hovering button is better than activeBtn
+		for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
+			if ((*button)->hovering)
+				activeBtn = button;
 	if (activeBtn == buttons.begin())
 		activeBtn = buttons.end();
 	--activeBtn;
+	unhoverAll();
 	(*activeBtn)->hover();
 }
 
 void Buttons::hoverNext() {
-	unhoverAll();
+	if (!(*activeBtn)->hovering) // currently hovering button is better than activeBtn
+		for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
+			if ((*button)->hovering)
+				activeBtn = button;
 	++activeBtn;
 	if (activeBtn == buttons.end())
 		activeBtn = buttons.begin();
+	unhoverAll();
 	(*activeBtn)->hover();
 }
 
@@ -90,7 +98,7 @@ void Buttons::pressActive() {
 				(*button)->press();
 }
 
-Buttons::Button * Buttons::whichBtnClicked(int x, int y) {
+Buttons::Button * Buttons::getBtnUnderCursor(int x, int y) {
 	float minX, minY, maxX, maxY;
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 		if ((*button)->enabled)
@@ -105,7 +113,7 @@ Buttons::Button * Buttons::whichBtnClicked(int x, int y) {
 }
 
 void Buttons::clickDown(int x, int y) {
-	Button * button = whichBtnClicked(x, y);
+	Button * button = getBtnUnderCursor(x, y);
 	if (button)
 		button->pressing = true;
 }
@@ -113,7 +121,7 @@ void Buttons::clickDown(int x, int y) {
 void Buttons::clickUp(int x, int y) {
 	// disable pressing for all, since we don't necessarily know which was clicked down on
 	unpressAll();
-	Button * button = whichBtnClicked(x, y);
+	Button * button = getBtnUnderCursor(x, y);
 	if (button)
 		button->press(); // mouse is still on btn; take action
 }

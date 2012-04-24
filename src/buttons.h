@@ -35,7 +35,7 @@ protected:
 	typedef list<Button *> Btns_t;
 	typedef Btns_t::iterator BtnIter_t;
 	Btns_t buttons;
-	BtnIter_t activeBtn; // button hilighted by keyboard
+	BtnIter_t activeBtn; // button selected by keyboard (could be unhilighted and still active)
 
 	int r, g, b, // KISS: same color filters to be used by every button
 		vpWidth, vpHeight,
@@ -53,7 +53,7 @@ public:
 	void unhoverAll();
 	void unpressAll();
 	void pressActive();
-	Button * whichBtnClicked(int x, int y);
+	Button * getBtnUnderCursor(int x, int y);
 	void clickDown(int x, int y);
 	void clickUp(int x, int y);
 	void passiveMouseHover(int x, int y);
