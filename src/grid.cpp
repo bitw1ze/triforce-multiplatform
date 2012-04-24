@@ -46,7 +46,7 @@ void Grid::addRow() {
 		combo = false;
 		/* Randomize the blocks without generating combos */
 		do    ( blocks[0][col]->init(blockSprites[ rand() % nblocktypes ], gridPos.x + col * block_w, gridPos.y) );
-		while ( leftMatch(0, col) >= 3 || upMatch(0, col) >= 3 );
+		while ( leftMatch(0, col) >= 2 || upMatch(0, col) >= 2 );
 		
 	}
 }
@@ -77,15 +77,53 @@ void Grid::swapBlocks() {
 	blocks[r][c1]->setSprite( blocks[r][c2]->getSprite() );
 	blocks[r][c2]->setSprite( temp );
 
-	//checkMatches(r, c1);
+	detectCombos(r, c1);
 }
 
-void Grid::checkMatches(int r, int c) {
-	//int left, right, up, down;
+void Grid::detectCombos(int r, int c) {
+	int left, right, up, down;
+	Cell cells[4];
+	for (int i=0; i<4; ++i)
+		cells[i].col = cells[i].row = -1;
+
+	cells[0].row = r;
+	cells[0].col = c;
+	left = leftMatch(r, c);
+
+	if (left >= 2) {
+		cells[0].row = r;
+		cells[0].col = c  - left;
+		cells[1].row = r;
+		cells[1].col = c;
+
+		for (int i=cells[0].col; i < cells[1].col; ++i) {
+			up = upMatch(cells[0].row, i);
+			down = downMatch(cells[0].row, i);
+			if (up >= 2 && down > 2) {
+				cells[2].row = cells[0].row - down;
+				cells[2].col = i;
+				cells[3].row = cells[0].row + up;
+				cells[3].col = i;
+			}
+			else if (down >= 2) {
+				cells[2].row = cells[0].row - down;
+				cells[2].col = i;
+			}
+			else if (up >= 2) {
+				cells[3].row = cells[0].row + up;
+				cells[3].col = i;
+			}
+		}
+		
+		for (int i=0; i<4; ++i)
+			printf("(%d, %d) ", cells[i].row, cells[i].col);
+		printf("\n");
+	}
+
 }
 
 int Grid::leftMatch(int row, int col) {
-	int matches = 1;
+	int matches = 0;
 
 	if (col <= 0)
 		return matches;
@@ -101,7 +139,7 @@ int Grid::leftMatch(int row, int col) {
 }
 
 int Grid::rightMatch(int row, int col) {
-	int matches = 1;
+	int matches = 0;
 
 	if (col >= ncols - 1)
 		return matches;
@@ -118,7 +156,7 @@ int Grid::rightMatch(int row, int col) {
 
 
 int Grid::upMatch(int row, int col) {
-	int matches = 1;
+	int matches = 0;
 
 	if (row == getTopRow())
 		return matches;
@@ -134,7 +172,7 @@ int Grid::upMatch(int row, int col) {
 }
 
 int Grid::downMatch(int row, int col) {
-	int matches = 1;
+	int matches = 0;
 
 	if (row <= 0)
 		return matches;
