@@ -3,7 +3,8 @@
 using namespace std;
 
 // function declarations
-extern void reshape(int x, int y);
+extern void reshape(int, int);
+void reshape2(int w, int h);
 void specialKeys(int key, int x, int y);
 void normalKeys(unsigned char key, int x, int y);
 void display();
@@ -12,6 +13,13 @@ void initGlut();
 // globals
 Triforce *triforce;
 CTimer *mainTimer;
+
+void reshape2(int w, int h) {
+	if (w != screen_w && h != screen_h) {
+		glutReshapeWindow(screen_w, screen_h);
+	}
+	reshape(w, h);
+}
 
 void display()
 {
@@ -38,7 +46,7 @@ void initGlut()
 {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutCreateWindow("<^> TRIFORCE <^>");
-	glutReshapeFunc(reshape);
+	glutReshapeFunc(reshape2);
 	glutMouseFunc(mouseButtons);
 	glutPassiveMotionFunc(mousePassiveMotion);
 	glutKeyboardFunc(normalKeys);
