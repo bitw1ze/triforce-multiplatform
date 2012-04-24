@@ -5,7 +5,6 @@ using namespace GObjLib;
 void GObject::create(int x1,int y1,int xspeed1,int yspeed1, CBaseSprite *spr) { 
 	__super::create(x1, y1, xspeed1, yspeed1, spr, NULL); 
 	enabled = true;
-	sprite = spr;
 }
 
 void GObject::offsetX(int x) {
@@ -21,9 +20,5 @@ void GObject::offsetXY(int x, int y) {
 }
 
 bool GObject::match(const GObject &right) const {
-	return ( sprite == right.sprite );
-}
-
-bool GObject::match(const CBaseSprite *right) const {
-	return ( sprite == right );
+	return ( getSprite() == right.getSprite() );
 }

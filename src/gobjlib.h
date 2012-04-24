@@ -3,8 +3,6 @@
 
 namespace GObjLib {
 	class GObject : public CObject {
-	protected:
-		CBaseSprite *sprite;
 	
 	public:
 		bool enabled;

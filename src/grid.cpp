@@ -47,7 +47,7 @@ void Grid::addRow() {
 		CBaseSprite *newBlock = NULL;
 		/* Randomize the blocks without generating combos */
 		do    ( newBlock = blockSprites[ rand() % nblocktypes ] );
-		while ( leftMatch(newBlock, 0, col) >= 3 || upMatch(newBlock, 0, col) >= 3 );
+		while ( leftMatch(0, col) >= 3 || upMatch(0, col) >= 3 );
 		blocks[0][col]->create(gridPos.x + col * block_w, gridPos.y, 0, 0, newBlock);
 	}
 }
@@ -82,16 +82,23 @@ void Grid::swapBlocks() {
 	blocks[r][c2]->setX(getX() + c2 * 48);
 	blocks[r][c1]->draw(0);
 	blocks[r][c2]->draw(0);
+
+	checkMatches(r, c1);
 }
 
-int Grid::leftMatch(CBaseSprite *block, int row, int col) {
+void Grid::checkMatches(int r, int c) {
+	int left, right, up, down;
+	
+}
+
+int Grid::leftMatch(int row, int col) {
 	int matches = 1;
 
 	if (col <= 0)
 		return matches;
 	
 	for (int c=col-1; c >= 0; --c) {
-		if (blocks[row][c]->match(block)) 
+		if (blocks[row][c]->match(*blocks[row][col])) 
 			++matches;
 		else
 			break;
@@ -100,14 +107,14 @@ int Grid::leftMatch(CBaseSprite *block, int row, int col) {
 	return matches;
 }
 
-int Grid::rightMatch(CBaseSprite *block, int row, int col) {
+int Grid::rightMatch(int row, int col) {
 	int matches = 1;
 
 	if (col >= ncols - 1)
 		return matches;
 
 	for (int c=col+1; c < ncols; ++c) {
-		if (blocks[row][c]->match(block)) 
+		if (blocks[row][c]->match(*blocks[row][col])) 
 			++matches;
 		else
 			break;
@@ -117,14 +124,14 @@ int Grid::rightMatch(CBaseSprite *block, int row, int col) {
 }
 
 
-int Grid::upMatch(CBaseSprite *block, int row, int col) {
+int Grid::upMatch(int row, int col) {
 	int matches = 1;
 
 	if (row == getTopRow())
 		return matches;
 
 	for (int r=row+1; r<=getTopRow(); ++r) {
-		if (blocks[r][col]->match(block))
+		if (blocks[r][col]->match(*blocks[row][col]))
 			++matches;
 		else
 			break;
@@ -133,14 +140,14 @@ int Grid::upMatch(CBaseSprite *block, int row, int col) {
 	return matches;
 }
 
-int Grid::downMatch(CBaseSprite *block, int row, int col) {
+int Grid::downMatch(int row, int col) {
 	int matches = 1;
 
 	if (row <= 0)
 		return matches;
 
 	for (int r=row-1; r>=0; --r) {
-		if (blocks[r][col]->match(block))
+		if (blocks[r][col]->match(*blocks[row][col]))
 			++matches;
 		else
 			break;

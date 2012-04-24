@@ -82,10 +82,10 @@ public:
 	void display();
 	void setCoords();
 	void swapBlocks();
-	int downMatch(CBaseSprite *block, int row, int col);
-	int upMatch(CBaseSprite *block, int row, int col);
-	int leftMatch(CBaseSprite *block, int row, int col);
-	int rightMatch(CBaseSprite *block, int row, int col);
+	int downMatch(int row, int col);
+	int upMatch(int row, int col);
+	int leftMatch(int row, int col);
+	int rightMatch(int row, int col);
 
 	/* set/get properties */
 	int getX() { return gridPos.x; }
@@ -93,6 +93,7 @@ public:
 	int getBlockWidth() { return block_w; }
 	int getBlockHeight() { return block_h; }
 	int getTopRow() { return blocks.size() - 1; }
+	void checkMatches(int r, int c);
 
 	Cursor *cursor;
 };
