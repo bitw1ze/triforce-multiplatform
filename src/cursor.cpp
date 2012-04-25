@@ -78,6 +78,7 @@ void Cursor::passiveMouseHover(int x, int y) {
 		return;
 	}
 
+	// move cursor inside grid
 	glutSetCursor(GLUT_CURSOR_LEFT_SIDE);
 	if (getX() + 2*cursor_delta - x_threshold*cursor_delta < x)
 		do
