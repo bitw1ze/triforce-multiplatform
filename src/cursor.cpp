@@ -66,14 +66,19 @@ void Cursor::passiveMouseHover(int x, int y) {
 	static const float y_threshold = 0,
 	                   x_threshold = 0.48;
 
-	// hide/set cursor type
-	static const int margin = 1; // number of blocks away from cursor to hide mouse
-	if (getX() - margin*cursor_delta < x && getX() + (margin+2)*cursor_delta > x
-		&& getY() - margin*cursor_delta < y && getY() + (margin+2)*cursor_delta > y)
-		glutSetCursor(GLUT_CURSOR_NONE);
-	else
+	// set cursor type, and see if cursor is even inside the grid
+	if (!(x > grid->getX() && x < grid->getX() + ncols*grid->getBlockWidth()))
+	{
 		glutSetCursor(GLUT_CURSOR_INHERIT);
+		return;
+	}
+	if (y > grid->getY() || y < grid->getY() - (nrows-1)*grid->getBlockHeight())
+	{
+		glutSetCursor(GLUT_CURSOR_INHERIT);
+		return;
+	}
 
+	glutSetCursor(GLUT_CURSOR_LEFT_SIDE);
 	if (getX() + 2*cursor_delta - x_threshold*cursor_delta < x)
 		do
 			moveRight();
