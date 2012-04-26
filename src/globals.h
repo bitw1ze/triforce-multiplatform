@@ -12,7 +12,7 @@ namespace Globals {
 	const uint32
 		screen_w		= 1024,
 		screen_h		= 768,
-		nrows			= 13,
+		nrows			= 12,
 		ncols			= 6,
 		nblocktypes		= 7;
 	const string themeDirectory = "themes\\classic\\";

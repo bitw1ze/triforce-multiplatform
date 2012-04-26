@@ -67,12 +67,12 @@ void Cursor::passiveMouseHover(int x, int y) {
 	                   x_threshold = 0.48;
 
 	// set cursor type, and see if cursor is even inside the grid
-	if (!(x > grid->getX() && x < grid->getX() + ncols*grid->getBlockWidth()))
+	if (!(x > grid->getX() && x < grid->getX() + (int)ncols*grid->getBlockWidth()))
 	{
 		glutSetCursor(GLUT_CURSOR_INHERIT);
 		return;
 	}
-	if (y > grid->getY() || y < grid->getY() - (nrows-1)*grid->getBlockHeight())
+	if (y > grid->getY() || y < grid->getY() - (int)(nrows-1)*grid->getBlockHeight())
 	{
 		glutSetCursor(GLUT_CURSOR_INHERIT);
 		return;

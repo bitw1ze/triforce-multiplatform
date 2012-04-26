@@ -7,3 +7,13 @@ bool Block::match(const Block *right) const {
 void Block::changeState(gameState gs) {
 	state = gs;
 }
+
+void Block::swap(Block &right) {
+	CBaseSprite *temp = getSprite();
+	setSprite( right.getSprite() );
+	right.setSprite( temp );
+
+	gameState status = getState();
+	changeState( right.getState() );
+	right.changeState( status );
+}

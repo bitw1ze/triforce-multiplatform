@@ -95,8 +95,8 @@ public:
 	int upMatch(int row, int col);
 	int leftMatch(int row, int col);
 	int rightMatch(int row, int col);
-	void detectCombos(int r, int c);
-	void killRows(Cell cells[4]);
+	Cell *detectCombos(int r, int c);
+	void onCombo(Cell cells[4]);
 
 	/* set/get properties */
 	int getX() { return gridPos.x; }
@@ -120,6 +120,7 @@ public:
 	Block() : CObject() { state = enabled; }
 	
 	bool match(const Block *right) const;
+	void swap(Block &right);
 	void changeState(gameState gs);
 	gameState getState() const { return state; }
 };
