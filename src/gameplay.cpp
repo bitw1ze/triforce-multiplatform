@@ -9,7 +9,8 @@
 
 // Constants
 const string GamePlay::bgFile = "bg.bmp";
-const string GamePlay::gridBorderFile = "gridborder.bmp";
+//const string GamePlay::gridBorderFile = "gridborder.bmp";
+const string GamePlay::gridBorderFile = "gridbordernew.bmp";
 const string GamePlay::blockFiles[] = {
 	"block-blue.bmp",
 	"block-green.bmp",
@@ -37,8 +38,8 @@ void GamePlay::display() {
 	background.drawGLbackground ();
 
 	grid->display();
-    gridBorderSprite->draw(0, grid->getX() - 6,
-	                       grid->getY() - 12 - (grid->getBlockHeight() * (nrows)));
+    gridBorderSprite->draw(0, grid->getX() - 21,
+	                       grid->getY() - 30 - (grid->getBlockHeight() * (nrows)));
 	glutSwapBuffers();
 }
 
