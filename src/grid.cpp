@@ -1,6 +1,3 @@
-/*	grid.cpp
-	by Gabe Pike */
-
 #include "game.h"
 
 /*	TODOs: 
