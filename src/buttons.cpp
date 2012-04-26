@@ -16,8 +16,7 @@ Buttons::~Buttons() {
 
 void Buttons::display() {
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
-		//if ((*button)->getState() == Block::enabled)
-			(*button)->draw((*button)->getFrameNum());
+		(*button)->draw((*button)->getFrameNum());
 }
 
 /**
@@ -49,34 +48,34 @@ void Buttons::add(void *classInstance, int actionArg,
 	{
 		b->hover();
 		buttons.push_back(b);
-		activeBtn = buttons.begin();
+		currentBtn = buttons.begin();
 	}
 	else
 		buttons.push_back(b);
 }
 
 void Buttons::hoverPrev() {
-	if (!(*activeBtn)->hovering) // currently hovering button is better than activeBtn
+	if (!(*currentBtn)->hovering) // prefer to use a hovering button over the currentBtn
 		for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 			if ((*button)->hovering)
-				activeBtn = button;
-	if (activeBtn == buttons.begin())
-		activeBtn = buttons.end();
-	--activeBtn;
+				currentBtn = button;
+	if (currentBtn == buttons.begin())
+		currentBtn = buttons.end();
+	--currentBtn;
 	unhoverAll();
-	(*activeBtn)->hover();
+	(*currentBtn)->hover();
 }
 
 void Buttons::hoverNext() {
-	if (!(*activeBtn)->hovering) // currently hovering button is better than activeBtn
+	if (!(*currentBtn)->hovering) // prefer to use a hovering button over the currentBtn
 		for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 			if ((*button)->hovering)
-				activeBtn = button;
-	++activeBtn;
-	if (activeBtn == buttons.end())
-		activeBtn = buttons.begin();
+				currentBtn = button;
+	++currentBtn;
+	if (currentBtn == buttons.end())
+		currentBtn = buttons.begin();
 	unhoverAll();
-	(*activeBtn)->hover();
+	(*currentBtn)->hover();
 }
 
 void Buttons::unhoverAll() {
@@ -90,18 +89,16 @@ void Buttons::unpressAll() {
 }
 
 void Buttons::pressActive() {
-	if ((*activeBtn)->hovering)
-		(*activeBtn)->press();
+	if ((*currentBtn)->hovering)
+		(*currentBtn)->activate();
 	else
 		for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
-//			if ((*button)->enabled && (*button)->hovering)
-				(*button)->press();
+			(*button)->activate();
 }
 
 Buttons::Button * Buttons::getBtnUnderCursor(int x, int y) {
 	float minX, minY, maxX, maxY;
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
-		//if ((*button)->enabled)
 		{
 			(*button)->Getxy(minX, minY);
 			maxX = minX + (*button)->sprite->GetWidth();
@@ -122,14 +119,13 @@ void Buttons::clickUp(int x, int y) {
 	// disable pressing for all, since we don't necessarily know which was clicked down on
 	unpressAll();
 	Button * button = getBtnUnderCursor(x, y);
-	if (button)
-		button->press(); // mouse is still on btn; take action
+	if (button && button->hovering)
+		button->activate(); // mouse is still on btn; take action
 }
 
 void Buttons::passiveMouseHover(int x, int y) {
 	float minX, minY, maxX, maxY;
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
-		//if ((*button)->enabled)
 		{
 			(*button)->Getxy(minX, minY);
 			maxX = minX + (*button)->sprite->GetWidth();
@@ -156,12 +152,12 @@ void Buttons::Button::hover() {
 	hovering = true;
 }
 
-void Buttons::Button::press() {
+void Buttons::Button::activate() {
 	action(actionClassInstance, actionArg);
 }
 
 int Buttons::Button::getFrameNum() const {
-	if (pressing) // pressing state takes precedence
+	if (pressing) // pressing state takes precedence over hovering
 		return 2;
 	else if (hovering)
 		return 1;

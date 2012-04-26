@@ -26,7 +26,7 @@ protected:
 		CBaseSprite * sprite; // a *public* alias to the sprite ptr used by CObject
 		void unhover();
 		void hover();
-		void press();
+		void activate();
 		void display();
 		int getFrameNum() const;
 	};
@@ -34,7 +34,7 @@ protected:
 	typedef list<Button *> Btns_t;
 	typedef Btns_t::iterator BtnIter_t;
 	Btns_t buttons;
-	BtnIter_t activeBtn; // button selected by keyboard (could be unhilighted and still active)
+	BtnIter_t currentBtn; // button selected by keyboard (could be unhilighted and still active)
 
 	int r, g, b, // KISS: same color filters to be used by every button
 		vpWidth, vpHeight,
