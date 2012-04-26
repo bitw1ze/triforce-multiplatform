@@ -1,3 +1,10 @@
+/*	gameplay.cpp
+	by Gabe Pike
+	Changes:
+		- handed off control of pushing new rows onto the grid to grid.cpp
+		- now displays a border around the grid
+*/
+
 #include "game.h"
 
 // Constants

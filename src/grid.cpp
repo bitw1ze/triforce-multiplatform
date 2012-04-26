@@ -1,3 +1,12 @@
+/*	grid.cpp
+	by Gabe Pike
+	Changes:
+		- added game states to the grid
+		- detect combos and break blocks when a combo is found
+		- added destructor
+		- documented all the methods
+*/
+
 #include "game.h"
 
 /*	TODOs: 

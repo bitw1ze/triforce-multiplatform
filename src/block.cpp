@@ -1,3 +1,11 @@
+/*	block.cpp
+	by Gabe Pike
+	Changes:
+		- Blocks now keep track of their own state
+		- Put the swap function in Block
+		- Block now handles its own display function based on states
+*/
+
 #include "game.h"
 
 Block::Block() : CObject() {

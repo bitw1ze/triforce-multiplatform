@@ -1,3 +1,9 @@
+/*	main.cpp
+	by Gabe Pike
+	Changes:
+		- window resolution is now forced
+*/
+
 #include "triforce.h"
 
 using namespace std;

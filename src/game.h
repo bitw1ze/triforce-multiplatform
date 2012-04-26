@@ -1,3 +1,10 @@
+/*	game.h
+	by Gabe Pike
+	Changes:
+		- added prototypes for methods used by other classes
+		- created a Point struct and a Cell struct for better x/y and row/col handling
+*/
+
 #pragma once
 
 #include <string>
