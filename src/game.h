@@ -11,6 +11,7 @@
 #include <vector>
 #include <ctime>
 #include <deque>
+#include <list>
 #include "2DGraphics.h"
 #include "globals.h"
 
@@ -79,16 +80,21 @@ public:
 
 class Grid {
 
+public:
+	enum gameState { play, combo, fall };
 protected:
 	int row_xvel, row_yvel,
 		block_w, block_h,
 		grid_yspeed, grid_yoff,
-		last_pushtime;
+		last_push, last_combo,
+		timer_push, timer_combo;
 	Point gridPos;
 	GamePlay *gamePlay;
 	deque<Block **> blocks;
 	CBaseSprite** blockSprites;
-
+	gameState state;
+	list<Cell *> combos;
+	Cell *currentCombo;
 	void composeFrame();
 
 public:
@@ -104,8 +110,12 @@ public:
 	int upMatch(int row, int col);
 	int leftMatch(int row, int col);
 	int rightMatch(int row, int col);
-	Cell *detectCombos(int r, int c);
-	void onCombo(Cell cells[4]);
+	bool detectCombos(int r, int c);
+	void onCombo();
+	void onFall();
+	void onPlay();
+	void changeState(gameState gs);
+	gameState getState() const { return state; }
 
 	/* set/get properties */
 	int getX() { return gridPos.x; }
@@ -132,7 +142,7 @@ public:
 	Block();
 	
 	bool match(const Block *right) const;
-	void swap(Block &right);
+	bool swap(Block &right);
 	void changeState(gameState gs);
 	void display();
 	gameState getState() const { return state; }
