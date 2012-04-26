@@ -142,7 +142,7 @@ public:
 	Block();
 	
 	bool match(const Block *right) const;
-	void swap(Block &right);
+	bool swap(Block &right);
 	void changeState(gameState gs);
 	void display();
 	gameState getState() const { return state; }

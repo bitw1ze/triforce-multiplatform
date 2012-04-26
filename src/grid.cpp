@@ -155,12 +155,12 @@ void Grid::swapBlocks() {
 	c2 = c1 + 1;
 	r = cursor->getRow();
 
-	blocks[r][c1]->swap(*blocks[r][c2]);
-
-	if (detectCombos(r, c1)) 
-		changeState(combo);
-	if (detectCombos(r, c2))
-		changeState(combo);
+	if (blocks[r][c1]->swap(*blocks[r][c2])) {
+		if (detectCombos(r, c1)) 
+			changeState(combo);
+		if (detectCombos(r, c2))
+			changeState(combo);
+	}
 }
 
 /*	killRows
@@ -205,7 +205,7 @@ void Grid::onFall() {
 		col = cells[2].col;
 		if (col != -1) 
 			for (row = cells[2].row; row <= cells[3].row; ++row)
-				blocks[row][col]->changeState ( Block::fall );
+				blocks[row][col]->changeState( Block::fall );
 	}
 }
 
@@ -223,7 +223,7 @@ void Grid::onPlay() {
 		col = cells[2].col;
 		if (col != -1) 
 			for (row = cells[2].row; row <= cells[3].row; ++row)
-				blocks[row][col]->changeState ( Block::disabled );
+				blocks[row][col]->changeState( Block::disabled );
 	}
 
 	combos.clear();
