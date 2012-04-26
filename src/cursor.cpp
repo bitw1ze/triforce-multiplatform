@@ -29,7 +29,7 @@ void Cursor::moveRight(bool doDraw) {
 }
 
 void Cursor::moveDown(bool doDraw) {
-	if (row > 0) {
+	if (getY() + 2*grid->getBlockHeight() <= grid->getY()) {
 		--row;
 		offsetY( cursor_delta );
 		if (doDraw)
@@ -79,19 +79,19 @@ void Cursor::passiveMouseHover(int x, int y) {
 
 	// move cursor inside grid
 	glutSetCursor(GLUT_CURSOR_LEFT_SIDE);
-	if (getX() + 2*cursor_delta - x_threshold*cursor_delta < x)
+	if (getX() + 2*grid->getBlockWidth() - x_threshold*grid->getBlockWidth() < x)
 		do
 			moveRight();
-		while (getX() + 2*cursor_delta - x_threshold*cursor_delta < x && col < ncols - 2);
+		while (getX() + 2*grid->getBlockWidth() - x_threshold*grid->getBlockWidth() < x && col < ncols - 2);
 	else
-		while (x - x_threshold*cursor_delta < getX() && col > 0)
+		while (x - x_threshold*grid->getBlockWidth() < getX() && col > 0)
 			moveLeft();
 
-	if (getY() - cursor_delta*y_threshold > y)
+	if (getY() - grid->getBlockHeight()*y_threshold > y)
 		do
 			moveUp();
-		while (getY() - cursor_delta*y_threshold > y && row < grid->getTopRow());
+		while (getY() - grid->getBlockHeight()*grid->getBlockHeight() > y && row < grid->getTopRow());
 	else
-		while (y > getY() + cursor_delta*(1+y_threshold) && row > 0) 
+		while (y > getY() + grid->getBlockHeight()*(1+y_threshold) && row > 0) 
 			moveDown();
 }
