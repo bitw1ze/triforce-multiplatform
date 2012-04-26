@@ -118,12 +118,12 @@ void Buttons::clickDown(int x, int y) {
 }
 
 void Buttons::clickUp(int x, int y) {
-	/* Disable pressing for all, since we don't necessarily know which was clicked
-     * down on. This is because the button clicked down on can be different than the
-	 */
 	Button * button = getBtnUnderCursor(x, y);
 	if (button && button->pressing)
 	{
+		/* Disable pressing for all, since we don't necessarily know which was clicked
+		 * down on. This is because the button clicked down on can be different than the
+		 */
 		unpressAll();
 		button->activate(); // mouse is still on btn; take action
 	}
