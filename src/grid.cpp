@@ -30,7 +30,7 @@ Grid::Grid(GamePlay *gp) {
 	gridPos.y = gp->getHeight() - (block_h * 2);
 	cursor = new Cursor(this, gp->cursorSprite);
 	last_push = mainTimer->time();
-	timer_push = 500;
+	timer_push = 400;
 	timer_combo = 0;
 	state = play;
 
