@@ -23,19 +23,28 @@ Grid::Grid(GamePlay *gp) {
 	gridPos.x = gp->getWidth()/2 - (block_w * ncols)/2;
 	gridPos.y = gp->getHeight() - (block_h * 2);
 	cursor = new Cursor(this, gp->cursorSprite);
+	last_pushtime = mainTimer->time();
 
 	for (int row=0; row< nrows/2 * 12; ++row) {
 		pushRow();
 	}
 }
 
+void Grid::composeFrame() {
+	if (mainTimer->elapsed(last_pushtime, 500)) {
+		pushRow();
+		last_pushtime = mainTimer->time();
+	}
+}
+
 /*	display
 	Call the draw function on all blocks, then draw the cursor over it. */
 void Grid::display() {
+	composeFrame();
+
 	for (deque<Block **>::iterator it = blocks.begin(); it < blocks.end(); ++it)
 		for (int j=0; j<ncols; ++j) 
-			if ((*it)[j]->getState() == Block::enabled)
-				(*it)[j]->draw(0);
+			(*it)[j]->display();
 	cursor->draw(0);
 }
 

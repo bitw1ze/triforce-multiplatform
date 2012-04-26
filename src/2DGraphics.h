@@ -127,6 +127,8 @@ class CObject //class for a moving object
 	int getY() { return (int)y; }
 	void setX(int _x) { x = (float)x; }
 	void setY(int _y) { y = (float)y; }
+	int getWidth() { return pSprite->GetWidth(); }
+	int getHeight() { return pSprite->GetHeight(); }
 };
 
 bool BMPSaveFrameBuffer(string fname, int x, int y, int width1, int height1);

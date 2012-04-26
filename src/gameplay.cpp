@@ -19,7 +19,6 @@ GamePlay::GamePlay() {
 	current_frame = 0; 
 	
 	last_time=mainTimer->time();
-	last_pushtime = mainTimer->time();
 
 	srand(time(NULL));
 	loadImages(); 
@@ -43,11 +42,6 @@ void GamePlay::processFrame()
 
 void GamePlay::composeFrame()
 {
-	if (mainTimer->elapsed(last_pushtime, 500)) {
-		grid->pushRow();
-		last_pushtime = mainTimer->time();
-	}
-
 	if(mainTimer->elapsed(last_time,300))
 	{
 		processFrame();

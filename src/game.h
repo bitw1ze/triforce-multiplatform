@@ -41,8 +41,7 @@ protected:
 
 	/* frame stuff */
 	int current_frame, 
-		last_time,
-		last_pushtime;
+		last_time;
 
 	BMPClass background;
 
@@ -76,11 +75,14 @@ class Grid {
 protected:
 	int row_xvel, row_yvel,
 		block_w, block_h,
-		grid_yspeed, grid_yoff;
+		grid_yspeed, grid_yoff,
+		last_pushtime;
 	Point gridPos;
 	GamePlay *gamePlay;
 	deque<Block **> blocks;
 	CBaseSprite** blockSprites;
+
+	void composeFrame();
 
 public:
 	Grid(GamePlay *ge);
@@ -115,13 +117,17 @@ class Block : public CObject {
 public: enum gameState { enabled, disabled, combo, fall };
 protected:
 	gameState state;
+	void onCombo();
+	CTimer *timer;
+	int last_time;
 public:
 
-	Block() : CObject() { state = enabled; }
+	Block();
 	
 	bool match(const Block *right) const;
 	void swap(Block &right);
 	void changeState(gameState gs);
+	void display();
 	gameState getState() const { return state; }
 };
 
