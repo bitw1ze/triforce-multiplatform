@@ -38,7 +38,6 @@ void Buttons::add(void *classInstance, int actionArg,
 
 	// create button obj
 	Button *b = new Button(sprite, xpos, ypos);
-	b->sprite = sprite; // create public alias
 	b->actionClassInstance = classInstance; // set the callback function and its args
 	b->action = action;
 	b->actionArg = actionArg;
@@ -99,11 +98,13 @@ void Buttons::activateCurrent() {
 
 Buttons::Button * Buttons::getBtnUnderCursor(int x, int y) {
 	float minX, minY, maxX, maxY;
+	CBaseSprite * sprite;
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 		{
 			(*button)->Getxy(minX, minY);
-			maxX = minX + (*button)->sprite->GetWidth();
-			maxY = minY + (*button)->sprite->GetHeight();
+			sprite = (*button)->getSprite();
+			maxX = minX + sprite->GetWidth();
+			maxY = minY + sprite->GetHeight();
 			if (x >= minX && x <= maxX && y >= minY && y <= maxY)
 				return (*button);
 		}
@@ -129,18 +130,10 @@ void Buttons::clickUp(int x, int y) {
 }
 
 void Buttons::passiveMouseHover(int x, int y) {
-	float minX, minY, maxX, maxY;
-	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
-		{
-			(*button)->Getxy(minX, minY);
-			maxX = minX + (*button)->sprite->GetWidth();
-			maxY = minY + (*button)->sprite->GetHeight();
-			if (x >= minX && x <= maxX && y >= minY && y <= maxY)
-			{
-				unhoverAll();
-				(*button)->hover();
-			}
-		}
+	Button * button = getBtnUnderCursor(x, y);
+	unhoverAll();
+	if (button)
+		button->hover();
 }
 
 Buttons::Button::Button(CBaseSprite * sprite, int xpos, int ypos) {
@@ -167,8 +160,4 @@ int Buttons::Button::getFrameNum() const {
 	else if (hovering)
 		return 1;
 	return 0;
-}
-
-Buttons::Button::~Button() {
-	delete sprite;
 }

@@ -16,25 +16,25 @@ protected:
 		bool hovering;
 		bool pressing;
 
-		// callback function to activate upon button press
-		void * actionClassInstance;
-		int actionArg;
-		void (*action)(void *classInstance, int actionArg);
-
 		Button(CBaseSprite *sprite, int xpos, int ypos);
-		~Button();
-		CBaseSprite * sprite; // a *public* alias to the sprite ptr used by CObject
 		void unhover();
 		void hover();
 		void activate();
 		void display();
 		int getFrameNum() const;
+
+		// callback function to activate upon button press
+		void * actionClassInstance;
+		int actionArg;
+		void (*action)(void *classInstance, int actionArg);
 	};
 
 	typedef list<Button *> Btns_t;
 	typedef Btns_t::iterator BtnIter_t;
 	Btns_t buttons;
-	BtnIter_t currentBtn; // button selected by keyboard (could be unhilighted and still active)
+
+	// track button selected by keyboard (could be unhilighted and still active)
+	BtnIter_t currentBtn; 
 
 	int r, g, b, // KISS: same color filters to be used by every button
 		vpWidth, vpHeight,
@@ -47,14 +47,18 @@ public:
 	void add(void *classInstance, int actionArg,
 	         void (*action)(void *classInstance, int actionArg), 
  	         string btnFiles[3], int xpos = 0, int ypos = 0);
-	void hoverPrev();
-	void hoverNext();
 	void unhoverAll();
 	void unpressAll();
+
+	//keyboard
+	void hoverPrev();
+	void hoverNext();
 	void activateCurrent();
+
+	// mouse
 	Button * getBtnUnderCursor(int x, int y);
+	void passiveMouseHover(int x, int y);
 	void clickDown(int x, int y);
 	void clickUp(int x, int y);
-	void passiveMouseHover(int x, int y);
 };
 
