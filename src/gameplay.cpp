@@ -1,3 +1,10 @@
+/*	gameplay.cpp
+	by Gabe Pike
+	Changes:
+		- handed off control of pushing new rows onto the grid to grid.cpp
+		- now displays a border around the grid
+*/
+
 #include "game.h"
 
 // Constants
@@ -19,7 +26,6 @@ GamePlay::GamePlay() {
 	current_frame = 0; 
 	
 	last_time=mainTimer->time();
-	last_pushtime = mainTimer->time();
 
 	srand(time(NULL));
 	loadImages(); 
@@ -43,11 +49,6 @@ void GamePlay::processFrame()
 
 void GamePlay::composeFrame()
 {
-	if (mainTimer->elapsed(last_pushtime, 500)) {
-		grid->pushRow();
-		last_pushtime = mainTimer->time();
-	}
-
 	if(mainTimer->elapsed(last_time,300))
 	{
 		processFrame();

@@ -1,5 +1,11 @@
 /*	grid.cpp
-	by Gabe Pike */
+	by Gabe Pike
+	Changes:
+		- added game states to the grid
+		- detect combos and break blocks when a combo is found
+		- added destructor
+		- documented all the methods
+*/
 
 #include "game.h"
 
@@ -23,19 +29,28 @@ Grid::Grid(GamePlay *gp) {
 	gridPos.x = gp->getWidth()/2 - (block_w * ncols)/2;
 	gridPos.y = gp->getHeight() - (block_h * 2);
 	cursor = new Cursor(this, gp->cursorSprite);
+	last_pushtime = mainTimer->time();
 
 	for (int row=0; row< nrows/2 * 12; ++row) {
 		pushRow();
 	}
 }
 
+void Grid::composeFrame() {
+	if (mainTimer->elapsed(last_pushtime, 500)) {
+		pushRow();
+		last_pushtime = mainTimer->time();
+	}
+}
+
 /*	display
 	Call the draw function on all blocks, then draw the cursor over it. */
 void Grid::display() {
+	composeFrame();
+
 	for (deque<Block **>::iterator it = blocks.begin(); it < blocks.end(); ++it)
 		for (int j=0; j<ncols; ++j) 
-			if ((*it)[j]->getState() == Block::enabled)
-				(*it)[j]->draw(0);
+			(*it)[j]->display();
 	cursor->draw(0);
 }
 
@@ -62,8 +77,10 @@ void Grid::pushRow() {
 	matrix (front of deque). It will make sure not to generate combos since
 	that is the player's job.	*/
 void Grid::addRow() {
-	if (blocks.size() >= nrows)
+	if (blocks.size() > nrows) {
+		delete [] blocks[nrows];
 		blocks.pop_back();
+	}
 
 	bool combo;
 	blocks.push_front(new Block *[ncols]);
