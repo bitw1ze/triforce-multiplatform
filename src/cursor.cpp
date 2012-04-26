@@ -37,7 +37,6 @@ void Cursor::moveDown(bool doDraw) {
 	}
 }
 
-
 void Cursor::moveUp(bool doDraw) {
 	if (row < grid->getTopRow()) {
 		++row;
