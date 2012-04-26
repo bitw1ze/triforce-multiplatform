@@ -29,17 +29,54 @@ Grid::Grid(GamePlay *gp) {
 	gridPos.x = gp->getWidth()/2 - (block_w * ncols)/2;
 	gridPos.y = gp->getHeight() - (block_h * 2);
 	cursor = new Cursor(this, gp->cursorSprite);
-	last_pushtime = mainTimer->time();
+	last_push = mainTimer->time();
+	timer_push = 500;
+	timer_combo = 0;
+	state = play;
 
 	for (int row=0; row< nrows/2 * 12; ++row) {
 		pushRow();
 	}
 }
 
+void Grid::changeState(gameState gs) {
+	switch (gs) {
+	case combo:
+		if (state != combo) {
+			timer_combo = 0;
+			last_combo = mainTimer->time();
+		}
+		state = gs;
+		onCombo();
+		break;
+	case fall:
+		state = gs;
+		onFall();
+		changeState(play);
+		break;
+	case play:
+		state = gs;
+		onPlay();
+		break;
+	}
+}
+
 void Grid::composeFrame() {
-	if (mainTimer->elapsed(last_pushtime, 500)) {
-		pushRow();
-		last_pushtime = mainTimer->time();
+	switch (state) {
+	case play:
+		if (mainTimer->elapsed(last_push, timer_push)) {
+			pushRow();
+			last_push = mainTimer->time();
+		}
+		break;
+	case combo:
+		if (mainTimer->elapsed(last_combo, timer_combo)) {
+			changeState(fall);
+			cout << "Falling\n";
+		}
+		break;
+	case fall:
+		break;
 	}
 }
 
@@ -120,15 +157,21 @@ void Grid::swapBlocks() {
 
 	blocks[r][c1]->swap(*blocks[r][c2]);
 
-	onCombo( detectCombos(r, c1) );
-	onCombo( detectCombos(r, c2) );
+	if (detectCombos(r, c1)) 
+		changeState(combo);
+	if (detectCombos(r, c2))
+		changeState(combo);
 }
 
 /*	killRows
 	Called when a combo occurs. It will change the state to a 'freeze' state,
 	where all the blocks will stop for a certain amount of time before breaking. */
-void Grid::onCombo(Cell cells[4]) {
+void Grid::onCombo() {
 	int _row, _col;
+	Cell *cells = currentCombo;
+	if (cells == NULL)
+		return;
+	combos.push_back(cells);
 
 	for (int i=0; i<4; ++i) 
 		printf("(%d, %d) ", cells[i].row, cells[i].col);
@@ -137,13 +180,54 @@ void Grid::onCombo(Cell cells[4]) {
 	_row = cells[0].row;
 	if (cells[0].col != -1) {
 		for (_col = cells[0].col; _col <= cells[1].col; ++_col)
-			blocks[_row][_col]->changeState( Block::disabled );
+			blocks[_row][_col]->changeState( Block::combo);
 	}
 	_col = cells[2].col;
 	if (cells[2].col != -1) {
 		for (_row = cells[2].row; _row <= cells[3].row; ++_row)
-			blocks[_row][_col]->changeState( Block::disabled );
+			blocks[_row][_col]->changeState( Block::combo);
 	}
+	
+	timer_combo += 1500;
+}
+
+void Grid::onFall() {
+	int row, col;
+
+	for (list<Cell *>::iterator it = combos.begin(); it != combos.end(); ++it) {
+		Cell *cells = *it;
+		
+		row = cells[0].row;
+		if (row != -1)
+			for (col = cells[0].col; col <= cells[1].col; ++col)
+				blocks[row][col]->changeState( Block::fall );
+
+		col = cells[2].col;
+		if (col != -1) 
+			for (row = cells[2].row; row <= cells[3].row; ++row)
+				blocks[row][col]->changeState ( Block::fall );
+	}
+}
+
+void Grid::onPlay() {
+	int row, col;
+
+	for (list<Cell *>::iterator it = combos.begin(); it != combos.end(); ++it) {
+		Cell *cells = *it;
+		
+		row = cells[0].row;
+		if (row != -1)
+			for (col = cells[0].col; col <= cells[1].col; ++col)
+				blocks[row][col]->changeState( Block::disabled );
+
+		col = cells[2].col;
+		if (col != -1) 
+			for (row = cells[2].row; row <= cells[3].row; ++row)
+				blocks[row][col]->changeState ( Block::disabled );
+	}
+
+	combos.clear();
+	last_push = mainTimer->time();
 }
 
 /*	leftMatch, rightMatch, downMatch, and upMatch
@@ -229,7 +313,7 @@ int Grid::downMatch(int row, int col) {
 
 	The final set of cells is returned at the end. It will be useful to pass this array
 	of cells to onCombo(), which handles the event of a combo. */
-Cell *Grid::detectCombos(int r, int c) {
+bool Grid::detectCombos(int r, int c) {
 	int left, right, up, down;
 	Cell *cells = new Cell[4];
 	for (int i=0; i<4; ++i)
@@ -275,7 +359,14 @@ Cell *Grid::detectCombos(int r, int c) {
 		}
 	}
 
-	return cells;
+	if (cells[0].row != -1 || cells[2].row != -1) {
+		currentCombo = cells;
+		return true;
+	}
+	else {
+		currentCombo = NULL;
+		return false;
+	}
 }
 
 /* destructor

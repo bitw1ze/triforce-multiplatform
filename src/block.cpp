@@ -24,12 +24,18 @@ bool Block::match(const Block *right) const {
 /*	changeState
 	Changes the state of the block. Much to be done with this function */
 void Block::changeState(gameState gs) {
-	state = gs;
+	
 	switch (state) {
 	case combo:
 		onCombo();
 		break;
+	case fall:
+		//onFall();
+		break;
+	case disabled:
+		break;
 	}
+	state = gs;
 }
 
 /*	swap
@@ -55,8 +61,9 @@ void Block::display() {
 		break;
 	case combo:
 		draw(0);
-		if (timer->elapsed(last_time, 200))
-			changeState(disabled);
+		break;
+	case fall:
+		draw(0);
 		break;
 	case disabled:
 		break;
