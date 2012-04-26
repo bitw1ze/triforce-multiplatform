@@ -88,12 +88,13 @@ void Buttons::unpressAll() {
 		(*button)->pressing = false;
 }
 
-void Buttons::pressActive() {
+void Buttons::activateCurrent() {
 	if ((*currentBtn)->hovering)
 		(*currentBtn)->activate();
 	else
 		for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
-			(*button)->activate();
+			if ((*button)->hovering)
+				(*button)->activate();
 }
 
 Buttons::Button * Buttons::getBtnUnderCursor(int x, int y) {
@@ -116,11 +117,15 @@ void Buttons::clickDown(int x, int y) {
 }
 
 void Buttons::clickUp(int x, int y) {
-	// disable pressing for all, since we don't necessarily know which was clicked down on
-	unpressAll();
+	/* Disable pressing for all, since we don't necessarily know which was clicked
+     * down on. This is because the button clicked down on can be different than the
+	 */
 	Button * button = getBtnUnderCursor(x, y);
-	if (button && button->hovering)
+	if (button && button->pressing)
+	{
+		unpressAll();
 		button->activate(); // mouse is still on btn; take action
+	}
 }
 
 void Buttons::passiveMouseHover(int x, int y) {

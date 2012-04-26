@@ -123,7 +123,7 @@ void Triforce::normalKeys(unsigned char key, int x, int y) {
 	else if (state == menu) {
 		switch (tolower(key)) {
 		case 'a':
-			menuButtons->pressActive();
+			menuButtons->activateCurrent();
 		}
 	}
 }

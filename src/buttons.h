@@ -51,7 +51,7 @@ public:
 	void hoverNext();
 	void unhoverAll();
 	void unpressAll();
-	void pressActive();
+	void activateCurrent();
 	Button * getBtnUnderCursor(int x, int y);
 	void clickDown(int x, int y);
 	void clickUp(int x, int y);
