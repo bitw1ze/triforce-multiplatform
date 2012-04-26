@@ -31,7 +31,7 @@ void GamePlay::display() {
 	background.drawGLbackground ();
 
 	grid->display();
-    gridBorderSprite->draw(0, grid->getX() - 6, grid->getY() - 12 - (grid->getBlockHeight() * (nrows-1)));
+    gridBorderSprite->draw(0, grid->getX() - 6, grid->getY() - 12 - (grid->getBlockHeight() * (nrows)));
 
 	glutSwapBuffers();
 }
