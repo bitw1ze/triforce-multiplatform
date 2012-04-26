@@ -11,7 +11,7 @@ typedef unsigned long uint64;
 namespace Globals {
 	const uint32
 		screen_w		= 1024,
-		screen_h		= 768,
+		screen_h		= 720,
 		nrows			= 12,
 		ncols			= 6,
 		nblocktypes		= 7;
