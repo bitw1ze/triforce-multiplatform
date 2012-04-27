@@ -132,7 +132,7 @@ public:
    setting the x and y values and setting states */
 
 class Block : public CObject {
-public: enum gameState { enabled, disabled, combo, fall };
+public: enum gameState { displayed, enabled, disabled, combo, fall };
 protected:
 	gameState state;
 	void onCombo();

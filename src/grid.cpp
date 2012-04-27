@@ -30,7 +30,7 @@ Grid::Grid(GamePlay *gp) {
 	gridPos.y = gp->getHeight() - (block_h * 2);
 	cursor = new Cursor(this, gp->cursorSprite);
 	last_push = mainTimer->time();
-	timer_push = 500;
+	timer_push = 400;
 	timer_combo = 0;
 	state = play;
 
@@ -119,17 +119,24 @@ void Grid::addRow() {
 		blocks.pop_back();
 	}
 
-	bool combo;
 	blocks.push_front(new Block *[ncols]);
 
 	for (int col=0; col<ncols; ++col) {
 		blocks[0][col] = new Block();
 
-		combo = false;
 		/* Randomize the blocks without generating combos */
 		do    ( blocks[0][col]->init(blockSprites[ rand() % nblocktypes ], gridPos.x + col * block_w, gridPos.y) );
 		while ( leftMatch(0, col) >= 2 || upMatch(0, col) >= 2 );
 		
+	}
+
+	if (blocks.size() > 1)
+		for (int col=0; col<ncols; ++col)
+			blocks[1][col]->changeState(Block::enabled);
+	if (blocks.size() > 2) {
+		for (int i=0; i<ncols; ++i) 
+			if (detectCombos(1, i))
+				changeState(combo);
 	}
 }
 

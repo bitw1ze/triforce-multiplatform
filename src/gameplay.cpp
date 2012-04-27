@@ -111,9 +111,13 @@ void GamePlay::specialKeys(int key, int x, int y) {
 }
 
 void GamePlay::normalKeys(unsigned char key, int x, int y) {
-	switch (toupper(key)) { 
-	case 'A':
+	switch (tolower(key)) { 
+	case 'a':
 		grid->swapBlocks();
+		break;
+	case 's':
+		if (grid->getState() == Grid::play)
+			grid->pushRow();
 		break;
 	}
 }
