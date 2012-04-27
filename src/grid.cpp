@@ -34,9 +34,15 @@ Grid::Grid(GamePlay *gp) {
 	timer_combo = 0;
 	state = play;
 
-	for (int row=0; row< nrows/2 * 12; ++row) {
-		pushRow();
-	}
+	int startingRows = nrows / 2 - 1;
+
+	for (int row=0; row < startingRows; ++row)
+		addRow();
+
+	for (int row = 0; row < startingRows; ++row) 
+		for (int col = 0; col < ncols; ++col) 
+			blocks[row][col]->offsetY( -1 * block_h * row );
+	
 }
 
 void Grid::changeState(gameState gs) {
@@ -89,6 +95,25 @@ void Grid::display() {
 		for (int j=0; j<ncols; ++j) 
 			(*it)[j]->display();
 	cursor->draw(0);
+}
+
+int Grid::countEnabledRows() const {
+	uint32 count;
+
+	for (count=0; count<blocks.size(); ++count) {
+		bool disabled = true;
+		for (int i=0; i<ncols; ++i) {
+			if (blocks[count][i]->getState() == Block::enabled) {
+				disabled = false;
+				break;
+			}
+		}
+	
+		if (disabled == true)
+			break;
+	}
+
+	return count;
 }
 
 /*	pushRow
@@ -160,6 +185,9 @@ void Grid::swapBlocks() {
 	c1 = cursor->getCol();
 	c2 = c1 + 1;
 	r = cursor->getRow();
+
+	if (r >= countEnabledRows())
+		return;
 
 	if (blocks[r][c1]->swap(*blocks[r][c2])) {
 		if (detectCombos(r, c1)) 
@@ -277,10 +305,10 @@ int Grid::rightMatch(int row, int col, bool ignoreActive) {
 int Grid::upMatch(int row, int col, bool ignoreActive) {
 	int matches = 0;
 
-	if (row == getTopRow())
+	if (row >= countEnabledRows() - 1)
 		return matches;
 
-	for (int r=row+1; r<=getTopRow(); ++r) {
+	for (int r=row+1; r < countEnabledRows(); ++r) {
 		if (blocks[r][col]->match(*blocks[row][col], ignoreActive))
 			++matches;
 		else

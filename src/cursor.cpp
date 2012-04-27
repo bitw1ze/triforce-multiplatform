@@ -44,7 +44,7 @@ bool Cursor::moveDown(bool doDraw) {
 }
 
 bool Cursor::moveUp(bool doDraw) {
-	if (row < grid->getTopRow()) {
+	if (row < nrows) {
 		++row;
 		offsetY( -cursor_delta );
 		if (doDraw)
@@ -61,12 +61,12 @@ void Cursor::setPos(int c, int r) {
 }
 
 void Cursor::shiftRow() {
-	if (row < grid->getTopRow())
+	if (row < nrows - 1)
 		++row;
 	else if (row == nrows - 1)
-		setPos(getCol(), grid->getTopRow());
+		setPos(getCol(), nrows - 1);
 	else
-		setPos(getCol(), grid->getTopRow()+1);
+		setPos(getCol(), nrows);
 }
 
 void Cursor::passiveMouseHover(int x, int y) {
@@ -91,7 +91,7 @@ void Cursor::passiveMouseHover(int x, int y) {
 		moveRight();
 	else if (x - x_threshold*grid->getBlockWidth() < getX() && col > 0)
 		moveLeft();
-	else if (getY() > y && row < grid->getTopRow())
+	else if (getY() > y && row < nrows)
 	    moveUp();
 	else if (y > getY() + grid->getBlockHeight() && row > 0)
 		moveDown(); 

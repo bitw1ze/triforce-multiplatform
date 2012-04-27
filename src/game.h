@@ -125,7 +125,7 @@ public:
 	int getY() { return gridPos.y; }
 	int getBlockWidth() { return block_w; }
 	int getBlockHeight() { return block_h; }
-	int getTopRow() { return blocks.size() - 1; }
+	int countEnabledRows() const;
 
 	Cursor *cursor;
 };
