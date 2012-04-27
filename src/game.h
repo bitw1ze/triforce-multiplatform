@@ -73,6 +73,7 @@ public:
 
 	void changeState(gameState gs);
 	gameState getState();
+	void passiveMouseHover(int x, int y);
 };
 
 /* Grid class holds abstracts all the operations on grid of blocks for a 
@@ -128,6 +129,7 @@ public:
 	int countEnabledRows() const;
 
 	Cursor *cursor;
+	void passiveMouseHover(int x, int y);
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 

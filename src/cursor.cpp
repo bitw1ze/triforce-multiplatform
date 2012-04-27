@@ -72,19 +72,6 @@ void Cursor::shiftRow() {
 void Cursor::passiveMouseHover(int x, int y) {
 	const float x_threshold = 0.49;
 
-	// see if cursor is even inside playable part of grid, and set cursor type
-	if (!(x > grid->getX() && x < grid->getX() + (int)ncols*grid->getBlockWidth()))
-	{
-		glutSetCursor(GLUT_CURSOR_INHERIT);
-		return;
-	}
-	if (y > grid->getY() - grid->getYOffset() ||
-	    y < grid->getY() - (int)(nrows)*grid->getBlockHeight())
-	{
-		glutSetCursor(GLUT_CURSOR_INHERIT);
-		return;
-	}
-
 	// move cursor inside grid
 	glutSetCursor(GLUT_CURSOR_LEFT_SIDE);
 	if (getX() + 2*grid->getBlockWidth() - x_threshold*grid->getBlockWidth() < x && col < ncols - 2)

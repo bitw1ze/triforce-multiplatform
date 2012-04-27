@@ -153,5 +153,5 @@ void Triforce::mousePassiveMotion(int x, int y) {
 	if (state == menu)
 		menuButtons->passiveMouseHover(x, y);
 	else if (state == play)
-		gamePlay->grid->cursor->passiveMouseHover(x, y);
+		gamePlay->passiveMouseHover(x, y);
 }

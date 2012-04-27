@@ -67,6 +67,17 @@ void Grid::changeState(gameState gs) {
 	}
 }
 
+void Grid::passiveMouseHover(int x, int y) {
+	// see if cursor is even inside playable part of grid, and set cursor type
+	if (!(x > gridPos.x && x < gridPos.x + (int)ncols*block_h))
+		glutSetCursor(GLUT_CURSOR_INHERIT);
+	else if (y > gridPos.y - grid_yoff ||
+	    y < gridPos.y - (int)(nrows)*block_h)
+		glutSetCursor(GLUT_CURSOR_INHERIT);
+	else
+		cursor->passiveMouseHover(x, y);
+}
+
 void Grid::composeFrame() {
 	switch (state) {
 	case play:

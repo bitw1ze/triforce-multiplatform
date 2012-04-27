@@ -121,3 +121,7 @@ void GamePlay::normalKeys(unsigned char key, int x, int y) {
 		break;
 	}
 }
+
+void GamePlay::passiveMouseHover(int x, int y) {
+	grid->passiveMouseHover(x, y);
+}

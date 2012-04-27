@@ -80,7 +80,6 @@ class CBaseSprite //simplest sprite
     int drawGLSprite(int frame);
 };
 
-
 class CTimer{ //game timer class using ms
   protected:
     DWORD m_nStartTime; //time in ms that timer was started
