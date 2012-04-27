@@ -118,6 +118,10 @@ void Grid::addRow() {
 		delete [] blocks[nrows];
 		blocks.pop_back();
 	}
+
+	if (blocks.size() > 0)
+		for (int col=0; col<ncols; ++col)
+			blocks[0][col]->setActive(true);
 	
 	blocks.push_front(new Block *[ncols]);
 
@@ -127,9 +131,6 @@ void Grid::addRow() {
 		do    ( blocks[0][col]->init(blockSprites[ rand() % nblocktypes ], gridPos.x + col * block_w, gridPos.y) );
 		while ( leftMatch(0, col, true) >= 2 || upMatch(0, col, true) >= 2 );
 	}
-	
-	for (int col=0; col<ncols; ++col)
-		blocks[0][col]->setActive(true);
 
 	if (blocks.size() > 3) {
 		for (int i=0; i<ncols; ++i) 
