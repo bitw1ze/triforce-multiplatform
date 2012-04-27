@@ -118,22 +118,20 @@ void Grid::addRow() {
 		delete [] blocks[nrows];
 		blocks.pop_back();
 	}
-
+	
 	blocks.push_front(new Block *[ncols]);
 
 	for (int col=0; col<ncols; ++col) {
 		blocks[0][col] = new Block();
-
 		/* Randomize the blocks without generating combos */
 		do    ( blocks[0][col]->init(blockSprites[ rand() % nblocktypes ], gridPos.x + col * block_w, gridPos.y) );
-		while ( leftMatch(0, col) >= 2 || upMatch(0, col) >= 2 );
-		
+		while ( leftMatch(0, col, true) >= 2 || upMatch(0, col, true) >= 2 );
 	}
+	
+	for (int col=0; col<ncols; ++col)
+		blocks[0][col]->setActive(true);
 
-	if (blocks.size() > 1)
-		for (int col=0; col<ncols; ++col)
-			blocks[1][col]->changeState(Block::enabled);
-	if (blocks.size() > 2) {
+	if (blocks.size() > 3) {
 		for (int i=0; i<ncols; ++i) 
 			if (detectCombos(1, i))
 				changeState(combo);
@@ -242,14 +240,14 @@ void Grid::onPlay() {
 	that match the block passed to the direction in the function's name.
 	e.g. a 3 combo will return 2		*/
 
-int Grid::leftMatch(int row, int col) {
+int Grid::leftMatch(int row, int col, bool ignoreActive) {
 	int matches = 0;
 
 	if (col <= 0)
 		return matches;
 	
 	for (int c=col-1; c >= 0; --c) {
-		if (blocks[row][c]->match(blocks[row][col])) 
+		if (blocks[row][c]->match(*blocks[row][col], ignoreActive))
 			++matches;
 		else
 			break;
@@ -258,14 +256,14 @@ int Grid::leftMatch(int row, int col) {
 	return matches;
 }
 
-int Grid::rightMatch(int row, int col) {
+int Grid::rightMatch(int row, int col, bool ignoreActive) {
 	int matches = 0;
 
 	if (col >= ncols - 1)
 		return matches;
 
 	for (int c=col+1; c < ncols; ++c) {
-		if (blocks[row][c]->match(blocks[row][col])) 
+		if (blocks[row][c]->match(*blocks[row][col], ignoreActive))
 			++matches;
 		else
 			break;
@@ -275,14 +273,14 @@ int Grid::rightMatch(int row, int col) {
 }
 
 
-int Grid::upMatch(int row, int col) {
+int Grid::upMatch(int row, int col, bool ignoreActive) {
 	int matches = 0;
 
 	if (row == getTopRow())
 		return matches;
 
 	for (int r=row+1; r<=getTopRow(); ++r) {
-		if (blocks[r][col]->match(blocks[row][col]))
+		if (blocks[r][col]->match(*blocks[row][col], ignoreActive))
 			++matches;
 		else
 			break;
@@ -291,14 +289,14 @@ int Grid::upMatch(int row, int col) {
 	return matches;
 }
 
-int Grid::downMatch(int row, int col) {
+int Grid::downMatch(int row, int col, bool ignoreActive) {
 	int matches = 0;
 
 	if (row <= 0)
 		return matches;
 
 	for (int r=row-1; r>=0; --r) {
-		if (blocks[r][col]->match(blocks[row][col]))
+		if (blocks[r][col]->match(*blocks[row][col], ignoreActive))
 			++matches;
 		else
 			break;

@@ -106,11 +106,13 @@ public:
 	void display();
 	void setCoords();
 	void swapBlocks();
-	int downMatch(int row, int col);
-	int upMatch(int row, int col);
-	int leftMatch(int row, int col);
-	int rightMatch(int row, int col);
+
+	int downMatch(int row, int col, bool ignoreActive = false);
+	int upMatch(int row, int col, bool ignoreActive = false);
+	int leftMatch(int row, int col, bool ignoreActive = false);
+	int rightMatch(int row, int col, bool ignoreActive = false);
 	bool detectCombos(int r, int c);
+
 	void onCombo();
 	void onFall();
 	void onPlay();
@@ -132,20 +134,23 @@ public:
    setting the x and y values and setting states */
 
 class Block : public CObject {
-public: enum gameState { displayed, enabled, disabled, combo, fall };
+public: enum gameState { enabled, disabled, combo, fall };
 protected:
 	gameState state;
 	void onCombo();
 	CTimer *timer;
 	int last_time;
+	bool active;
 public:
 
 	Block();
 	
-	bool match(const Block *right) const;
+	bool match(const Block &right, bool ignoreActive = false) const;
 	bool swap(Block &right);
 	void changeState(gameState gs);
 	void display();
+	bool isActive() const { return active; }
+	void setActive(bool act) { active = act; }
 	gameState getState() const { return state; }
 };
 

@@ -9,19 +9,23 @@
 #include "game.h"
 
 Block::Block() : CObject() {
-	state = displayed; 
+	active = false;
+	state = enabled; 
 	timer = new CTimer(); 
 	timer->start();
 	last_time = timer->time();
 }
 
 /*	match
-	Detect a single match of one block to another block based on the sprite. */
-bool Block::match(const Block *right) const { 
+	Detect a single match of one block to another block based on the sprite.
+	ignoreActive should be enabled when only testing if block states and sprites
+	match, such as when generating blocks */
+bool Block::match(const Block &right, bool ignoreActive) const { 
 	return 
-		getState() == right->getState()
-		&& (getState() == enabled || getState() == displayed)
-		&&	getSprite() == right->getSprite();
+			getState() == right.getState()
+		&&	(ignoreActive ? true : (isActive() == true && right.isActive() == true) )
+		&&	getState() == enabled
+		&&	getSprite() == right.getSprite();
 }
 
 /*	changeState
@@ -68,7 +72,6 @@ void Block::onCombo() {
 
 void Block::display() {
 	switch (state) {
-	case displayed:
 	case enabled:
 		draw(0);
 		break;
