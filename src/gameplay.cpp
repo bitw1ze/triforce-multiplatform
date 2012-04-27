@@ -116,7 +116,8 @@ void GamePlay::normalKeys(unsigned char key, int x, int y) {
 		grid->swapBlocks();
 		break;
 	case 's':
-		grid->pushRow();
+		if (grid->getState() == Grid::play)
+			grid->pushRow();
 		break;
 	}
 }

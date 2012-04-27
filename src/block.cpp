@@ -9,7 +9,7 @@
 #include "game.h"
 
 Block::Block() : CObject() {
-	state = enabled; 
+	state = displayed; 
 	timer = new CTimer(); 
 	timer->start();
 	last_time = timer->time();
@@ -19,9 +19,9 @@ Block::Block() : CObject() {
 	Detect a single match of one block to another block based on the sprite. */
 bool Block::match(const Block *right) const { 
 	return 
-		getState() != disabled && 
-		getSprite() == right->getSprite() && 
-		getState() == right->getState(); 
+		getState() == right->getState()
+		&& (getState() == enabled || getState() == displayed)
+		&&	getSprite() == right->getSprite();
 }
 
 /*	changeState
@@ -68,6 +68,7 @@ void Block::onCombo() {
 
 void Block::display() {
 	switch (state) {
+	case displayed:
 	case enabled:
 		draw(0);
 		break;
