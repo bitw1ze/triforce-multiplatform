@@ -118,6 +118,7 @@ public:
 	gameState getState() const { return state; }
 
 	/* set/get properties */
+	int getYOffset() { return grid_yoff; }
 	int getX() { return gridPos.x; }
 	int getY() { return gridPos.y; }
 	int getBlockWidth() { return block_w; }
@@ -148,7 +149,7 @@ public:
 	gameState getState() const { return state; }
 };
 
-/* The Cursor class controls the operations on the player's cursor, liie moving
+/* The Cursor class controls the operations on the player's cursor, like moving
    it around. */
 
 class Cursor : public CObject {
@@ -161,10 +162,10 @@ protected:
 
 public:
 	Cursor(Grid *, CBaseSprite *);
-	void moveUp(bool doDraw=true);
-	void moveDown(bool doDraw=true);
-	void moveLeft(bool doDraw=true);
-	void moveRight(bool doDraw=true);
+	bool moveUp(bool doDraw=true);
+	bool moveDown(bool doDraw=true);
+	bool moveLeft(bool doDraw=true);
+	bool moveRight(bool doDraw=true);
 	void setPos(int c, int r);
 	int getRow() const { return row; }
 	int getCol() const { return col; }

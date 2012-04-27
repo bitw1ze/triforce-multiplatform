@@ -10,40 +10,48 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	setPos(0, 0);
 }
 
-void Cursor::moveLeft(bool doDraw) {
+bool Cursor::moveLeft(bool doDraw) {
 	if (col > 0) {
 		--col;
 		offsetX( -cursor_delta );
 		if (doDraw)
 			draw(0);
+		return true;
 	}
+	return false;
 }
 
-void Cursor::moveRight(bool doDraw) {
+bool Cursor::moveRight(bool doDraw) {
 	if (col < ncols - 2) {
 		++col;
 		offsetX( cursor_delta );
 		if (doDraw)
 			draw(0);
+		return true;
 	}
+	return false;
 }
 
-void Cursor::moveDown(bool doDraw) {
+bool Cursor::moveDown(bool doDraw) {
 	if (getY() + 2*grid->getBlockHeight() <= grid->getY()) {
 		--row;
 		offsetY( cursor_delta );
 		if (doDraw)
 			draw(0);
+		return true;
 	}
+	return false;
 }
 
-void Cursor::moveUp(bool doDraw) {
+bool Cursor::moveUp(bool doDraw) {
 	if (row < grid->getTopRow()) {
 		++row;
 		offsetY( -cursor_delta );
 		if (doDraw)
 			draw(0);
+		return true;
 	}
+	return false;
 }
 
 void Cursor::setPos(int c, int r) {
@@ -62,16 +70,16 @@ void Cursor::shiftRow() {
 }
 
 void Cursor::passiveMouseHover(int x, int y) {
-	static const float y_threshold = 0,
-	                   x_threshold = 0.48;
+	const float x_threshold = 0.48;
 
-	// set cursor type, and see if cursor is even inside the grid
+	// see if cursor is even inside playable part of grid, and set cursor type
 	if (!(x > grid->getX() && x < grid->getX() + (int)ncols*grid->getBlockWidth()))
 	{
 		glutSetCursor(GLUT_CURSOR_INHERIT);
 		return;
 	}
-	if (y > grid->getY() || y < grid->getY() - (int)(nrows-1)*grid->getBlockHeight())
+	if (y > grid->getY() - grid->getYOffset() ||
+	    y < grid->getY() - (int)(nrows-1)*grid->getBlockHeight())
 	{
 		glutSetCursor(GLUT_CURSOR_INHERIT);
 		return;
@@ -79,19 +87,12 @@ void Cursor::passiveMouseHover(int x, int y) {
 
 	// move cursor inside grid
 	glutSetCursor(GLUT_CURSOR_LEFT_SIDE);
-	if (getX() + 2*grid->getBlockWidth() - x_threshold*grid->getBlockWidth() < x)
-		do
-			moveRight();
-		while (getX() + 2*grid->getBlockWidth() - x_threshold*grid->getBlockWidth() < x && col < ncols - 2);
-	else
-		while (x - x_threshold*grid->getBlockWidth() < getX() && col > 0)
-			moveLeft();
-
-	if (getY() - grid->getBlockHeight()*y_threshold > y)
-		do
-			moveUp();
-		while (getY() - grid->getBlockHeight()*grid->getBlockHeight() > y && row < grid->getTopRow());
-	else
-		while (y > getY() + grid->getBlockHeight()*(1+y_threshold) && row > 0) 
-			moveDown();
+	if (getX() + 2*grid->getBlockWidth() - x_threshold*grid->getBlockWidth() < x && col < ncols - 2)
+		moveRight();
+	if (x - x_threshold*grid->getBlockWidth() < getX() && col > 0)
+		moveLeft();
+	if (getY() > y && row < grid->getTopRow())
+	    moveUp();
+	if (y > getY() + grid->getBlockHeight() && row > 0)
+		moveDown(); 
 }
