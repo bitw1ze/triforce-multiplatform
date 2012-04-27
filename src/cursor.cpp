@@ -79,7 +79,7 @@ void Cursor::passiveMouseHover(int x, int y) {
 		return;
 	}
 	if (y > grid->getY() - grid->getYOffset() ||
-	    y < grid->getY() - (int)(nrows-1)*grid->getBlockHeight())
+	    y < grid->getY() - (int)(nrows)*grid->getBlockHeight())
 	{
 		glutSetCursor(GLUT_CURSOR_INHERIT);
 		return;
