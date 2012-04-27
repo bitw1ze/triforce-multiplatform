@@ -38,7 +38,7 @@ void GamePlay::display() {
 
 	grid->display();
     gridBorderSprite->draw(0, grid->getX() - 21,
-	                       grid->getY() - 30 - (grid->getBlockHeight() * (nrows)));
+	                       grid->getY() - 35 - (grid->getBlockHeight() * (nrows)));
 	glutSwapBuffers();
 }
 
