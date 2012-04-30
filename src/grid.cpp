@@ -218,10 +218,11 @@ void Grid::onCombo() {
 		return;
 	combos.push_back(cells);
 
+	/* debug
 	for (int i=0; i<4; ++i) 
 		printf("(%d, %d) ", cells[i].row, cells[i].col);
 	printf("\n");
-
+	*/
 	_row = cells[0].row;
 	if (cells[0].col != -1) {
 		for (_col = cells[0].col; _col <= cells[1].col; ++_col)
@@ -234,6 +235,7 @@ void Grid::onCombo() {
 	}
 	
 	timer_combo += 1500;
+	detectFall();
 }
 
 void Grid::onFall() {
@@ -412,6 +414,50 @@ bool Grid::detectCombos(int r, int c) {
 		currentCombo = NULL;
 		return false;
 	}
+}
+
+bool Grid::detectFall() const {
+	int row, col;
+
+	vector<Cell> fallData;
+	
+	row = currentCombo[0].row;
+	if (row != -1 && row < blocks.size() - 1) {
+		for (int col=currentCombo[0].col; col <= currentCombo[1].col; ++col) {
+			if (blocks[row+1][col]->getState() == Block::enabled) {
+				Cell fd;
+				fd.col = col;
+				fd.row = row + 1;
+				fallData.push_back(fd);
+			}
+		}
+	}
+
+	col = currentCombo[3].col;
+	Cell top;
+	top.col = col;
+	top.row = -1;
+
+	if (col != -1 && currentCombo[3].row < blocks.size() - 1) {
+		for (int i = 0; i < fallData.size(); ++i) {
+			if ( fallData[i].col == col ) {
+				top.row = currentCombo[3].row + 1;
+				break;
+			}
+		}
+		
+		if (top.row == -1)
+			top.row = currentCombo[3].row + 1;
+
+		fallData.push_back(top);
+	}
+
+	printf("Falldata: ");
+	for (int i = 0; i < fallData.size(); ++i) 
+		printf("(%d, %d) ", fallData[i].row, fallData[i].col);
+	printf("\n");
+
+	return fallData.size() > 0;
 }
 
 /* destructor

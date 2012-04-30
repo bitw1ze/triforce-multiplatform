@@ -113,6 +113,7 @@ public:
 	int leftMatch(int row, int col, bool ignoreActive = false);
 	int rightMatch(int row, int col, bool ignoreActive = false);
 	bool detectCombos(int r, int c);
+	bool detectFall() const;
 
 	void onCombo();
 	void onFall();
