@@ -22,6 +22,7 @@
 	Also create the initial rows of the game */
 Grid::Grid(GamePlay *gp) {
 	gamePlay = gp;
+	Block::setComboInterval(1500);
 	blockSprites = gp->blockSprites;
 	block_w = blockSprites[0]->GetWidth();
 	block_h = blockSprites[0]->GetHeight();
@@ -53,54 +54,17 @@ void Grid::changeState(gameState gs) {
 	switch (gs) {
 	case combo:
 		if (state != combo) {
-			timer_combo = 1500;
+			timer_combo = Block::getComboInterval();
 			last_combo = mainTimer->time();
 		}
-
+		else
+			timer_combo += Block::getComboInterval();
 		state = gs;
-		onCombo();
 		
 		break;
-	case fall:
-		state = gs;
-		onFall();
-		break;
 	case play:
 		state = gs;
-		onPlay();
-		break;
-	}
-}
-
-void Grid::passiveMouseHover(int x, int y) {
-	// see if cursor is even inside playable part of grid, and set cursor type
-	if (!(x > gridPos.x && x < gridPos.x + (int)ncols*block_h))
-		glutSetCursor(GLUT_CURSOR_INHERIT);
-	else if (y > gridPos.y - grid_yoff ||
-	    y < gridPos.y - (int)(nrows)*block_h)
-		glutSetCursor(GLUT_CURSOR_INHERIT);
-	else
-		cursor->passiveMouseHover(x, y);
-}
-
-void Grid::composeFrame() {
-	switch (state) {
-	case play:
-		if (mainTimer->elapsed(last_push, timer_push)) {
-			pushRow();
-			last_push = mainTimer->time();
-		}
-		break;
-	case combo:
-		if (mainTimer->elapsed(last_combo, timer_combo)) {
-			setFallStates();	
-			changeState(fall);
-		}
-		break;
-	case fall:
-		//if (mainTimer->elapsed(last_fall, timer_fall)) {
-			changeState(play);
-		//}
+		last_push = mainTimer->time();
 		break;
 	}
 }
@@ -114,6 +78,33 @@ void Grid::display() {
 		for (int j=0; j<ncols; ++j) 
 			(*it)[j]->display();
 	cursor->draw(0);
+}
+
+void Grid::composeFrame() {
+	switch (state) {
+	case play:
+		if (mainTimer->elapsed(last_push, timer_push)) {
+			pushRow();
+			last_push = mainTimer->time();
+		}
+		break;
+	case combo:
+		if (mainTimer->elapsed(last_combo, timer_combo)) {
+			changeState(play);
+		}
+		break;
+	}
+}
+
+void Grid::passiveMouseHover(int x, int y) {
+	// see if cursor is even inside playable part of grid, and set cursor type
+	if (!(x > gridPos.x && x < gridPos.x + (int)ncols*block_h))
+		glutSetCursor(GLUT_CURSOR_INHERIT);
+	else if (y > gridPos.y - grid_yoff ||
+	    y < gridPos.y - (int)(nrows)*block_h)
+		glutSetCursor(GLUT_CURSOR_INHERIT);
+	else
+		cursor->passiveMouseHover(x, y);
 }
 
 int Grid::countEnabledRows() const {
@@ -172,23 +163,25 @@ void Grid::addRow() {
 	for (int col=0; col<ncols; ++col) {
 		blocks[0][col] = new Block();
 		blocks[0][col]->left = (col > 0) ? blocks[0][col - 1] : NULL;
-		blocks[0][col]->right = (col < ncols - 1) ? blocks[0][col + 1] : NULL;
 		blocks[0][col]->up = (blocks.size() > 1) ? blocks[1][col] : NULL;
+		blocks[0][col]->right = NULL;
+		blocks[0][col]->down = NULL;
 
 		/* Randomize the blocks without generating combos */
 		do    ( blocks[0][col]->init(blockSprites[ rand() % nblocktypes ], gridPos.x + col * block_w, gridPos.y) );
-		while ( leftMatch(0, col, true) >= 2 || upMatch(0, col, true) >= 2 );
+		while ( blocks[0][col]->leftMatch(NULL, true) >= 2 || blocks[0][col]->leftMatch(NULL, true) >= 2 );
 	}
+
+	for (int i = 0; i < ncols - 1; ++i)
+		blocks[0][i]->right = blocks[0][i + 1];
 
 	if (blocks.size() > 1)
 		for (int i=0; i<ncols; ++i) 
 			blocks[1][i]->down = blocks[0][i];
 
-	if (blocks.size() > 3) {
+	if (blocks.size() > 3)
 		for (int i=0; i<ncols; ++i) 
-			if (detectCombos(1, i))
-				changeState(combo);
-	}
+			blocks[1][i]->detectCombos();
 }
 
 /*	setCoords
@@ -217,55 +210,11 @@ void Grid::swapBlocks() {
 		return;
 
 	if (blocks[r][c1]->swap(*blocks[r][c2])) {
-		if (detectCombos(r, c1)) 
+		if (blocks[r][c1]->detectCombos() || blocks[r][c2]->detectCombos() ) {
 			changeState(combo);
-		if (detectCombos(r, c2))
-			changeState(combo);
+		}
 	}
 }
-
-/*	killRows
-	Called when a combo occurs. It will change the state to a 'freeze' state,
-	where all the blocks will stop for a certain amount of time before breaking. */
-void Grid::onCombo() {
-	int row, col;
-	Cell *cells = currentCombo;
-	if (cells == NULL)
-		return;
-	combos.push_back(cells);
-
-	/* debug
-	for (int i=0; i<4; ++i) 
-		printf("(%d, %d) ", cells[i].row, cells[i].col);
-	printf("\n");
-	*/
-	row = cells[0].row;
-	if (cells[0].col != -1) {
-		for (col = cells[0].col; col <= cells[1].col; ++col)
-			blocks[row][col]->setStateTimer(Block::combo, Block::disabled, timer_combo);
-	}
-	col = cells[2].col;
-	if (cells[2].col != -1) {
-		for (row = cells[2].row; row <= cells[3].row; ++row)
-			blocks[row][col]->setStateTimer(Block::combo, Block::disabled, timer_combo);
-	}
-}
-
-void Grid::onFinishCombos() {
-	onFall();
-}
-
-void Grid::onFall() {
-	
-}
-
-void Grid::onPlay() {
-	combos.clear();
-	fallData.clear();
-	last_push = mainTimer->time();
-}
-
-
 
 /* destructor
 	Delete all the blocks and the cursor */

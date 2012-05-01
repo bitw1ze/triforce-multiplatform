@@ -82,10 +82,9 @@ public:
 class Grid {
 
 public:
-	enum gameState { play, combo, fall };
+	enum gameState { play, combo };
 protected:
-	int row_xvel, row_yvel,
-		block_w, block_h,
+	int block_w, block_h,
 		grid_yspeed, grid_yoff,
 		last_push, last_combo,
 		timer_push, timer_combo,
@@ -95,9 +94,6 @@ protected:
 	deque<Block **> blocks;
 	CBaseSprite** blockSprites;
 	gameState state;
-	list<Cell *> combos;
-	Cell *currentCombo;
-	vector< vector<Cell> > fallData;
 	void composeFrame();
 
 public:
@@ -111,8 +107,6 @@ public:
 	void swapBlocks();
 
 	void onCombo();
-	void onFinishCombos();
-	void onFall();
 	void onPlay();
 	void changeState(gameState gs);
 	gameState getState() const { return state; }
@@ -138,16 +132,13 @@ protected:
 	gameState state, nextState;
 	void onCombo();
 	CTimer *timer;
-	int last_state,
-		last_fall,
-		interval_fall,
-		timer_state,
-		total_falls, count_falls, fall_offset;
+	int last_state, interval_state,
+		last_fall, interval_fall, total_falls, count_falls, fall_offset;
 	bool active;
-public:
 
+	static int interval_combo;
+public:
 	Block();
-	
 	Block *left, *right, *up, *down;
 	bool swap(Block &right);
 	void changeState(gameState gs);
@@ -155,21 +146,24 @@ public:
 	void composeFrame();
 	bool isActive() const { return active; }
 	void setActive(bool act) { active = act; }
-	void setStateTimer(gameState oldst, gameState newst, int t);
+	void setStateTimer(gameState oldst, gameState newst);
 	void setFalls(int falls) { total_falls = falls * fall_offset; }
 	gameState getState() const { return state; }
 
 	bool match(const Block *right, bool ignoreActive = false) const;
-	Block *downMatch(bool ignoreActive = false);
-	Block *upMatch(bool ignoreActive = false);
-	Block *leftMatch(bool ignoreActive = false);
-	Block *rightMatch(bool ignoreActive = false);
+	int downMatch(Block **matched = NULL, bool ignoreActive = false);
+	int upMatch(Block **matched = NULL, bool ignoreActive = false);
+	int leftMatch(Block **matched = NULL, bool ignoreActive = false);
+	int rightMatch(Block **matched = NULL, bool ignoreActive = false);
 	bool detectCombos();
 	void setFallStates();
 	int downDistance( Block *) const;
 	int upDistance(Block *) const;
 	int leftDistance(Block *) const;
 	int rightDistance(Block *) const;
+	
+	static int getComboInterval() { return interval_combo; }
+	static void setComboInterval(int n) { interval_combo = n; }
 };
 
 /* The Cursor class controls the operations on the player's cursor, like moving
