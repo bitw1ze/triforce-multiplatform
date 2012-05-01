@@ -145,12 +145,15 @@ void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
 	{
 		switch (button) {
 		case GLUT_LEFT_BUTTON:
-			if (mouseState == GLUT_UP)
+			if (mouseState == GLUT_DOWN)
 				gamePlay->grid->swapBlocks();
 		}
 	}
 }
 
+void Triforce::mouseMotion(int x, int y) {
+	mousePassiveMotion(x, y);
+}
 void Triforce::mousePassiveMotion(int x, int y) {
 	if (state == menu)
 		menuButtons->passiveMouseHover(x, y);

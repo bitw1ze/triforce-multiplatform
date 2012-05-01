@@ -44,6 +44,10 @@ void mouseButtons(int button, int state, int x, int y) {
 	triforce->mouseButtons(button, state, x, y);
 }
 
+void mouseMotion(int x, int y) {
+	triforce->mousePassiveMotion(x, y);
+}
+
 void mousePassiveMotion(int x, int y) {
 	triforce->mousePassiveMotion(x, y);
 }
@@ -54,6 +58,7 @@ void initGlut()
 	glutCreateWindow("<^> TRIFORCE <^>");
 	glutReshapeFunc(reshape2);
 	glutMouseFunc(mouseButtons);
+	glutMotionFunc(mousePassiveMotion);
 	glutPassiveMotionFunc(mousePassiveMotion);
 	glutKeyboardFunc(normalKeys);
 	glutSpecialFunc(specialKeys);
