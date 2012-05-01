@@ -31,7 +31,8 @@ Block::Block() : CObject() {
 void Block::changeState(gameState gs) {
 	switch (gs) {
 	case combo:
-		last_combo = timer->time();
+		if (state != combo)
+			last_combo = timer->time();
 	//	onCombo();
 		break;
 	case fall:
@@ -141,35 +142,30 @@ bool Block::match(const Block *right, bool ignoreActive) const {
 	is found, it will then iteratively search for a vertical from each block in the
 	horizontal match.  */
 bool Block::detectAndSetComboState() {
-	Block *bleft = NULL, *bright = NULL, *bup = NULL, *bdown = NULL;
-	Block *leftright = NULL, *downup = NULL;
+	Block *horiz = NULL, *vert = NULL;
 	int nleft, nright, nup, ndown;
 
-	nleft = leftMatch(&bleft);
-	nright = rightMatch(&bright);
+	nleft = leftMatch();
+	nright = rightMatch();
 
 	if ( nleft + nright >= 2) {
-		leftright = this;
-		for (int i=0; i < nleft; i++) 
-			leftright = leftright->left;
+		horiz = offsetCol(-nleft);
 		
 		for (int i=0; i <= nright; ++i) {
-			leftright->changeState(combo);
-			nup = leftright->upMatch(&bup);
-			ndown = leftright->downMatch(&bdown);
+			horiz->changeState(combo);
+			nup = horiz->upMatch();
+			ndown = horiz->downMatch();
 
 			if (nup + ndown >= 2) {
-				downup = this;
-				for (int i=0; i < ndown; ++i)
-					downup = downup->down;
+				vert = offsetRow(-ndown);
 
 				for (int i=0; i <= nup; ++i) {
-					downup->changeState(combo);
-					downup = downup->up;
+					vert->changeState(combo);
+					vert = vert->up;
 				}
 			}
 
-			leftright = leftright->right;
+			horiz = horiz->right;
 		}
 
 		changeState(combo);
@@ -177,32 +173,28 @@ bool Block::detectAndSetComboState() {
 		return true;
 	}
 	else {
-		ndown = downMatch(&bdown);
-		nup = upMatch(&bup);
+		ndown = downMatch();
+		nup = upMatch();
 
 		if ( ndown + nup >= 2) {
-			downup = this;
-			for (int i=0; i < ndown; ++i)
-				downup = downup->down;
+			vert = offsetRow(-ndown);
 
 			for (int i=0; i <= nup; ++i) {
-				downup->changeState(combo);
+				vert->changeState(combo);
 
-				nleft = downup->leftMatch(&bleft);
-				nright = downup->rightMatch(&bright);
+				nleft = vert->leftMatch();
+				nright = vert->rightMatch();
 
 				if (nleft + nright >= 2) {
-					leftright = this;
-					for (int i=0; i < nleft; ++i) 
-						leftright = leftright->left;
+					horiz = offsetCol(-nleft);
 
 					for (int i=0; i <= nright; ++i) {
-						leftright->changeState(combo);
-						leftright = leftright->right;
+						horiz->changeState(combo);
+						horiz = horiz->right;
 					}
 				}
 
-				downup = downup->up;
+				vert = vert->up;
 			} 
 
 			changeState(combo);
@@ -386,4 +378,36 @@ int Block::rightDistance(Block *block) const {
 	}
 
 	return (temp != NULL) ? count : 0;
+}
+
+Block * Block::offsetRow(int n) {
+	Block *temp = this;
+
+	if (n > 0) {
+		while (--n >= 0 && temp != NULL) 
+			temp = temp->up;
+	}
+	else {
+		n = -n;
+		while (--n >= 0 && temp != NULL)
+			temp = temp->down;
+	}
+
+	return temp ? temp : this;
+}
+
+Block * Block::offsetCol(int n) {
+	Block *temp = this;
+
+	if (n > 0) {
+		while (--n >= 0 && temp != NULL) 
+			temp = temp->right;
+	}
+	else {
+		n = -n;
+		while (--n >= 0 && temp != NULL)
+			temp = temp->left;
+	}
+
+	return temp ? temp : this;
 }
