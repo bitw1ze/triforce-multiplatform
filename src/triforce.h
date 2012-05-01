@@ -17,9 +17,9 @@ extern CTimer *mainTimer;
 class Triforce {
 public : enum gameState {MENU, PLAY, PAUSE, QUIT};
 private:
-	GamePlay *gamePlay; 
-	gameState state;
-	Input input;
+	static gameState state;
+	static GamePlay *gamePlay; 
+	static Input input;
 
 	Buttons * menuButtons;
 	static const string bgFile;
@@ -37,8 +37,8 @@ public:
 
 	Triforce();
 	~Triforce();
-	void setState(gameState s);
-	gameState getState(gameState s) {return state;}
+	static void setState(gameState s);
+	static gameState getState(gameState s) {return state;}
 	void display();
 	static void setStateWrapper(void *tfInstance, int gameState); // for callbacks
 	void specialKeys(int key, int x, int y);

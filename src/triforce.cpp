@@ -1,10 +1,12 @@
 #include "triforce.h"
 
 const string Triforce::bgFile = "bg.bmp";
+Triforce::gameState Triforce::state = MENU;
+GamePlay * Triforce::gamePlay = NULL;
 
 Triforce::Triforce()
 { 
-	state = MENU; // initialize before using changeState
+//	state = MENU; // initialize before using changeState
 	current_frame = 0; 
 	loadImages(); 
 
