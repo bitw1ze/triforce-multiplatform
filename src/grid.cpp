@@ -8,6 +8,7 @@
 */
 
 #include "game.h"
+#include <algorithm>
 
 /*	TODOs: 
 		- Make the grid manage its own timer and control when rows are pushed.
@@ -29,9 +30,12 @@ Grid::Grid(GamePlay *gp) {
 	gridPos.x = gp->getWidth()/2 - (block_w * ncols)/2;
 	gridPos.y = gp->getHeight() - (block_h * 2);
 	cursor = new Cursor(this, gp->cursorSprite);
-	last_push = mainTimer->time();
+	last_push = 0;
 	timer_push = 400;
+	last_combo = 0;
 	timer_combo = 0;
+	last_fall = 0;
+	timer_fall = 0;
 	state = play;
 
 	int startingRows = nrows / 2 - 1;
@@ -49,16 +53,17 @@ void Grid::changeState(gameState gs) {
 	switch (gs) {
 	case combo:
 		if (state != combo) {
-			timer_combo = 0;
+			timer_combo = 1500;
 			last_combo = mainTimer->time();
 		}
+
 		state = gs;
 		onCombo();
+		
 		break;
 	case fall:
 		state = gs;
 		onFall();
-		changeState(play);
 		break;
 	case play:
 		state = gs;
@@ -88,11 +93,14 @@ void Grid::composeFrame() {
 		break;
 	case combo:
 		if (mainTimer->elapsed(last_combo, timer_combo)) {
+			setFallStates();	
 			changeState(fall);
-			cout << "Falling\n";
 		}
 		break;
 	case fall:
+		//if (mainTimer->elapsed(last_fall, timer_fall)) {
+			changeState(play);
+		//}
 		break;
 	}
 }
@@ -163,10 +171,18 @@ void Grid::addRow() {
 
 	for (int col=0; col<ncols; ++col) {
 		blocks[0][col] = new Block();
+		blocks[0][col]->left = (col > 0) ? blocks[0][col - 1] : NULL;
+		blocks[0][col]->right = (col < ncols - 1) ? blocks[0][col + 1] : NULL;
+		blocks[0][col]->up = (blocks.size() > 1) ? blocks[1][col] : NULL;
+
 		/* Randomize the blocks without generating combos */
 		do    ( blocks[0][col]->init(blockSprites[ rand() % nblocktypes ], gridPos.x + col * block_w, gridPos.y) );
 		while ( leftMatch(0, col, true) >= 2 || upMatch(0, col, true) >= 2 );
 	}
+
+	if (blocks.size() > 1)
+		for (int i=0; i<ncols; ++i) 
+			blocks[1][i]->down = blocks[0][i];
 
 	if (blocks.size() > 3) {
 		for (int i=0; i<ncols; ++i) 
@@ -212,7 +228,7 @@ void Grid::swapBlocks() {
 	Called when a combo occurs. It will change the state to a 'freeze' state,
 	where all the blocks will stop for a certain amount of time before breaking. */
 void Grid::onCombo() {
-	int _row, _col;
+	int row, col;
 	Cell *cells = currentCombo;
 	if (cells == NULL)
 		return;
@@ -223,242 +239,33 @@ void Grid::onCombo() {
 		printf("(%d, %d) ", cells[i].row, cells[i].col);
 	printf("\n");
 	*/
-	_row = cells[0].row;
+	row = cells[0].row;
 	if (cells[0].col != -1) {
-		for (_col = cells[0].col; _col <= cells[1].col; ++_col)
-			blocks[_row][_col]->changeState( Block::combo);
+		for (col = cells[0].col; col <= cells[1].col; ++col)
+			blocks[row][col]->setStateTimer(Block::combo, Block::disabled, timer_combo);
 	}
-	_col = cells[2].col;
+	col = cells[2].col;
 	if (cells[2].col != -1) {
-		for (_row = cells[2].row; _row <= cells[3].row; ++_row)
-			blocks[_row][_col]->changeState( Block::combo);
+		for (row = cells[2].row; row <= cells[3].row; ++row)
+			blocks[row][col]->setStateTimer(Block::combo, Block::disabled, timer_combo);
 	}
-	
-	timer_combo += 1500;
-	detectFall();
+}
+
+void Grid::onFinishCombos() {
+	onFall();
 }
 
 void Grid::onFall() {
-	int row, col;
-
-	for (list<Cell *>::iterator it = combos.begin(); it != combos.end(); ++it) {
-		Cell *cells = *it;
-		
-		row = cells[0].row;
-		if (row != -1)
-			for (col = cells[0].col; col <= cells[1].col; ++col)
-				blocks[row][col]->changeState( Block::fall );
-
-		col = cells[2].col;
-		if (col != -1) 
-			for (row = cells[2].row; row <= cells[3].row; ++row)
-				blocks[row][col]->changeState( Block::fall );
-	}
+	
 }
 
 void Grid::onPlay() {
-	int row, col;
-
-	for (list<Cell *>::iterator it = combos.begin(); it != combos.end(); ++it) {
-		Cell *cells = *it;
-		
-		row = cells[0].row;
-		if (row != -1)
-			for (col = cells[0].col; col <= cells[1].col; ++col)
-				blocks[row][col]->changeState( Block::disabled );
-
-		col = cells[2].col;
-		if (col != -1) 
-			for (row = cells[2].row; row <= cells[3].row; ++row)
-				blocks[row][col]->changeState( Block::disabled );
-	}
-
 	combos.clear();
+	fallData.clear();
 	last_push = mainTimer->time();
 }
 
-/*	leftMatch, rightMatch, downMatch, and upMatch
-	These functions are all used to detect combos. They return the number of blocks
-	that match the block passed to the direction in the function's name.
-	e.g. a 3 combo will return 2		*/
 
-int Grid::leftMatch(int row, int col, bool ignoreActive) {
-	int matches = 0;
-
-	if (col <= 0)
-		return matches;
-	
-	for (int c=col-1; c >= 0; --c) {
-		if (blocks[row][c]->match(*blocks[row][col], ignoreActive))
-			++matches;
-		else
-			break;
-	}
-
-	return matches;
-}
-
-int Grid::rightMatch(int row, int col, bool ignoreActive) {
-	int matches = 0;
-
-	if (col >= ncols - 1)
-		return matches;
-
-	for (int c=col+1; c < ncols; ++c) {
-		if (blocks[row][c]->match(*blocks[row][col], ignoreActive))
-			++matches;
-		else
-			break;
-	}
-
-	return matches;
-}
-
-
-int Grid::upMatch(int row, int col, bool ignoreActive) {
-	int matches = 0;
-
-	if (row >= countEnabledRows() - 1)
-		return matches;
-
-	for (int r=row+1; r < countEnabledRows(); ++r) {
-		if (blocks[r][col]->match(*blocks[row][col], ignoreActive))
-			++matches;
-		else
-			break;
-	}
-
-	return matches;
-}
-
-int Grid::downMatch(int row, int col, bool ignoreActive) {
-	int matches = 0;
-
-	if (row <= 0)
-		return matches;
-
-	for (int r=row-1; r>=0; --r) {
-		if (blocks[r][col]->match(*blocks[row][col], ignoreActive))
-			++matches;
-		else
-			break;
-	}
-
-	return matches;
-}
-
-/*	detectCombos
-	This function uses the match<direction> functions to find all possible combos.
-	A combo can be stored as a set of Cells, where a Cell is a struct that holds the
-	row and column of a block. A combo in one direction (e.g. 3 blocks in a row 
-	horizontal) is stored in 2 cells, and a combo in two directions (e.g. 5 blocks 
-	vertical and 3 blocks horizontal) is stored in 4 cells.
-	
-	This function computes the cells by first finding a horizontal match. If a match
-	is found, it will then iteratively search for a vertical from each block in the
-	horizontal match. 
-
-	The final set of cells is returned at the end. It will be useful to pass this array
-	of cells to onCombo(), which handles the event of a combo. */
-bool Grid::detectCombos(int r, int c) {
-	int left, right, up, down;
-	Cell *cells = new Cell[4];
-	for (int i=0; i<4; ++i)
-		cells[i].col = cells[i].row = -1;
-
-	left = leftMatch(r, c);
-	right = rightMatch(r, c);
-
-	if ( left + right >= 2) {
-		cells[0].row = cells[1].row = r;
-		cells[0].col = c - left;
-		cells[1].col = c + right;
-
-		for (int i=cells[0].col; i <= cells[1].col; ++i) {
-			up = upMatch(cells[0].row, i);
-			down = downMatch(cells[0].row, i);
-			if (up + down >= 2) {
-				cells[2].col = cells[3].col = i;
-				cells[2].row = cells[0].row - down;
-				cells[3].row = cells[0].row + up;
-				break;
-			}
-		}
-	}
-	else {
-		down = downMatch(r, c);
-		up = upMatch(r, c);
-		if ( up + down >= 2) {
-			cells[2].col = cells[3].col = c;
-			cells[2].row = r - down;
-			cells[3].row = r + up;
-
-			for (int i=cells[2].row; i <= cells[3].row; ++i) {
-				left = leftMatch(i, cells[2].col);
-				right = rightMatch(i, cells[2].col);
-				if (left + right >= 2) {
-					cells[0].row = cells[1].row = i;
-					cells[0].col = cells[2].col - left;
-					cells[1].col = cells[2].col + right;
-					break;
-				}
-			}
-		}
-	}
-
-	if (cells[0].row != -1 || cells[2].row != -1) {
-		currentCombo = cells;
-		return true;
-	}
-	else {
-		currentCombo = NULL;
-		return false;
-	}
-}
-
-bool Grid::detectFall() const {
-	int row, col;
-
-	vector<Cell> fallData;
-	
-	row = currentCombo[0].row;
-	if (row != -1 && row < blocks.size() - 1) {
-		for (int col=currentCombo[0].col; col <= currentCombo[1].col; ++col) {
-			if (blocks[row+1][col]->getState() == Block::enabled) {
-				Cell fd;
-				fd.col = col;
-				fd.row = row + 1;
-				fallData.push_back(fd);
-			}
-		}
-	}
-
-	col = currentCombo[3].col;
-	Cell top;
-	top.col = col;
-	top.row = -1;
-
-	if (col != -1 && currentCombo[3].row < blocks.size() - 1) {
-		for (int i = 0; i < fallData.size(); ++i) {
-			if ( fallData[i].col == col ) {
-				top.row = currentCombo[3].row + 1;
-				break;
-			}
-		}
-		
-		if (top.row == -1)
-			top.row = currentCombo[3].row + 1;
-
-		fallData.push_back(top);
-	}
-
-	printf("Falldata: ");
-	for (int i = 0; i < fallData.size(); ++i) 
-		printf("(%d, %d) ", fallData[i].row, fallData[i].col);
-	printf("\n");
-
-	return fallData.size() > 0;
-}
 
 /* destructor
 	Delete all the blocks and the cursor */

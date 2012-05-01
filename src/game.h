@@ -88,7 +88,8 @@ protected:
 		block_w, block_h,
 		grid_yspeed, grid_yoff,
 		last_push, last_combo,
-		timer_push, timer_combo;
+		timer_push, timer_combo,
+		last_fall, timer_fall;
 	Point gridPos;
 	GamePlay *gamePlay;
 	deque<Block **> blocks;
@@ -96,6 +97,7 @@ protected:
 	gameState state;
 	list<Cell *> combos;
 	Cell *currentCombo;
+	vector< vector<Cell> > fallData;
 	void composeFrame();
 
 public:
@@ -108,14 +110,8 @@ public:
 	void setCoords();
 	void swapBlocks();
 
-	int downMatch(int row, int col, bool ignoreActive = false);
-	int upMatch(int row, int col, bool ignoreActive = false);
-	int leftMatch(int row, int col, bool ignoreActive = false);
-	int rightMatch(int row, int col, bool ignoreActive = false);
-	bool detectCombos(int r, int c);
-	bool detectFall() const;
-
 	void onCombo();
+	void onFinishCombos();
 	void onFall();
 	void onPlay();
 	void changeState(gameState gs);
@@ -139,22 +135,41 @@ public:
 class Block : public CObject {
 public: enum gameState { enabled, disabled, combo, fall };
 protected:
-	gameState state;
+	gameState state, nextState;
 	void onCombo();
 	CTimer *timer;
-	int last_time;
+	int last_state,
+		last_fall,
+		interval_fall,
+		timer_state,
+		total_falls, count_falls, fall_offset;
 	bool active;
 public:
 
 	Block();
 	
-	bool match(const Block &right, bool ignoreActive = false) const;
+	Block *left, *right, *up, *down;
 	bool swap(Block &right);
 	void changeState(gameState gs);
 	void display();
+	void composeFrame();
 	bool isActive() const { return active; }
 	void setActive(bool act) { active = act; }
+	void setStateTimer(gameState oldst, gameState newst, int t);
+	void setFalls(int falls) { total_falls = falls * fall_offset; }
 	gameState getState() const { return state; }
+
+	bool match(const Block *right, bool ignoreActive = false) const;
+	Block *downMatch(bool ignoreActive = false);
+	Block *upMatch(bool ignoreActive = false);
+	Block *leftMatch(bool ignoreActive = false);
+	Block *rightMatch(bool ignoreActive = false);
+	bool detectCombos();
+	void setFallStates();
+	int downDistance( Block *) const;
+	int upDistance(Block *) const;
+	int leftDistance(Block *) const;
+	int rightDistance(Block *) const;
 };
 
 /* The Cursor class controls the operations on the player's cursor, like moving
