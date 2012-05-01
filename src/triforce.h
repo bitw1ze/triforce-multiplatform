@@ -38,7 +38,7 @@ public:
 	Triforce();
 	~Triforce();
 	void setState(gameState s);
-	void getState(gameState s);
+	gameState getState(gameState s) {return state;}
 	void display();
 	static void setStateWrapper(void *tfInstance, int gameState); // for callbacks
 	void specialKeys(int key, int x, int y);
