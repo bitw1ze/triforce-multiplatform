@@ -155,8 +155,8 @@ public:
 	int upMatch(Block **matched = NULL, bool ignoreActive = false);
 	int leftMatch(Block **matched = NULL, bool ignoreActive = false);
 	int rightMatch(Block **matched = NULL, bool ignoreActive = false);
-	bool detectCombos();
-	void setFallStates();
+	bool detectAndSetComboState();
+	void detectAndSetFallState();
 	int downDistance( Block *) const;
 	int upDistance(Block *) const;
 	int leftDistance(Block *) const;

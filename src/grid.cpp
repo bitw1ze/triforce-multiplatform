@@ -189,7 +189,7 @@ void Grid::addRow() {
 
 	if (blocks.size() > 3)
 		for (int i=0; i<ncols; ++i) 
-			blocks[1][i]->detectCombos();
+			blocks[1][i]->detectAndSetComboState();
 
 	if (blocks.size() > 1)
 		for (int i=0; i<ncols; ++i) 
@@ -223,9 +223,11 @@ void Grid::swapBlocks() {
 
 	Block *temp = getBlock(r, c1);
 	if (temp != NULL && temp->swap(*temp->right)) {
-		if (temp->detectCombos() | temp->right->detectCombos() ) {
-			changeState(combo);
-		}
+		temp->detectAndSetComboState();
+		temp->right->detectAndSetComboState();
+
+		temp->detectAndSetFallState();
+		temp->right->detectAndSetFallState();
 	}
 }
 

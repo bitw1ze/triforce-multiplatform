@@ -57,7 +57,7 @@ void Block::composeFrame() {
 	case combo:
 		if (timer->elapsed(last_combo, 1500)) {
 			changeState(disabled);
-			setFallStates();
+			detectAndSetFallState();
 		}
 		break;
 
@@ -66,14 +66,18 @@ void Block::composeFrame() {
 			last_fall = timer->time();
 			offsetY(getHeight() / fall_factor);
 			++count_falls;
-
-			if (total_falls % count_falls == 0) {
-				if (down->state == disabled)
-					down->setSprite(getSprite());
-			}
 		}
 		if (count_falls >= total_falls) {
-			changeState(enabled);
+			int n = (total_falls / fall_factor);
+			offsetY(n * -getHeight());
+			Block *temp = this;
+			for (int i=0; i<n; ++i)
+				temp = temp->down;
+			temp->setSprite(getSprite());
+			temp->changeState(enabled);
+			state = disabled;
+
+			detectAndSetComboState();
 		}
 
 		break;
@@ -129,7 +133,7 @@ bool Block::match(const Block *right, bool ignoreActive) const {
 		&&	getSprite() == right->getSprite();
 }
 
-/*	detectCombos
+/*	detectAndSetComboState
 	This function uses the match<direction> functions to find all possible combos.
 	A combo can be stored as a set of Cells, where a Cell is a struct that holds the
 	row and column of a block. A combo in one direction (e.g. 3 blocks in a row 
@@ -139,7 +143,7 @@ bool Block::match(const Block *right, bool ignoreActive) const {
 	This function computes the cells by first finding a horizontal match. If a match
 	is found, it will then iteratively search for a vertical from each block in the
 	horizontal match.  */
-bool Block::detectCombos() {
+bool Block::detectAndSetComboState() {
 	Block *bleft = NULL, *bright = NULL, *bup = NULL, *bdown = NULL;
 	Block *leftright = NULL, *downup = NULL;
 	int nleft, nright, nup, ndown;
@@ -170,6 +174,8 @@ bool Block::detectCombos() {
 
 			leftright = leftright->right;
 		}
+
+		changeState(combo);
 
 		return true;
 	}
@@ -202,6 +208,8 @@ bool Block::detectCombos() {
 				downup = downup->up;
 			} 
 
+			changeState(combo);
+
 			return true;
 		}
 	}
@@ -209,28 +217,38 @@ bool Block::detectCombos() {
 	return false;
 }
 
-void Block::setFallStates() {
+void Block::detectAndSetFallState() {
 	Block *temp = NULL;
 	int nfall;
 
-	if (up != NULL && up->getState() == enabled)
+	if (state == disabled && up != NULL && up->getState() == enabled) {
 		nfall = 1;
-	else return;
+		
+		temp = down;
+		while (temp != NULL && temp->getState() == disabled) {
+			++nfall;
+			temp = temp->down;
+		}
 
-	temp = down;
-	while (temp != NULL && temp->getState() != enabled) {
-		++nfall;
-		temp = temp->down;
+		temp = up;
+		while (temp != NULL && temp->getState() == enabled) {
+			temp->setFallCount(nfall);
+			temp->changeState(fall);
+			temp = temp->up;
+		}
 	}
+	else if (state == enabled && down != NULL && down->getState() == disabled) {
+		nfall = 0;
 
-	temp = up;
-	while (temp != NULL && temp->getState() == enabled) {
-		temp->setFallCount(nfall);
-		temp->changeState(fall);
-		temp = temp->up;
+		temp = down;
+		while (temp != NULL && temp->getState() == disabled) {
+			++nfall;
+			temp = temp->down;
+		}
+
+		changeState(fall);
+		setFallCount(nfall);
 	}
-
-	state = disabled;
 }
 
 void Block::transferDown() {
