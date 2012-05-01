@@ -22,7 +22,7 @@
 	Also create the initial rows of the game */
 Grid::Grid(GamePlay *gp) {
 	gamePlay = gp;
-	Block::setComboInterval(1500);
+	//Block::setComboInterval(1500);
 	blockSprites = gp->blockSprites;
 	block_w = blockSprites[0]->GetWidth();
 	block_h = blockSprites[0]->GetHeight();
@@ -54,11 +54,11 @@ void Grid::changeState(gameState gs) {
 	switch (gs) {
 	case combo:
 		if (state != combo) {
-			timer_combo = Block::getComboInterval();
+			timer_combo = 1500;
 			last_combo = mainTimer->time();
 		}
 		else
-			timer_combo += Block::getComboInterval();
+			timer_combo += 1500;
 		state = gs;
 		
 		break;
@@ -74,9 +74,15 @@ void Grid::changeState(gameState gs) {
 void Grid::display() {
 	composeFrame();
 
-	for (deque<Block **>::iterator it = blocks.begin(); it < blocks.end(); ++it)
-		for (int j=0; j<ncols; ++j) 
-			(*it)[j]->display();
+	Block *row = blocks[0][0];
+	while (row != NULL) {
+		Block *col = row;
+		while (col != NULL) {
+			col->display();
+			col = col->right;
+		}
+		row = row->up;
+	}
 	cursor->draw(0);
 }
 
@@ -132,11 +138,17 @@ void Grid::pushRow() {
 	grid_yoff += grid_yspeed;
 
 	cursor->offsetY(-grid_yspeed);
-	for (uint32 i=0; i<blocks.size(); ++i) {
-		for (int j=0; j<ncols; ++j) {
-			blocks[i][j]->offsetY(-grid_yspeed);
+	Block *row = blocks[0][0];
+	Block *col = NULL;
+	while (row != NULL) {
+		col = row;
+		while (col != NULL) {
+			col->offsetY(-grid_yspeed);
+			col = col->right;
 		}
+		row = row->up;
 	}
+	
 	if (grid_yoff >= block_h) {
 		grid_yoff = 0;
 		cursor->shiftRow();
@@ -175,13 +187,13 @@ void Grid::addRow() {
 	for (int i = 0; i < ncols - 1; ++i)
 		blocks[0][i]->right = blocks[0][i + 1];
 
-	if (blocks.size() > 1)
-		for (int i=0; i<ncols; ++i) 
-			blocks[1][i]->down = blocks[0][i];
-
 	if (blocks.size() > 3)
 		for (int i=0; i<ncols; ++i) 
 			blocks[1][i]->detectCombos();
+
+	if (blocks.size() > 1)
+		for (int i=0; i<ncols; ++i) 
+			blocks[1][i]->down = blocks[0][i];
 }
 
 /*	setCoords
@@ -209,19 +221,35 @@ void Grid::swapBlocks() {
 	if (r >= countEnabledRows())
 		return;
 
-	if (blocks[r][c1]->swap(*blocks[r][c2])) {
-		if (blocks[r][c1]->detectCombos() || blocks[r][c2]->detectCombos() ) {
+	Block *temp = getBlock(r, c1);
+	if (temp != NULL && temp->swap(*temp->right)) {
+		if (temp->detectCombos() | temp->right->detectCombos() ) {
 			changeState(combo);
 		}
 	}
+}
+
+Block * Grid::getBlock(int r, int c) {
+	Block *row = blocks[0][0];
+	Block *col = NULL;
+	for (int i=0; i <= r && row != NULL; ++i, row = row->up) {
+		col = row;
+		for (int j=0; j < c && col != NULL; ++j, col = col->right) {
+			printf("(%d, %d)\n", i, j);
+		}
+	}
+
+	return col;
 }
 
 /* destructor
 	Delete all the blocks and the cursor */
 Grid::~Grid() {
 	delete cursor;
+	/*
 	for (uint32 i=0; i<blocks.size(); ++i)
 		for (uint32 j=0; j<ncols; ++j)
 			if (blocks[i][j] != NULL)
 				delete blocks[i][j];
+				*/
 }

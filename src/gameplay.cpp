@@ -120,6 +120,8 @@ void GamePlay::normalKeys(unsigned char key, int x, int y) {
 			grid->pushRow();
 		break;
 	}
+
+	glutPostRedisplay();
 }
 
 void GamePlay::passiveMouseHover(int x, int y) {

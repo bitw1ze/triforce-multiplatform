@@ -105,6 +105,7 @@ public:
 	void display();
 	void setCoords();
 	void swapBlocks();
+	Block * getBlock(int row, int col);
 
 	void onCombo();
 	void onPlay();
@@ -132,11 +133,11 @@ protected:
 	gameState state, nextState;
 	void onCombo();
 	CTimer *timer;
-	int last_state, interval_state,
-		last_fall, interval_fall, total_falls, count_falls, fall_offset;
+	int last_combo, interval_combo;
+	int last_fall, interval_fall, total_falls, count_falls, fall_factor;
 	bool active;
 
-	static int interval_combo;
+	//static int interval_combo;
 public:
 	Block();
 	Block *left, *right, *up, *down;
@@ -146,8 +147,7 @@ public:
 	void composeFrame();
 	bool isActive() const { return active; }
 	void setActive(bool act) { active = act; }
-	void setStateTimer(gameState oldst, gameState newst);
-	void setFalls(int falls) { total_falls = falls * fall_offset; }
+	void setFallCount(int falls) { total_falls = falls * fall_factor; count_falls = 0; }
 	gameState getState() const { return state; }
 
 	bool match(const Block *right, bool ignoreActive = false) const;
@@ -161,9 +161,10 @@ public:
 	int upDistance(Block *) const;
 	int leftDistance(Block *) const;
 	int rightDistance(Block *) const;
+	void transferDown();
 	
-	static int getComboInterval() { return interval_combo; }
-	static void setComboInterval(int n) { interval_combo = n; }
+	//static int getComboInterval() { return interval_combo; }
+	//static void setComboInterval(int n) { interval_combo = n; }
 };
 
 /* The Cursor class controls the operations on the player's cursor, like moving

@@ -8,18 +8,21 @@
 
 #include "game.h"
 
-int Block::interval_combo;
+//int Block::interval_combo;
 
 Block::Block() : CObject() {
 	active = false;
 	state = enabled; 
 	timer = new CTimer(); 
 	timer->start();
-	last_state = -1;
+
+	last_combo = -1;
+	interval_combo = 1500;
+
 	last_fall = -1;
-	interval_fall = 100;
+	interval_fall = 20;
 	total_falls = 0;
-	fall_offset = 6;
+	fall_factor = 6;
 	count_falls = 0;
 }
 
@@ -28,10 +31,11 @@ Block::Block() : CObject() {
 void Block::changeState(gameState gs) {
 	switch (gs) {
 	case combo:
+		last_combo = timer->time();
 	//	onCombo();
 		break;
 	case fall:
-		last_fall = mainTimer->time();
+		last_fall = timer->time();
 		count_falls = 0;
 		//onFall();
 		break;
@@ -44,47 +48,33 @@ void Block::changeState(gameState gs) {
 	state = gs;
 }
 
-void Block::setStateTimer(gameState newState, gameState nextst) {
-	last_state = mainTimer->time();
-	if (newState == combo)
-		interval_state = Block::interval_combo;
-	changeState(newState);
-	nextState = nextst;
-}
-
-/*	swap
-	Swap two adjacent blocks that the cursor has selected. */
-bool Block::swap(Block &right) {
-	if ( getState() == combo || getState() == fall ||
-		right.getState() == combo || right.getState() == fall)
-		return false;
-
-	CBaseSprite *temp = getSprite();
-	setSprite( right.getSprite() );
-	right.setSprite( temp );
-
-	gameState status = getState();
-	changeState( right.getState() );
-	right.changeState( status );
-
-	return true;
-}
-
 void Block::composeFrame() {
-	if (last_state > 0 && mainTimer->elapsed(last_state, interval_state)) {
-		changeState(nextState);
-		last_state = -1;
-	}
-
+	
 	switch (state) {
-	case fall:
-		cout << "Falling\n";
-		if (mainTimer->elapsed(last_fall, interval_fall)) {
-			offsetY(getHeight() / fall_offset);
-			++count_falls;
+	case enabled:
+		break;
+
+	case combo:
+		if (timer->elapsed(last_combo, 1500)) {
+			changeState(disabled);
+			setFallStates();
 		}
-		if (count_falls >= total_falls) 
+		break;
+
+	case fall:
+		if (timer->elapsed(last_fall, interval_fall)) {
+			last_fall = timer->time();
+			offsetY(getHeight() / fall_factor);
+			++count_falls;
+
+			if (total_falls % count_falls == 0) {
+				if (down->state == disabled)
+					down->setSprite(getSprite());
+			}
+		}
+		if (count_falls >= total_falls) {
 			changeState(enabled);
+		}
 
 		break;
 	}
@@ -108,6 +98,24 @@ void Block::display() {
 	}
 }
 
+/*	swap
+	Swap two adjacent blocks that the cursor has selected. */
+bool Block::swap(Block &right) {
+	if ( getState() == combo || getState() == fall ||
+		right.getState() == combo || right.getState() == fall)
+		return false;
+
+	CBaseSprite *temp = getSprite();
+	setSprite( right.getSprite() );
+	right.setSprite( temp );
+
+	gameState st = state;
+	state = right.state;
+	right.state = st;
+
+	return true;
+}
+
 /*	match
 	Detect a single match of one block to another block based on the sprite.
 	ignoreActive should be enabled when only testing if block states and sprites
@@ -121,72 +129,6 @@ bool Block::match(const Block *right, bool ignoreActive) const {
 		&&	getSprite() == right->getSprite();
 }
 
-/*	leftMatch, rightMatch, downMatch, and upMatch
-	These functions are all used to detect combos. They return the number of blocks
-	that match the block passed to the direction in the function's name.
-	e.g. a 3 combo will return 2		*/
-
-int Block::leftMatch(Block **matched, bool ignoreActive) {
-	int matches = 0;
-	
-	Block *temp = this->left;
-	while (match(temp, ignoreActive))  {
-		temp = temp->left;
-		++matches;
-	}
-
-	if (matched != NULL)
-		*matched = temp;
-
-	return matches;
-}
-
-int Block::rightMatch(Block **matched, bool ignoreActive) {
-	int matches = 0;
-	
-	Block *temp = this->right;
-	while (match(temp, ignoreActive))  {
-		temp = temp->right;
-		++matches;
-	}
-
-	if (matched != NULL)
-		*matched = temp;
-
-	return matches;
-}
-
-
-int Block::upMatch(Block **matched, bool ignoreActive) {
-	int matches = 0;
-	
-	Block *temp = this->up;
-	while (match(temp, ignoreActive))  {
-		temp = temp->up;
-		++matches;
-	}
-
-	if (matched != NULL)
-		*matched = temp;
-
-	return matches;
-}
-
-int Block::downMatch(Block **matched, bool ignoreActive) {
-	int matches = 0;
-	
-	Block *temp = this->down;
-	while (match(temp, ignoreActive))  {
-		temp = temp->down;
-		++matches;
-	}
-
-	if (matched != NULL)
-		*matched = temp;
-
-	return matches;
-}
-
 /*	detectCombos
 	This function uses the match<direction> functions to find all possible combos.
 	A combo can be stored as a set of Cells, where a Cell is a struct that holds the
@@ -198,7 +140,7 @@ int Block::downMatch(Block **matched, bool ignoreActive) {
 	is found, it will then iteratively search for a vertical from each block in the
 	horizontal match.  */
 bool Block::detectCombos() {
-	Block *bleft, *bright, *bup, *bdown;
+	Block *bleft = NULL, *bright = NULL, *bup = NULL, *bdown = NULL;
 	Block *leftright = NULL, *downup = NULL;
 	int nleft, nright, nup, ndown;
 
@@ -206,24 +148,28 @@ bool Block::detectCombos() {
 	nright = rightMatch(&bright);
 
 	if ( nleft + nright >= 2) {
-		leftright = bleft;
-
-		do {
+		leftright = this;
+		for (int i=0; i < nleft; i++) 
+			leftright = leftright->left;
+		
+		for (int i=0; i <= nright; ++i) {
 			leftright->changeState(combo);
-
 			nup = leftright->upMatch(&bup);
 			ndown = leftright->downMatch(&bdown);
 
 			if (nup + ndown >= 2) {
-				downup = bdown;
-				do {
+				downup = this;
+				for (int i=0; i < ndown; ++i)
+					downup = downup->down;
+
+				for (int i=0; i <= nup; ++i) {
 					downup->changeState(combo);
 					downup = downup->up;
-				} while (downup != bup);
+				}
 			}
 
 			leftright = leftright->right;
-		} while (leftright != right);
+		}
 
 		return true;
 	}
@@ -231,25 +177,30 @@ bool Block::detectCombos() {
 		ndown = downMatch(&bdown);
 		nup = upMatch(&bup);
 
-		if ( nleft + nright >= 2) {
-			downup = bdown;
+		if ( ndown + nup >= 2) {
+			downup = this;
+			for (int i=0; i < ndown; ++i)
+				downup = downup->down;
 
-			do {
-				downup->setStateTimer(combo, disabled);
+			for (int i=0; i <= nup; ++i) {
+				downup->changeState(combo);
 
 				nleft = downup->leftMatch(&bleft);
 				nright = downup->rightMatch(&bright);
 
-				if (nup + ndown >= 2) {
-					leftright = bleft;
-					do {
-						downup->setStateTimer(combo, disabled);
-						downup = downup->up;
-					} while (bleft != bright);
+				if (nleft + nright >= 2) {
+					leftright = this;
+					for (int i=0; i < nleft; ++i) 
+						leftright = leftright->left;
+
+					for (int i=0; i <= nright; ++i) {
+						leftright->changeState(combo);
+						leftright = leftright->right;
+					}
 				}
 
 				downup = downup->up;
-			} while (downup != down);
+			} 
 
 			return true;
 		}
@@ -259,16 +210,121 @@ bool Block::detectCombos() {
 }
 
 void Block::setFallStates() {
-	Block *temp = up;
-	int nfall = 1;
+	Block *temp = NULL;
+	int nfall;
 
-	while (temp != NULL && temp->getState() == enabled) {
-		temp->setFalls(nfall);
-		temp->changeState(fall);
+	if (up != NULL && up->getState() == enabled)
+		nfall = 1;
+	else return;
 
-		temp = temp->up;
+	temp = down;
+	while (temp != NULL && temp->getState() != enabled) {
 		++nfall;
+		temp = temp->down;
 	}
+
+	temp = up;
+	while (temp != NULL && temp->getState() == enabled) {
+		temp->setFallCount(nfall);
+		temp->changeState(fall);
+		temp = temp->up;
+	}
+
+	state = disabled;
+}
+
+void Block::transferDown() {
+
+}
+
+/*	leftMatch, rightMatch, downMatch, and upMatch
+	These functions are all used to detect combos. They return the number of blocks
+	that match the block passed to the direction in the function's name.
+	e.g. a 3 combo will return 2		*/
+
+int Block::leftMatch(Block **matched, bool ignoreActive) {
+	int matches = 0;
+	
+	if (this->left == NULL)
+		return 0;
+
+	Block *temp = this;
+	while (match(temp->left, ignoreActive))  {
+		temp = temp->left;
+		++matches;
+	}
+
+	if (temp == NULL)
+		temp = this;
+
+	if (matched != NULL)
+		*matched = temp;
+
+	return matches;
+}
+
+int Block::rightMatch(Block **matched, bool ignoreActive) {
+	int matches = 0;
+	
+	if (this->right == NULL)
+		return 0;
+
+	Block *temp = this;
+	while (match(temp->right, ignoreActive))  {
+		temp = temp->right;
+		++matches;
+	}
+
+	if (temp == NULL)
+		temp = this;
+
+	if (matched != NULL)
+		*matched = temp;
+
+	return matches;
+}
+
+
+int Block::upMatch(Block **matched, bool ignoreActive) {
+	int matches = 0;
+	
+	if (this->up == NULL)
+		return 0;
+
+	Block *temp = this;
+	while (match(temp->up, ignoreActive))  {
+		temp = temp->up;
+		++matches;
+	}
+
+	if (temp == NULL)
+		temp = this;
+
+	if (matched != NULL)
+		*matched = temp;
+
+	return matches;
+}
+
+int Block::downMatch(Block **matched, bool ignoreActive) {
+	int matches = 0;
+	
+	if (this->down == NULL)
+		return 0;
+
+	Block *temp = this;
+	while (match(temp->down, ignoreActive))  {
+		temp = temp->down;
+		++matches;
+	}
+
+	if (temp == NULL)
+		temp = this;
+
+	if (matched != NULL)
+		*matched = temp;
+
+	return matches;
 }
 
 int Block::downDistance(Block *block) const {
