@@ -40,12 +40,16 @@ void normalKeys(unsigned char key, int x, int y) {
 	triforce->normalKeys(key, x, y);
 }
 
+void keyUp(unsigned char key, int x, int y) {
+	triforce->keyUp(key, x, y);
+}
+
 void mouseButtons(int button, int state, int x, int y) {
 	triforce->mouseButtons(button, state, x, y);
 }
 
 void mouseMotion(int x, int y) {
-	triforce->mousePassiveMotion(x, y);
+	triforce->mouseMotion(x, y);
 }
 
 void mousePassiveMotion(int x, int y) {
@@ -57,11 +61,12 @@ void initGlut()
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutCreateWindow("<^> TRIFORCE <^>");
 	glutReshapeFunc(reshape2);
-	glutMouseFunc(mouseButtons);
-	glutMotionFunc(mousePassiveMotion);
-	glutPassiveMotionFunc(mousePassiveMotion);
 	glutKeyboardFunc(normalKeys);
+	glutKeyboardUpFunc(keyUp);
 	glutSpecialFunc(specialKeys);
+	glutMouseFunc(mouseButtons);
+	glutMotionFunc(mouseMotion);
+	glutPassiveMotionFunc(mousePassiveMotion);
 	glutReshapeWindow(screen_w, screen_h);
 	glutSwapBuffers();
 	mainTimer = new CTimer();

@@ -26,6 +26,8 @@ private:
 	int current_frame,
 		last_time;
 
+	list<unsigned char> keysDown;
+
 	void displayMenu();
 	void composeFrame();
 	void processFrame();
@@ -40,6 +42,7 @@ public:
 	static void changeStateWrapper(void *tfInstance, int gameState); // for callbacks
 	void specialKeys(int key, int x, int y);
 	void normalKeys(unsigned char key, int x, int y);
+	void keyUp(unsigned char key, int x, int y);
 	void mouseButtons(int button, int mouseState, int x, int y);
 	void mouseMotion(int x, int y);
 	void mousePassiveMotion(int x, int y);

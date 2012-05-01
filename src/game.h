@@ -70,6 +70,7 @@ public:
 	int getHeight() { return background.getViewportHeight();} 
 	void specialKeys(int key, int x, int y);
 	void normalKeys(unsigned char key, int x, int y);
+	void keyUp(unsigned char key, int x, int y);
 
 	void changeState(gameState gs);
 	gameState getState();

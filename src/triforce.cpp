@@ -128,6 +128,18 @@ void Triforce::normalKeys(unsigned char key, int x, int y) {
 			menuButtons->activateCurrent();
 		}
 	}
+//	keysDown.push_back(key);
+
+}
+
+void Triforce::keyUp(unsigned char key, int x, int y) {
+	/*
+	if (state == play) {
+	}
+	else if (state == menu) {
+	}
+	*/
+//	keysDown.remove(key);
 }
 
 void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
