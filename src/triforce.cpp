@@ -4,7 +4,7 @@ const string Triforce::bgFile = "bg.bmp";
 
 Triforce::Triforce()
 { 
-	state = menu; // initialize before using changeState
+	state = MENU; // initialize before using changeState
 	current_frame = 0; 
 	loadImages(); 
 
@@ -13,8 +13,8 @@ Triforce::Triforce()
 	string playBtns[] = {"playBtn_small.bmp", "playBtnHover_small.bmp", "playBtnPressed_small.bmp"};
 	string quitBtns[] = {"quitBtn_small.bmp", "quitBtnHover_small.bmp", "quitBtnPressed_small.bmp"};
 	menuButtons = new Buttons(vpWidth, vpHeight);
-	menuButtons->add(this, play, changeStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
-	menuButtons->add(this, quit, changeStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
+	menuButtons->add(this, PLAY, changeStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
+	menuButtons->add(this, QUIT, changeStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
 }
 
 Triforce::~Triforce()
@@ -26,17 +26,17 @@ void Triforce::changeState(gameState s)
 {
 	switch (s)
 	{
-	case menu:
-		if (state == play) // state change from play to load
+	case MENU:
+		if (state == PLAY) // state change from play to load
 			delete gamePlay;
 		break;
-	case play:
-		if (state == menu) // state change from menu to play
+	case PLAY:
+		if (state == MENU) // state change from menu to play
 			gamePlay = new GamePlay;
 		break;
-	case pause:
+	case PAUSE:
 		break; // TODO: not yet implemented
-	case quit:
+	case QUIT:
 		exit(0);
 	}
 	state = s;
@@ -55,11 +55,11 @@ void Triforce::display()
 {
 	switch (state)
 	{
-	case menu: // fall through
-	case pause:
+	case MENU: // fall through
+	case PAUSE:
 		displayMenu();
 		break;
-	case play:
+	case PLAY:
 		gamePlay->display();
 		break;
 	}
@@ -92,10 +92,10 @@ void Triforce::loadImages()
 }
 
 void Triforce::specialKeys(int key, int x, int y) {
-	if (state == play) {
+	if (state == PLAY) {
 		gamePlay->specialKeys(key, x, y);
 	}
-	else if (state == menu) {
+	else if (state == MENU) {
 		switch (key) {
 		case GLUT_KEY_LEFT:
 			menuButtons->hoverPrev();
@@ -119,10 +119,10 @@ void Triforce::normalKeys(unsigned char key, int x, int y) {
 		exit(0);
 
 	// context-sensetive bindings
-	if (state == play) {
+	if (state == PLAY) {
 		gamePlay->normalKeys(key, x, y);
 	}
-	else if (state == menu) {
+	else if (state == MENU) {
 		switch (tolower(key)) {
 		case 'a':
 			menuButtons->activateCurrent();
@@ -134,16 +134,16 @@ void Triforce::normalKeys(unsigned char key, int x, int y) {
 
 void Triforce::keyUp(unsigned char key, int x, int y) {
 	/*
-	if (state == play) {
+	if (state == PLAY) {
 	}
-	else if (state == menu) {
+	else if (state == MENU) {
 	}
 	*/
 //	keysDown.remove(key);
 }
 
 void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
-	if (state == menu)
+	if (state == MENU)
 	{
 		switch (button) {
 		case GLUT_LEFT_BUTTON:
@@ -153,7 +153,7 @@ void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
 				menuButtons->clickUp(x, y);
 		}
 	}
-	else if (state == play)
+	else if (state == PLAY)
 	{
 		switch (button) {
 		case GLUT_LEFT_BUTTON:
@@ -167,8 +167,8 @@ void Triforce::mouseMotion(int x, int y) {
 	mousePassiveMotion(x, y);
 }
 void Triforce::mousePassiveMotion(int x, int y) {
-	if (state == menu)
+	if (state == MENU)
 		menuButtons->passiveMouseHover(x, y);
-	else if (state == play)
+	else if (state == PLAY)
 		gamePlay->passiveMouseHover(x, y);
 }

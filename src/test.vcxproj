@@ -16,6 +16,7 @@
     <ClCompile Include="gameplay.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="grid.cpp" />
+    <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="triforce.cpp" />
   </ItemGroup>
@@ -24,6 +25,7 @@
     <ClInclude Include="buttons.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="input.h" />
     <ClInclude Include="triforce.h" />
   </ItemGroup>
   <ItemGroup>
