@@ -254,8 +254,9 @@ Block * Grid::getBlock(int r, int c) {
 	for (int i=0; i <= r && row != NULL; ++i, row = row->up) {
 		col = row;
 		for (int j=0; j < c && col != NULL; ++j, col = col->right) {
-			printf("(%d, %d)\n", i, j);
+			//printf("(%d, %d) ", i, j);
 		}
+		//printf("\n");
 	}
 
 	return col;
