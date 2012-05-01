@@ -13,8 +13,8 @@ Triforce::Triforce()
 	string playBtns[] = {"playBtn_small.bmp", "playBtnHover_small.bmp", "playBtnPressed_small.bmp"};
 	string quitBtns[] = {"quitBtn_small.bmp", "quitBtnHover_small.bmp", "quitBtnPressed_small.bmp"};
 	menuButtons = new Buttons(vpWidth, vpHeight);
-	menuButtons->add(this, PLAY, changeStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
-	menuButtons->add(this, QUIT, changeStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
+	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
+	menuButtons->add(this, QUIT, setStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
 }
 
 Triforce::~Triforce()
@@ -22,7 +22,7 @@ Triforce::~Triforce()
 	delete menuButtons;
 }
 
-void Triforce::changeState(gameState s)
+void Triforce::setState(gameState s)
 {
 	switch (s)
 	{
@@ -42,10 +42,10 @@ void Triforce::changeState(gameState s)
 	state = s;
 }
 
-void Triforce::changeStateWrapper(void *tfInstance, int gameState)
+void Triforce::setStateWrapper(void *tfInstance, int gameState)
 {
 	Triforce * t = (Triforce *)tfInstance;
-	t->changeState((enum gameState)gameState);
+	t->setState((enum gameState)gameState);
 }
 
 /**

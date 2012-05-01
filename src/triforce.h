@@ -4,6 +4,7 @@
 #include <vector>
 #include <ctime>
 #include <deque>
+#include "input.h"
 #include "buttons.h"
 #include "2DGraphics.h"
 #include "globals.h"
@@ -18,6 +19,7 @@ public : enum gameState {MENU, PLAY, PAUSE, QUIT};
 private:
 	GamePlay *gamePlay; 
 	gameState state;
+	Input input;
 
 	Buttons * menuButtons;
 	static const string bgFile;
@@ -35,9 +37,10 @@ public:
 
 	Triforce();
 	~Triforce();
-	void changeState(gameState s);
+	void setState(gameState s);
+	void getState(gameState s);
 	void display();
-	static void changeStateWrapper(void *tfInstance, int gameState); // for callbacks
+	static void setStateWrapper(void *tfInstance, int gameState); // for callbacks
 	void specialKeys(int key, int x, int y);
 	void normalKeys(unsigned char key, int x, int y);
 	void keyUp(unsigned char key, int x, int y);
