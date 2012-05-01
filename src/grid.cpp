@@ -128,7 +128,7 @@ int Grid::countEnabledRows() const {
 	for (count=0; count<blocks.size(); ++count) {
 		bool disabled = true;
 		for (int i=0; i<ncols; ++i) {
-			if (blocks[count][i]->getState() == Block::enabled) {
+			if (blocks[count][i]->getState() == Block::enabled || blocks[count][i]->getState() == Block::inactive) {
 				disabled = false;
 				break;
 			}
@@ -177,12 +177,12 @@ void Grid::addRow() {
 
 	if (blocks.size() > 0)
 		for (int col=0; col<ncols; ++col)
-			blocks[0][col]->setActive(true);
+			getBlock(0, col)->changeState(Block::enabled);
 	
 	blocks.push_front(new Block *[ncols]);
 
 	for (int col=0; col<ncols; ++col) {
-		blocks[0][col] = new Block();
+		blocks[0][col] = new Block(this);
 		blocks[0][col]->left = (col > 0) ? blocks[0][col - 1] : NULL;
 		blocks[0][col]->up = (blocks.size() > 1) ? blocks[1][col] : NULL;
 		blocks[0][col]->right = NULL;

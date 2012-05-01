@@ -129,25 +129,23 @@ public:
    setting the x and y values and setting states */
 
 class Block : public CObject {
-public: enum gameState { enabled, disabled, combo, fall };
+public: enum gameState { enabled, disabled, combo, fall, inactive };
 protected:
 	gameState state, nextState;
 	void onCombo();
 	CTimer *timer;
 	int last_combo, interval_combo;
 	int last_fall, interval_fall, total_falls, count_falls, fall_factor;
-	bool active;
+	Grid *grid;
 
 	//static int interval_combo;
 public:
-	Block();
+	Block(Grid *g);
 	Block *left, *right, *up, *down;
 	bool swap(Block &right);
 	void changeState(gameState gs);
 	void display();
 	void composeFrame();
-	bool isActive() const { return active; }
-	void setActive(bool act) { active = act; }
 	void setFallCount(int falls) { total_falls = falls * fall_factor; count_falls = 0; }
 	gameState getState() const { return state; }
 

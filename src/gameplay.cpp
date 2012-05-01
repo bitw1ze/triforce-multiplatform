@@ -113,6 +113,7 @@ void GamePlay::specialKeys(int key, int x, int y) {
 void GamePlay::normalKeys(unsigned char key, int x, int y) {
 	switch (tolower(key)) { 
 	case 'a':
+		cout << "Swapping\n";
 		grid->swapBlocks();
 		break;
 	case 's':
