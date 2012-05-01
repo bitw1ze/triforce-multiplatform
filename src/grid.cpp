@@ -85,6 +85,17 @@ void Grid::display() {
 }
 
 void Grid::composeFrame() {
+	Block *row = getBlock(0, 0);
+	Block *col = NULL;
+	while (row != NULL) {
+		col = row;
+		while (col != NULL) {
+			col->composeFrame();
+			col = col->right;
+		}
+		row = row->up;
+	}
+
 	switch (state) {
 	case play:
 		if (mainTimer->elapsed(last_push, timer_push)) {
@@ -185,9 +196,13 @@ void Grid::addRow() {
 	for (int i = 0; i < ncols - 1; ++i)
 		blocks[0][i]->right = blocks[0][i + 1];
 
-	if (blocks.size() > 3)
-		for (int i=0; i<ncols; ++i) 
-			blocks[1][i]->detectAndSetComboState();
+	if (blocks.size() > 3) {
+		for (int i=0; i<ncols; ++i)  {
+			if (blocks[1][i]->detectAndSetComboState()) {
+				changeState(combo);
+			}
+		}
+	}
 
 	if (blocks.size() > 1)
 		for (int i=0; i<ncols; ++i) 
@@ -221,11 +236,15 @@ void Grid::swapBlocks() {
 
 	Block *temp = getBlock(r, c1);
 	if (temp != NULL && temp->swap(*temp->right)) {
-		temp->detectAndSetComboState();
-		temp->right->detectAndSetComboState();
-
-		temp->detectAndSetFallState();
-		temp->right->detectAndSetFallState();
+		if (temp->detectAndSetComboState())
+			changeState(combo);
+		else
+			temp->detectAndSetFallState();
+		
+		if (temp->right->detectAndSetComboState())
+			changeState(combo);
+		else
+			temp->right->detectAndSetFallState();
 	}
 }
 
