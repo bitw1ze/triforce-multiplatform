@@ -75,11 +75,13 @@ void Triforce::displayMenu()
 
 void Triforce::composeFrame()
 {
+	/*
 	if(mainTimer->elapsed(last_time, 300))
 	{
-		//processFrame();
+		processFrame();
 		last_time=mainTimer->time();
 	}
+	*/
 	glutPostRedisplay();
 }
 

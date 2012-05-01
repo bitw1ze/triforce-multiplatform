@@ -59,14 +59,12 @@ void Grid::changeState(gameState gs) {
 		}
 		else
 			timer_combo += 1500;
-		state = gs;
-		
 		break;
 	case play:
-		state = gs;
 		last_push = mainTimer->time();
 		break;
 	}
+	state = gs;
 }
 
 /*	display
