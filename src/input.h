@@ -63,13 +63,24 @@ namespace Input
 
 		void *actionsClassInstance; // class instance that action belongs to
 
-		/* callbacks of all registered action functions */
+		// callbacks of all registered action functions
 		void (*action)(void (*actionsClassInstance)(), Input::state inputState, int actionType);
 	};
 
-	void setGSFunc(int (*getStateFunc)());
+	/**
+	 * Setup
+	 */
+
+	// getStateFunc returns state of program, and only uses actions with the same state
+	void setGSFunc(int (*getStateFunc)()); 
+	void addMouseMotionFunc(void (*mouseMotion)(int x, int y));
+	void addMousePassiveMotionFunc(void (*mouseMotion)(int x, int y));
 	void registerAction(void *classInstance, void (*action)(void *, int),
 	                           int actionType, string shortDesc);
+
+	/**
+	 * Binding
+	 */
 
 	// the Triforce constructor binds the default keys for the entire game
 	// TODO: Eventually, a class that loads config files will handle overriding these bindings.
@@ -77,18 +88,26 @@ namespace Input
 	void bindSpecialKey(Action action, int key);
 	void bindButton(Action action, int button);
 
+	/**
+	 * Inputs and actions
+	 */
+
 	void doAction(int actionType);
 
-	// actions
 	void keyPress(unsigned char key, int x, int y);
 	void keyRelease(unsigned char key, int x, int y);
 	void keySpecialPress(int key, int x, int y);
 	void keySpecialRelease(int key, int x, int y);
 	void mousePress(int button, int mouseState, int x, int y);
 
-	// motions - The x/y args will be passed to the member functions of the other classes
-	//           to be handled entirely; Input is only choosing which function to send to
-    //           based on the state.
+	/**
+	 * Motions
+	 */
+
+	// The x/y args will be passed to the member functions of the other classes
+	// to be handled entirely; Input is only choosing which function to send to
+    // based on the state.
 	void mouseMotion(int x, int y);
 	void mousePassiveMotion(int x, int y);
+
 } //Input

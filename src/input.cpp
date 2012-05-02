@@ -2,14 +2,18 @@
 
 namespace Input
 {
-	namespace {
-		int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
-		list<Action> actions;
 
-		// keys that are currently being held down
-		list<unsigned char> keysDown;
-		list<unsigned char> keysSpecialDown;
-	} // unnamed
+namespace
+{
+	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
+	list<void (*)(int x, int y)> mouseMotionFuncs;
+	list<void (*)(int x, int y)> mousePassiveMotionFuncs;
+	list<Action> actions;
+
+	// keys that are currently being held down
+	list<unsigned char> keysDown;
+	list<unsigned char> keysSpecialDown;
+} // unnamed
 
 void setGSFunc(int (*getStateFunc)())
 {
