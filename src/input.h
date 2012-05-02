@@ -62,7 +62,7 @@
 
 namespace Input
 {
-	enum state {press, hold, release};
+	enum state {PRESS, HOLD, RELEASE};
 
 	/**
 	 *  Each instance of any class that takes actions on input has
@@ -84,8 +84,17 @@ namespace Input
 		// callback of registered action function
 		ActionFunc action;
 	public:
+		// declare an action with no definition (no action function attached)
 		Action(int activeState, int actionType, string shortDesc) :
 		  activeState(activeState), actionType(actionType), shortDesc(shortDesc){}
+
+#if 0
+		// declare/define an action function (with an action function attached)
+		Action(int activeState, int actionType, string shortDesc,
+			void *actionsClassInstance, ActionFunc action) :
+			activeState(activeState), actionType(actionType), shortDesc(shortDesc),
+			actionsClassInstance(actionsClassInstance), action(action){}
+#endif
 
 	    void define(void *actionsClassInstance, ActionFunc);
 	};
