@@ -67,14 +67,14 @@ void mousePress(int button, int mouseState, int x, int y)
 /**
  *  Activated when mouse moves while a mouse button IS held down.
  */
-void mouseMove(int x, int y)
+void mouseMotion(int x, int y)
 {
 }
 
 /**
  *  Activated when mouse moves while a mouse button ISN'T held down.
  */
-void mousePassiveMove(int x, int y)
+void mousePassiveMotion(int x, int y)
 {
 }
 
