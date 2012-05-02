@@ -16,10 +16,10 @@ extern CTimer *mainTimer;
 
 class Triforce {
 public : enum gameState {MENU, PLAY, PAUSE, QUIT};
+public : enum actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT};
 private:
 	static gameState state;
 	static GamePlay *gamePlay; 
-	static Input input;
 
 	Buttons * menuButtons;
 	static const string bgFile;
@@ -38,9 +38,13 @@ public:
 	Triforce();
 	~Triforce();
 	static void setState(gameState s);
-	static gameState getState(gameState s) {return state;}
+	static gameState getState() {return state;}
 	void display();
 	static void setStateWrapper(void *tfInstance, int gameState); // for callbacks
+	static void action(void *tfInstance, actions action);
+
+
+	/* deprecated */
 	void specialKeys(int key, int x, int y);
 	void normalKeys(unsigned char key, int x, int y);
 	void keyUp(unsigned char key, int x, int y);

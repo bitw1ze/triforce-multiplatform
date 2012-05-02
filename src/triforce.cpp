@@ -17,6 +17,14 @@ Triforce::Triforce()
 	menuButtons = new Buttons(vpWidth, vpHeight);
 	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
 	menuButtons->add(this, QUIT, setStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
+
+	Input::setGSFunc((int(*)()) getState);
+	/*
+	input->addAction(this, action, ACTION_UP, "Up");
+	input->addAction(this, action, ACTION_DOWN, "Down");
+	input->addAction(this, action, ACTION_LEFT, "Left");
+	input->addAction(this, action, ACTION_RIGHT, "Right");
+	*/
 }
 
 Triforce::~Triforce()
