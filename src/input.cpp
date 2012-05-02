@@ -8,7 +8,7 @@ namespace Input
 namespace
 {
 	list<Action *> availableActions;
-	list<Controller> controllers;
+	list<Player> players;
 	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
 
 	/*
@@ -40,7 +40,7 @@ void Action::define(void * actionClassInstance, ActionFunc action)
 	this->action = action;
 }
 
-void Controller::addAction(void *classInstance, void (*action)(void *, int),
+void Player::addAction(void *classInstance, void (*action)(void *, int),
                            int actionType, string shortDesc)
 {
 }

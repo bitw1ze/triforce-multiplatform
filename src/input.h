@@ -99,11 +99,7 @@ namespace Input
 	    void define(void *actionsClassInstance, ActionFunc);
 	};
 
-	/**
-	 * Input supports multiple controller objects. Each player gets a
-	 *  "controller", even if they're just different buttons on the same device.
-	 */
-	class Controller
+	class Player
 	{
 	private:
 		list<Action> actions;
