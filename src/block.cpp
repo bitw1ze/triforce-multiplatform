@@ -204,8 +204,6 @@ bool Block::detectAndSetComboState() {
 }
 
 void Block::detectAndSetFallState() {
-	return;
-
 	Block *temp = NULL;
 	int nfall;
 
