@@ -51,13 +51,12 @@
  *
  */
 
-class Input
+namespace Input
 {
-private:
-	public: enum state {press, hold, release};
+	enum state {press, hold, release};
+
 	class Action
 	{
-	public:
 		int activeState; // action is only active this matches getState()
 		int actionType; // type of action, which is passed as an arg to the action func
 		string shortDesc; // 1-2 word description of what action does
@@ -67,37 +66,29 @@ private:
 		/* callbacks of all registered action functions */
 		void (*action)(void (*actionsClassInstance)(), Input::state inputState, int actionType);
 	};
-	static int (*getState)(); // used to determine which actions are currently valid for Triforce
-	static list<Action> actions;
 
-	// keys that are currently being held down
-	static list<unsigned char> keysDown;
-	static list<unsigned char> keysSpecialDown;
-
-public:
-	static void setGSFunc(int (*getStateFunc)()) {getState = getStateFunc;}
-	Input(int (*getState)());
-	static void registerAction(void *classInstance, void (*action)(void *, int),
+	void setGSFunc(int (*getStateFunc)());
+	void registerAction(void *classInstance, void (*action)(void *, int),
 	                           int actionType, string shortDesc);
 
 	// the Triforce constructor binds the default keys for the entire game
 	// TODO: Eventually, a class that loads config files will handle overriding these bindings.
-	static void bindKey(Action action, unsigned char key);
-	static void bindSpecialKey(Action action, int key);
-	static void bindButton(Action action, int button);
+	void bindKey(Action action, unsigned char key);
+	void bindSpecialKey(Action action, int key);
+	void bindButton(Action action, int button);
 
-	static void doAction(int actionType);
+	void doAction(int actionType);
 
 	// actions
-	static void keyPress(unsigned char key, int x, int y);
-	static void keyRelease(unsigned char key, int x, int y);
-	static void keySpecialPress(int key, int x, int y);
-	static void keySpecialRelease(int key, int x, int y);
-	static void mousePress(int button, int mouseState, int x, int y);
+	void keyPress(unsigned char key, int x, int y);
+	void keyRelease(unsigned char key, int x, int y);
+	void keySpecialPress(int key, int x, int y);
+	void keySpecialRelease(int key, int x, int y);
+	void mousePress(int button, int mouseState, int x, int y);
 
 	// motions - The x/y args will be passed to the member functions of the other classes
 	//           to be handled entirely; Input is only choosing which function to send to
     //           based on the state.
-	static void mouseMove(int x, int y);
-	static void mousePassiveMove(int x, int y);
-};
+	void mouseMotion(int x, int y);
+	void mousePassiveMotion(int x, int y);
+} //Input

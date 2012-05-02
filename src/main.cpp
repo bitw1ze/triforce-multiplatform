@@ -49,11 +49,15 @@ void mouseButtons(int button, int state, int x, int y) {
 }
 
 void mouseMotion(int x, int y) {
+	// call both while Input is being implemented
 	triforce->mouseMotion(x, y);
+//	Input::mousePassiveMotion(x, y);
 }
 
 void mousePassiveMotion(int x, int y) {
+	// call both while Input is being implemented
 	triforce->mousePassiveMotion(x, y);
+//	Input::mousePassiveMotion(x, y);
 }
 
 void initGlut()
