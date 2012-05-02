@@ -163,7 +163,7 @@ public:
 	int rightDistance(Block *) const;
 	void transferDown();
 	Block * offsetRow(int n);
-	Block * offsetCol(int n)
+	Block * offsetCol(int n);
 	
 	//static int getComboInterval() { return interval_combo; }
 	//static void setComboInterval(int n) { interval_combo = n; }

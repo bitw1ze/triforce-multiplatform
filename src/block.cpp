@@ -149,9 +149,7 @@ bool Block::detectAndSetComboState() {
 	nright = rightMatch();
 
 	if ( nleft + nright >= 2) {
-		horiz = this;
-		for (int i=0; i < nleft; i++) 
-			horiz = horiz->left;
+		horiz = offsetCol(-nleft);
 		
 		for (int i=0; i <= nright; ++i) {
 			horiz->changeState(combo);
@@ -159,9 +157,7 @@ bool Block::detectAndSetComboState() {
 			ndown = horiz->downMatch();
 
 			if (nup + ndown >= 2) {
-				vert = this;
-				for (int i=0; i < ndown; ++i)
-					vert = vert->down;
+				vert = offsetRow(-ndown);
 
 				for (int i=0; i <= nup; ++i) {
 					vert->changeState(combo);
@@ -181,9 +177,7 @@ bool Block::detectAndSetComboState() {
 		nup = upMatch();
 
 		if ( ndown + nup >= 2) {
-			vert = this;
-			for (int i=0; i < ndown; ++i)
-				vert = vert->down;
+			vert = offsetRow(-ndown);
 
 			for (int i=0; i <= nup; ++i) {
 				vert->changeState(combo);
@@ -192,9 +186,7 @@ bool Block::detectAndSetComboState() {
 				nright = vert->rightMatch();
 
 				if (nleft + nright >= 2) {
-					horiz = this;
-					for (int i=0; i < nleft; ++i) 
-						horiz = horiz->left;
+					horiz = offsetCol(-nleft);
 
 					for (int i=0; i <= nright; ++i) {
 						horiz->changeState(combo);
