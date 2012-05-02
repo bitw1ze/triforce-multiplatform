@@ -125,9 +125,7 @@ bool Block::swap(Block &right) {
 bool Block::match(const Block *right, bool ignoreActive) const { 
 	return 
 			right != NULL
-		&&	getState() == right->getState()
-		&&	(ignoreActive ? true : (isActive() == true && right->isActive() == true) )
-		&&	getState() == enabled
+		&&	getState() != disabled && right->getState() != disabled
 		&&	getSprite() == right->getSprite();
 }
 
@@ -151,7 +149,9 @@ bool Block::detectAndSetComboState() {
 	if ( nleft + nright >= 2) {
 		horiz = offsetCol(-nleft);
 		
-		for (int i=0; i <= nright; ++i) {
+		cout << "hori: ";
+		for (int i=-nleft; i <= nright; ++i) {
+			cout << i << " ";
 			horiz->changeState(combo);
 			nup = horiz->upMatch();
 			ndown = horiz->downMatch();
@@ -159,7 +159,7 @@ bool Block::detectAndSetComboState() {
 			if (nup + ndown >= 2) {
 				vert = offsetRow(-ndown);
 
-				for (int i=0; i <= nup; ++i) {
+				for (int i=-ndown; i <= nup; ++i) {
 					vert->changeState(combo);
 					vert = vert->up;
 				}
@@ -168,8 +168,7 @@ bool Block::detectAndSetComboState() {
 			horiz = horiz->right;
 		}
 
-		changeState(combo);
-
+		cout << endl;
 		return true;
 	}
 	else {
@@ -179,7 +178,7 @@ bool Block::detectAndSetComboState() {
 		if ( ndown + nup >= 2) {
 			vert = offsetRow(-ndown);
 
-			for (int i=0; i <= nup; ++i) {
+			for (int i=-ndown; i <= nup; ++i) {
 				vert->changeState(combo);
 
 				nleft = vert->leftMatch();
@@ -188,7 +187,7 @@ bool Block::detectAndSetComboState() {
 				if (nleft + nright >= 2) {
 					horiz = offsetCol(-nleft);
 
-					for (int i=0; i <= nright; ++i) {
+					for (int i=-nleft; i <= nright; ++i) {
 						horiz->changeState(combo);
 						horiz = horiz->right;
 					}
@@ -196,8 +195,6 @@ bool Block::detectAndSetComboState() {
 
 				vert = vert->up;
 			} 
-
-			changeState(combo);
 
 			return true;
 		}
