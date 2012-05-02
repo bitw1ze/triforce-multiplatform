@@ -71,15 +71,23 @@ namespace Input
 	 */
 	class Action
 	{
-	public:
+	private:
+
+		typedef void (*ActionFunc)(void (*actionsClassInstance)(),
+			Input::state inputState, int actionType);
 		int activeState; // action is only active this matches getState()
 		int actionType; // type of action, which is passed as an arg to the action func
 		string shortDesc; // 1-2 word description of what action does
 
 		void *actionsClassInstance; // class instance that action belongs to
 
-		// callbacks of all registered action functions
-		void (*action)(void (*actionsClassInstance)(), Input::state inputState, int actionType);
+		// callback of registered action function
+		ActionFunc action;
+	public:
+		Action(int activeState, int actionType, string shortDesc) :
+		  activeState(activeState), actionType(actionType), shortDesc(shortDesc){}
+
+	    void define(void *actionsClassInstance, ActionFunc);
 	};
 
 	/**
@@ -91,7 +99,7 @@ namespace Input
 	private:
 		list<Action> actions;
 	public:
-		void registerAction(void *classInstance, void (*action)(void *, int),
+		void addAction(void *classInstance, void (*action)(void *, int),
 	                        int actionType, string shortDesc);
 	};
 
@@ -101,6 +109,9 @@ namespace Input
 
 	// getStateFunc returns state of program, and only uses actions with the same state
 	void setGSFunc(int (*getStateFunc)()); 
+	void declareAction(Action * action); // statically determine actions program supports
+	void defineAction(); // 
+
 	void addMouseMotionFunc(int activeState, void (*mouseMotion)(int x, int y));
 	void addMousePassiveMotionFunc(int activeState, void (*mouseMotion)(int x, int y));
 

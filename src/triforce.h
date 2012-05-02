@@ -40,14 +40,15 @@ public:
 	static void setState(gameState s);
 	static gameState getState() {return state;}
 	void display();
-	static void setStateWrapper(void *tfInstance, int gameState); // for callbacks
-	static void action(void *tfInstance, actions action);
+	// FIXME: now that setState is static, does this wrapper really need to exist?
+	static void setStateWrapper(void *tfInstance, int gameState); // for Button callbacks
 
+	static void registerActions();
+	static void doAction(void *tfInstance, actions action); // for Input callback
 
 	/* deprecated */
 	void specialKeys(int key, int x, int y);
 	void normalKeys(unsigned char key, int x, int y);
-	void keyUp(unsigned char key, int x, int y);
 	void mouseButtons(int button, int mouseState, int x, int y);
 	void mouseMotion(int x, int y);
 	void mousePassiveMotion(int x, int y);

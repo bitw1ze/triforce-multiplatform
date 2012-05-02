@@ -7,6 +7,7 @@ namespace Input
 
 namespace
 {
+	list<Action *> availableActions;
 	list<Controller> controllers;
 	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
 
@@ -33,15 +34,25 @@ namespace
 	}
 } // unnamed
 
+void Action::define(void * actionClassInstance, ActionFunc action)
+{
+	this->actionsClassInstance = actionClassInstance;
+	this->action = action;
+}
 
-void Controller::registerAction(void *classInstance, void (*action)(void *, int),
-                               int actionType, string shortDesc)
+void Controller::addAction(void *classInstance, void (*action)(void *, int),
+                           int actionType, string shortDesc)
 {
 }
 
 void setGSFunc(int (*getStateFunc)())
 {
 	getState = getStateFunc;
+}
+
+void declareAction(Action * action)
+{
+	availableActions.push_back(action);
 }
 
 void addMouseMotionFunc(int activeState, void (*mouseMotion)(int x, int y))

@@ -20,10 +20,10 @@ Triforce::Triforce()
 
 	Input::setGSFunc((int(*)()) getState);
 	/*
-	input->addAction(this, action, ACTION_UP, "Up");
-	input->addAction(this, action, ACTION_DOWN, "Down");
-	input->addAction(this, action, ACTION_LEFT, "Left");
-	input->addAction(this, action, ACTION_RIGHT, "Right");
+	input->addAction(this, doAction, ACTION_UP, "Up");
+	input->addAction(this, doAction, ACTION_DOWN, "Down");
+	input->addAction(this, doAction, ACTION_LEFT, "Left");
+	input->addAction(this, doAction, ACTION_RIGHT, "Right");
 	*/
 }
 
@@ -101,6 +101,10 @@ void Triforce::loadImages()
   background.loadGLTextures();
 }
 
+void Triforce::registerActions()
+{
+}
+
 void Triforce::specialKeys(int key, int x, int y) {
 	if (state == PLAY) {
 		gamePlay->specialKeys(key, x, y);
@@ -140,16 +144,6 @@ void Triforce::normalKeys(unsigned char key, int x, int y) {
 	}
 //	keysDown.push_back(key);
 
-}
-
-void Triforce::keyUp(unsigned char key, int x, int y) {
-	/*
-	if (state == PLAY) {
-	}
-	else if (state == MENU) {
-	}
-	*/
-//	keysDown.remove(key);
 }
 
 void Triforce::mouseButtons(int button, int mouseState, int x, int y) {

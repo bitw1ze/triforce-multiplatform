@@ -41,7 +41,7 @@ void normalKeys(unsigned char key, int x, int y) {
 }
 
 void keyUp(unsigned char key, int x, int y) {
-	triforce->keyUp(key, x, y);
+	//triforce->keyUp(key, x, y);
 }
 
 void mouseButtons(int button, int state, int x, int y) {
@@ -66,7 +66,7 @@ void initGlut()
 	glutCreateWindow("<^> TRIFORCE <^>");
 	glutReshapeFunc(reshape2);
 	glutKeyboardFunc(normalKeys);
-	glutKeyboardUpFunc(keyUp);
+	//glutKeyboardUpFunc(keyUp);
 	glutSpecialFunc(specialKeys);
 	glutMouseFunc(mouseButtons);
 	glutMotionFunc(mouseMotion);
