@@ -10,7 +10,7 @@
 
 //int Block::interval_combo;
 
-Block::Block() : CObject() {
+Block::Block(Grid *g) : CObject() {
 	active = false;
 	state = enabled; 
 	timer = new CTimer(); 
@@ -24,6 +24,8 @@ Block::Block() : CObject() {
 	total_falls = 0;
 	fall_factor = 6;
 	count_falls = 0;
+
+	grid = g;
 }
 
 /*	changeState
@@ -77,7 +79,9 @@ void Block::composeFrame() {
 			temp->changeState(enabled);
 			state = disabled;
 
-			detectAndSetComboState();
+			if (temp->detectAndSetComboState())
+				if (grid->getState() != Grid::combo)
+					grid->changeState(Grid::combo);
 		}
 
 		break;
@@ -126,7 +130,8 @@ bool Block::match(const Block *right, bool ignoreActive) const {
 	return 
 			right != NULL
 		&&	getState() != disabled && right->getState() != disabled
-		&&	getSprite() == right->getSprite();
+		&&	getSprite() == right->getSprite()
+		&&  (ignoreActive ? true : isActive() && right->isActive());
 }
 
 /*	detectAndSetComboState

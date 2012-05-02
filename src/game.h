@@ -136,10 +136,11 @@ protected:
 	int last_combo, interval_combo;
 	int last_fall, interval_fall, total_falls, count_falls, fall_factor;
 	bool active;
+	Grid *grid;
 
 	//static int interval_combo;
 public:
-	Block();
+	Block(Grid *g);
 	Block *left, *right, *up, *down;
 	bool swap(Block &right);
 	void changeState(gameState gs);
