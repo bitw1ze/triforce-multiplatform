@@ -13,7 +13,7 @@
  *  register a single callback function which handles all of its actions.
  *  When Input receives mouse/keyboard/controller/etc. input, it
  *  calls the appropriate callback function, which depends upon the state of
- *  Triforce. The callback func is passed an action, such as UP or DOWN,
+ *  Triforce. The callback func is passed an action, such as UP or SWAP,
  *  which it handles. This means that all functions in the game are
  *  encapsulated from any particular input device or key binding. Also, 
  *  the Input class is isolated from changes to each class, so coupling is
@@ -25,11 +25,19 @@
  *  movement keys is held down, the action should be taken immediately and 
  *  repeatedly until it is depressed; perhaps even on a particular interval.
  *  If a menu button is pressed, however, the action should not fire until the
- *  key is released.
+ *  key is released. This is handled by simply passing the state of the input
+ *  to the action function (i.e. press, hold, release). The hold state provides
+ *  the option of Input handling button repeats, but it still allows the
+ *  action function to handle it, since it calls "press" first, then "hold"
+ *  if the button has fired again but not been released, and "release" once
+ *  done.
  * 
- * FIXME: explain how the above will be implemented
- *
  *  Implemetation:
+ *   
+ *  To control the repeat rate, an Input function will have to be inserted into
+ *  the display() loop, which will fire the action again if the key has not
+ *  been released within a certain number of ms.
+ * 
  *    Each class registering actions with Input will supply:
  *       a pointer to itself
  *       a pointer to its action function, which knows how to handle each action
@@ -46,6 +54,7 @@
 class Input
 {
 private:
+	public: enum state {press, hold, release};
 	class Action
 	{
 	public:
@@ -56,7 +65,7 @@ private:
 		void *actionsClassInstance; // class instance that action belongs to
 
 		/* callbacks of all registered action functions */
-		void (*action)(void (*actionsClassInstance)(), int actionType);
+		void (*action)(void (*actionsClassInstance)(), Input::state inputState, int actionType);
 	};
 	static int (*getState)(); // used to determine which actions are currently valid for Triforce
 	static list<Action> actions;
@@ -70,10 +79,13 @@ public:
 	Input(int (*getState)());
 	static void registerAction(void *classInstance, void (*action)(void *, int),
 	                           int actionType, string shortDesc);
-	// TODO: a class that loads config files will eventually handle binding these
+
+	// the Triforce constructor binds the default keys for the entire game
+	// TODO: Eventually, a class that loads config files will handle overriding these bindings.
 	static void bindKey(Action action, unsigned char key);
 	static void bindSpecialKey(Action action, int key);
 	static void bindButton(Action action, int button);
+
 	static void doAction(int actionType);
 
 	// actions
@@ -83,7 +95,9 @@ public:
 	static void keySpecialRelease(int key, int x, int y);
 	static void mousePress(int button, int mouseState, int x, int y);
 
-	// motions
+	// motions - The x/y args will be passed to the member functions of the other classes
+	//           to be handled entirely; Input is only choosing which function to send to
+    //           based on the state.
 	static void mouseMove(int x, int y);
 	static void mousePassiveMove(int x, int y);
 };
