@@ -1,28 +1,65 @@
 #include "input.h"
+#include <map>
+#include <list>
 
 namespace Input
 {
 
 namespace
 {
+	list<Controller> controllers;
 	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
-	list<void (*)(int x, int y)> mouseMotionFuncs;
-	list<void (*)(int x, int y)> mousePassiveMotionFuncs;
-	list<Action> actions;
 
-	// keys that are currently being held down
+	/*
+	 * Handle mouse motion
+	 */ 
+	typedef int ActiveState;
+	typedef void (*MouseMotionFunc)(int x, int y);
+	typedef map<ActiveState, MouseMotionFunc>::iterator MouseMotionIter;
+	map<ActiveState, MouseMotionFunc> mouseMotionFuncs;
+	map<ActiveState, MouseMotionFunc> mousePassiveMotionFuncs;
+
+	/*
+	 * Keys currently being held down
+	 */ 
 	list<unsigned char> keysDown;
 	list<unsigned char> keysSpecialDown;
+
+	void warnTooManyStateHandlers(string callerName)
+	{
+		cout << "Warning: ignored attempt to register more than one callback"
+			 << "function to handle the same input for the same programs state "
+			 << "(" << callerName << ")" << endl;
+	}
 } // unnamed
+
+
+void Controller::registerAction(void *classInstance, void (*action)(void *, int),
+                               int actionType, string shortDesc)
+{
+}
 
 void setGSFunc(int (*getStateFunc)())
 {
 	getState = getStateFunc;
 }
 
-void registerAction(void *classInstance, void (*action)(void *, int),
-                    int actionType, string shortDesc)
+void addMouseMotionFunc(int activeState, void (*mouseMotion)(int x, int y))
 {
+	pair<MouseMotionIter,bool> ret;
+	ret = mouseMotionFuncs.insert(
+			pair<ActiveState,MouseMotionFunc>(activeState, mouseMotion));
+	if (!ret.second)
+		warnTooManyStateHandlers(__FUNCTION__);
+}
+
+void addMousePassiveMotionFunc(int activeState, void (*mouseMotion)(int x, int y))
+{
+	pair<MouseMotionIter,bool> ret;
+	ret = mousePassiveMotionFuncs.insert(
+			pair<ActiveState,MouseMotionFunc>(activeState, mouseMotion));
+	if (!ret.second)
+		warnTooManyStateHandlers(__FUNCTION__);
 }
 
 void bindKey(Action action, unsigned char key)
@@ -69,6 +106,10 @@ void mousePress(int button, int mouseState, int x, int y)
  */
 void mouseMotion(int x, int y)
 {
+	MouseMotionIter it;
+	it = mouseMotionFuncs.find(getState());
+	if (it != mouseMotionFuncs.end())
+		it->second(x, y);
 }
 
 /**
@@ -76,6 +117,10 @@ void mouseMotion(int x, int y)
  */
 void mousePassiveMotion(int x, int y)
 {
+	MouseMotionIter it;
+	it = mousePassiveMotionFuncs.find(getState());
+	if (it != mousePassiveMotionFuncs.end())
+		it->second(x, y);
 }
 
 } // Input

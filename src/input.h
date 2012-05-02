@@ -10,7 +10,16 @@
  *  of the game that the user wants to take action X. 
  *
  *  Each part of the game that needs to take actions based on input will
- *  register a single callback function which handles all of its actions.
+ *  have a static function that is called upon the start of the *program*,
+ *  which registers every possible action on input that the class can perform.
+ *  (this information will be used later to build the controller config
+ *  dialogs). When any classes that need to take actions based on input
+ *  are instantiated, their constructor will register a single callback
+ *  function which handles all of its actions for that instance only. Other
+ *  instances are used for other players. For example: if two cursors are
+ *  instantiated, the first one is for the first players control, the second
+ *  one is for the second players control, etc.
+ *
  *  When Input receives mouse/keyboard/controller/etc. input, it
  *  calls the appropriate callback function, which depends upon the state of
  *  Triforce. The callback func is passed an action, such as UP or SWAP,
@@ -55,8 +64,14 @@ namespace Input
 {
 	enum state {press, hold, release};
 
+	/**
+	 *  Each instance of any class that takes actions on input has
+	 *   Action object entries. Each entry points to the action() function
+	 *   for that class.
+	 */
 	class Action
 	{
+	public:
 		int activeState; // action is only active this matches getState()
 		int actionType; // type of action, which is passed as an arg to the action func
 		string shortDesc; // 1-2 word description of what action does
@@ -68,15 +83,26 @@ namespace Input
 	};
 
 	/**
+	 * Input supports multiple controller objects. Each player gets a
+	 *  "controller", even if they're just different buttons on the same device.
+	 */
+	class Controller
+	{
+	private:
+		list<Action> actions;
+	public:
+		void registerAction(void *classInstance, void (*action)(void *, int),
+	                        int actionType, string shortDesc);
+	};
+
+	/**
 	 * Setup
 	 */
 
 	// getStateFunc returns state of program, and only uses actions with the same state
 	void setGSFunc(int (*getStateFunc)()); 
-	void addMouseMotionFunc(void (*mouseMotion)(int x, int y));
-	void addMousePassiveMotionFunc(void (*mouseMotion)(int x, int y));
-	void registerAction(void *classInstance, void (*action)(void *, int),
-	                           int actionType, string shortDesc);
+	void addMouseMotionFunc(int activeState, void (*mouseMotion)(int x, int y));
+	void addMousePassiveMotionFunc(int activeState, void (*mouseMotion)(int x, int y));
 
 	/**
 	 * Binding

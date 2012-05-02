@@ -1,4 +1,5 @@
 #include "game.h"
+#include "input.h"
 
 Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	grid = gr;
