@@ -49,7 +49,6 @@ void Block::changeState(gameState gs) {
 }
 
 void Block::composeFrame() {
-	
 	switch (state) {
 	case enabled:
 		break;
@@ -85,8 +84,6 @@ void Block::composeFrame() {
 }
 
 void Block::display() {
-	composeFrame();
-
 	switch (state) {
 	case enabled:
 		draw(0);
@@ -218,6 +215,8 @@ bool Block::detectAndSetComboState() {
 }
 
 void Block::detectAndSetFallState() {
+	return;
+
 	Block *temp = NULL;
 	int nfall;
 
