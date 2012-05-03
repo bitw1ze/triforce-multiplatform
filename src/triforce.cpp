@@ -22,8 +22,8 @@ Triforce::Triforce()
 	// Configure input
 	Input::setGSFunc((int(*)()) getState);
 	registerActions();
-	//Input::addMousePassiveMotionFunc(this, MENU, menuButtons->mousePassiveMotion);
-	//Input::addMouseMotionFunc(this, MENU, menuButtons->mousePassiveMotion);  // same as passive motion
+	Input::addMousePassiveMotionFunc(menuButtons, MENU, menuButtons->mousePassiveMotion);
+	Input::addMouseMotionFunc(menuButtons, MENU, menuButtons->mousePassiveMotion);  // same as passive motion
 
 	/* This is pseudocode
 	input->addAction(this, doAction, ACTION_UP, "Up");

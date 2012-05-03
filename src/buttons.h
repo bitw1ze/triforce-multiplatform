@@ -12,7 +12,6 @@ class Buttons
 protected:
 	class Button : public CObject
 	{
-
 	public:
 		bool hovering;
 		bool pressing;
