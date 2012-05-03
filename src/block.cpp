@@ -128,11 +128,25 @@ bool Block::swap(Block &right) {
 	ignoreActive should be enabled when only testing if block states and sprites
 	match, such as when generating blocks */
 bool Block::match(const Block *right, bool ignoreActive) const { 
-	return 
-			right != NULL
-		&&	getState() != disabled && right->getState() != disabled
-		&&	getSprite() == right->getSprite()
-		&&  (ignoreActive ? true : getState() != inactive && right->getState() != inactive);
+	if (right == NULL)
+		return false;
+
+	gameState ls = getState();
+	gameState rs = right->getState();
+
+	if (getSprite() != right->getSprite())
+		return false;
+
+	if (ignoreActive) {
+		if (!(ls == inactive || ls == enabled && rs == inactive || rs == enabled))
+			return false;
+	}
+	else {
+		if (!(ls == enabled && rs == enabled)) 
+			return false;
+	}
+	
+	return true;
 }
 
 /*	detectAndSetComboState
