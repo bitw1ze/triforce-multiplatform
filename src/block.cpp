@@ -55,7 +55,7 @@ void Block::composeFrame() {
 		break;
 
 	case combo:
-		if (timer->elapsed(last_combo, *total_combo_interval)) {
+		if (timer->elapsed(last_combo, total_combo_interval)) {
 			changeState(disabled);
 			detectAndSetFallState();
 		}
@@ -77,9 +77,7 @@ void Block::composeFrame() {
 			temp->changeState(enabled);
 			state = disabled;
 
-			if (temp->detectAndSetComboState())
-				if (grid->getState() != Grid::combo)
-					grid->changeState(Grid::combo);
+			temp->detectAndSetComboState();
 		}
 
 		break;
@@ -134,16 +132,13 @@ bool Block::match(const Block *right, bool ignoreActive) const {
 	gameState ls = getState();
 	gameState rs = right->getState();
 
-	if (ignoreActive) {
-		if (!( (ls == inactive || ls == enabled) && (rs == inactive || rs == enabled)))
-			return false;
-	}
-	else {
-		if (!(ls == enabled && rs == enabled)) 
-			return false;
-	}
+	if (getSprite() != right->getSprite())
+		return false;
 
-	return (getSprite() == right->getSprite());
+	if (ignoreActive) 
+		return (ls == enabled || ls == inactive) && (rs == enabled || rs == inactive);
+	else
+		return (ls == enabled && rs == enabled);
 }
 
 /*	detectAndSetComboState
@@ -159,8 +154,8 @@ bool Block::match(const Block *right, bool ignoreActive) const {
 bool Block::detectAndSetComboState() {
 	Block *horiz = NULL, *vert = NULL;
 	int nleft, nright, nup, ndown;
-	int *interval = new int;
-	*interval = 0;
+
+	list<Block *> combos;
 
 	nleft = leftMatch();
 	nright = rightMatch();
@@ -169,9 +164,7 @@ bool Block::detectAndSetComboState() {
 		horiz = offsetCol(-nleft);
 		
 		for (int i=-nleft; i <= nright; ++i) {
-			*interval += interval_combo;
-			horiz->total_combo_interval = interval;
-			horiz->changeState(combo);
+			combos.push_back(horiz);
 			nup = horiz->upMatch();
 			ndown = horiz->downMatch();
 
@@ -179,17 +172,13 @@ bool Block::detectAndSetComboState() {
 				vert = offsetRow(-ndown);
 
 				for (int i=-ndown; i <= nup; ++i) {
-					*interval += interval_combo;
-					vert->total_combo_interval = interval;
-					vert->changeState(combo);
+					combos.push_back(vert);
 					vert = vert->up;
 				}
 			}
 
 			horiz = horiz->right;
 		}
-
-		return true;
 	}
 	else {
 		ndown = downMatch();
@@ -199,9 +188,7 @@ bool Block::detectAndSetComboState() {
 			vert = offsetRow(-ndown);
 
 			for (int i=-ndown; i <= nup; ++i) {
-					*interval += interval_combo;
-					vert->total_combo_interval = interval;
-					vert->changeState(combo);
+					combos.push_back(vert);
 
 				nleft = vert->leftMatch();
 				nright = vert->rightMatch();
@@ -210,21 +197,26 @@ bool Block::detectAndSetComboState() {
 					horiz = offsetCol(-nleft);
 
 					for (int i=-nleft; i <= nright; ++i) {
-						*interval += interval_combo;
-						horiz->total_combo_interval = interval;
-						horiz->changeState(combo);
+						combos.push_back(horiz);
 						horiz = horiz->right;
 					}
 				}
 
 				vert = vert->up;
 			} 
-
-			return true;
 		}
 	}
 
-	return false;
+	if (combos.size() == 0)
+		return false;
+
+	int interval = combos.size() * Block::interval_combo;
+	for (list<Block *>::iterator it = combos.begin(); it != combos.cend(); it++) {
+		(*it)->total_combo_interval = interval;
+		(*it)->changeState(combo);
+	}
+
+	return true;
 }
 
 void Block::detectAndSetFallState() {
@@ -270,7 +262,7 @@ void Block::transferDown() {
 	that match the block passed to the direction in the function's name.
 	e.g. a 3 combo will return 2		*/
 
-int Block::leftMatch(Block **matched, bool ignoreActive) {
+int Block::leftMatch(bool ignoreActive) {
 	int matches = 0;
 	
 	if (this->left == NULL)
@@ -282,16 +274,10 @@ int Block::leftMatch(Block **matched, bool ignoreActive) {
 		++matches;
 	}
 
-	if (temp == NULL)
-		temp = this;
-
-	if (matched != NULL)
-		*matched = temp;
-
 	return matches;
 }
 
-int Block::rightMatch(Block **matched, bool ignoreActive) {
+int Block::rightMatch(bool ignoreActive) {
 	int matches = 0;
 	
 	if (this->right == NULL)
@@ -303,17 +289,11 @@ int Block::rightMatch(Block **matched, bool ignoreActive) {
 		++matches;
 	}
 
-	if (temp == NULL)
-		temp = this;
-
-	if (matched != NULL)
-		*matched = temp;
-
 	return matches;
 }
 
 
-int Block::upMatch(Block **matched, bool ignoreActive) {
+int Block::upMatch(bool ignoreActive) {
 	int matches = 0;
 	
 	if (this->up == NULL)
@@ -325,16 +305,10 @@ int Block::upMatch(Block **matched, bool ignoreActive) {
 		++matches;
 	}
 
-	if (temp == NULL)
-		temp = this;
-
-	if (matched != NULL)
-		*matched = temp;
-
 	return matches;
 }
 
-int Block::downMatch(Block **matched, bool ignoreActive) {
+int Block::downMatch(bool ignoreActive) {
 	int matches = 0;
 	
 	if (this->down == NULL)
@@ -345,12 +319,6 @@ int Block::downMatch(Block **matched, bool ignoreActive) {
 		temp = temp->down;
 		++matches;
 	}
-
-	if (temp == NULL)
-		temp = this;
-
-	if (matched != NULL)
-		*matched = temp;
 
 	return matches;
 }

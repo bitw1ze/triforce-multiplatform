@@ -137,7 +137,7 @@ protected:
 	CTimer *timer;
 	int last_combo;
 	int last_fall, interval_fall, total_falls, count_falls, fall_factor;
-	int *total_combo_interval;
+	int total_combo_interval;
 	Grid *grid;
 
 	//static int interval_combo;
@@ -152,10 +152,10 @@ public:
 	gameState getState() const { return state; }
 
 	bool match(const Block *right, bool ignoreActive = false) const;
-	int downMatch(Block **matched = NULL, bool ignoreActive = false);
-	int upMatch(Block **matched = NULL, bool ignoreActive = false);
-	int leftMatch(Block **matched = NULL, bool ignoreActive = false);
-	int rightMatch(Block **matched = NULL, bool ignoreActive = false);
+	int downMatch(bool ignoreActive = false);
+	int upMatch(bool ignoreActive = false);
+	int leftMatch(bool ignoreActive = false);
+	int rightMatch(bool ignoreActive = false);
 	bool detectAndSetComboState();
 	void detectAndSetFallState();
 	int downDistance( Block *) const;

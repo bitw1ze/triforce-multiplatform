@@ -189,7 +189,7 @@ void Grid::addRow() {
 
 		/* Randomize the blocks without generating combos */
 		do    ( blocks[0][col]->init(blockSprites[ rand() % nblocktypes ], gridPos.x + col * block_w, gridPos.y) );
-		while ( blocks[0][col]->leftMatch(NULL, true) >= 2 || blocks[0][col]->leftMatch(NULL, true) >= 2 );
+		while ( blocks[0][col]->leftMatch(true) >= 2 || blocks[0][col]->upMatch(true) >= 2 );
 	}
 
 	for (int i = 0; i < ncols - 1; ++i)
