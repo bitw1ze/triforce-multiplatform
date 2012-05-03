@@ -9,6 +9,9 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	col = ncols / 2;
 	init(sprite);
 	setPos(0, 0);
+
+	Input::addMouseMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
+	Input::addMousePassiveMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
 }
 
 bool Cursor::moveLeft(bool doDraw) {
@@ -70,17 +73,24 @@ void Cursor::shiftRow() {
 		setPos(getCol(), nrows);
 }
 
-void Cursor::mousePassiveMotion(int x, int y) {
+void Cursor::mousePassiveMotion(void *cursorInstance, int x, int y) {
+	Cursor *c = (Cursor *)cursorInstance;
 	const float x_threshold = 0.49;
+
+	if (!c->grid->containsPoint(x, y))
+	{
+		glutSetCursor(GLUT_CURSOR_INHERIT);
+		return;
+	}
 
 	// move cursor inside grid
 	glutSetCursor(GLUT_CURSOR_LEFT_SIDE);
-	if (getX() + 2*grid->getBlockWidth() - x_threshold*grid->getBlockWidth() < x && col < ncols - 2)
-		moveRight();
-	else if (x - x_threshold*grid->getBlockWidth() < getX() && col > 0)
-		moveLeft();
-	else if (getY() > y && row < nrows)
-	    moveUp();
-	else if (y > getY() + grid->getBlockHeight() && row > 0)
-		moveDown(); 
+	if (c->getX() + 2*c->grid->getBlockWidth() - x_threshold*c->grid->getBlockWidth() < x && c->col < ncols - 2)
+		c->moveRight();
+	else if (x - x_threshold*c->grid->getBlockWidth() < c->getX() && c->col > 0)
+		c->moveLeft();
+	else if (c->getY() > y && c->row < nrows)
+	    c->moveUp();
+	else if (y > c->getY() + c->grid->getBlockHeight() && c->row > 0)
+		c->moveDown(); 
 }

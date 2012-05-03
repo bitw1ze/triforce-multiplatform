@@ -108,6 +108,7 @@ public:
 	void swapBlocks();
 	Block * getBlock(int row, int col);
 
+	bool containsPoint(int x, int y);
 	void onCombo();
 	void onPlay();
 	void changeState(gameState gs);
@@ -122,7 +123,6 @@ public:
 	int countEnabledRows() const;
 
 	Cursor *cursor;
-	static void mousePassiveMotion(void *gridInstance, int x, int y);
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 
@@ -182,6 +182,8 @@ protected:
 	static const string spriteFile;
 
 public:
+	static void mousePassiveMotion(void *gridInstance, int x, int y);
+
 	Cursor(Grid *, CBaseSprite *);
 	bool moveUp(bool doDraw=true);
 	bool moveDown(bool doDraw=true);
@@ -191,5 +193,4 @@ public:
 	int getRow() const { return row; }
 	int getCol() const { return col; }
 	void shiftRow();
-	void mousePassiveMotion(int x, int y);
 };
