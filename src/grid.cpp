@@ -7,8 +7,9 @@
 		- documented all the methods
 */
 
-#include "game.h"
 #include <algorithm>
+#include "game.h"
+#include "input.h"
 
 /*	TODOs: 
 		- Make the grid manage its own timer and control when rows are pushed.
@@ -47,8 +48,8 @@ Grid::Grid(GamePlay *gp) {
 		for (int col = 0; col < ncols; ++col) 
 			blocks[row][col]->offsetY( -1 * block_h * row );
 	
-	//Input::addMouseMotionFunc(this, Triforce::gameState.PLAY, mousePassiveMotion);
-	//Input::addMousePassiveMotionFunc(this, Triforce::gameState.PLAY, mousePassiveMotion);
+	Input::addMouseMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
+	Input::addMousePassiveMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
 }
 
 void Grid::changeState(gameState gs) {
