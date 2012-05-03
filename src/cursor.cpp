@@ -70,7 +70,7 @@ void Cursor::shiftRow() {
 		setPos(getCol(), nrows);
 }
 
-void Cursor::passiveMouseHover(int x, int y) {
+void Cursor::mousePassiveMotion(int x, int y) {
 	const float x_threshold = 0.49;
 
 	// move cursor inside grid

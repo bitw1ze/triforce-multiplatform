@@ -122,7 +122,7 @@ void Grid::mousePassiveMotion(void *gridInstance, int x, int y) {
 	    y < g->gridPos.y - (int)(nrows)*g->block_h)
 		glutSetCursor(GLUT_CURSOR_INHERIT);
 	else
-		g->cursor->passiveMouseHover(x, y);
+		g->cursor->mousePassiveMotion(x, y);
 }
 
 int Grid::countEnabledRows() const {
