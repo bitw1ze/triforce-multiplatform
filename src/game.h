@@ -134,8 +134,9 @@ protected:
 	gameState state, nextState;
 	void onCombo();
 	CTimer *timer;
-	int last_combo, interval_combo;
+	int last_combo;
 	int last_fall, interval_fall, total_falls, count_falls, fall_factor;
+	int *total_combo_interval;
 	Grid *grid;
 
 	//static int interval_combo;
@@ -164,6 +165,7 @@ public:
 	Block * offsetRow(int n);
 	Block * offsetCol(int n);
 	
+	static int interval_combo;
 	//static int getComboInterval() { return interval_combo; }
 	//static void setComboInterval(int n) { interval_combo = n; }
 };

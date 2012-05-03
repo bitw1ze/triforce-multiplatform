@@ -22,7 +22,6 @@
 	Also create the initial rows of the game */
 Grid::Grid(GamePlay *gp) {
 	gamePlay = gp;
-	//Block::setComboInterval(1500);
 	blockSprites = gp->blockSprites;
 	block_w = blockSprites[0]->GetWidth();
 	block_h = blockSprites[0]->GetHeight();
@@ -54,11 +53,11 @@ void Grid::changeState(gameState gs) {
 	switch (gs) {
 	case combo:
 		if (state != combo) {
-			timer_combo = 1500;
+			timer_combo = Block::interval_combo;
 			last_combo = mainTimer->time();
 		}
 		else
-			timer_combo += 1500;
+			timer_combo += Block::interval_combo;
 		break;
 	case play:
 		last_push = mainTimer->time();
@@ -177,7 +176,7 @@ void Grid::addRow() {
 
 	if (blocks.size() > 0)
 		for (int col=0; col<ncols; ++col)
-			getBlock(0, col)->changeState(Block::enabled);
+			blocks[0][col]->changeState(Block::enabled);
 	
 	blocks.push_front(new Block *[ncols]);
 
@@ -196,13 +195,9 @@ void Grid::addRow() {
 	for (int i = 0; i < ncols - 1; ++i)
 		blocks[0][i]->right = blocks[0][i + 1];
 
-	if (blocks.size() > 3) {
-		for (int i=0; i<ncols; ++i)  {
-			if (blocks[1][i]->detectAndSetComboState()) {
-				changeState(combo);
-			}
-		}
-	}
+	if (blocks.size() > 3) 
+		for (int i=0; i<ncols; ++i)  
+			blocks[1][i]->detectAndSetComboState();
 
 	if (blocks.size() > 1)
 		for (int i=0; i<ncols; ++i) 
@@ -236,14 +231,9 @@ void Grid::swapBlocks() {
 
 	Block *temp = getBlock(r, c1);
 	if (temp != NULL && temp->swap(*temp->right)) {
-		if (temp->detectAndSetComboState())
-			changeState(combo);
-		else
+		if (!temp->detectAndSetComboState())
 			temp->detectAndSetFallState();
-		
-		if (temp->right->detectAndSetComboState())
-			changeState(combo);
-		else
+		if (!temp->right->detectAndSetComboState())
 			temp->right->detectAndSetFallState();
 	}
 }

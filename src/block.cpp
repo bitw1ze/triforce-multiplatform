@@ -8,14 +8,14 @@
 
 #include "game.h"
 
-//int Block::interval_combo;
+int Block::interval_combo;
 
 Block::Block(Grid *g) : CObject() {
 	timer = new CTimer(); 
 	timer->start();
 
 	last_combo = -1;
-	interval_combo = 1500;
+	interval_combo = 500;
 
 	last_fall = -1;
 	interval_fall = 20;
@@ -32,17 +32,16 @@ Block::Block(Grid *g) : CObject() {
 void Block::changeState(gameState gs) {
 	switch (gs) {
 	case combo:
-		if (state != combo)
+		if (state != combo) {
 			last_combo = timer->time();
-	//	onCombo();
+			grid->changeState(Grid::combo);
+		}
 		break;
 	case fall:
 		last_fall = timer->time();
 		count_falls = 0;
-		//onFall();
 		break;
 	case disabled:
-		//setSprite(NULL);
 		break;
 	case enabled:
 		break;
@@ -56,7 +55,7 @@ void Block::composeFrame() {
 		break;
 
 	case combo:
-		if (timer->elapsed(last_combo, 1500)) {
+		if (timer->elapsed(last_combo, *total_combo_interval)) {
 			changeState(disabled);
 			detectAndSetFallState();
 		}
@@ -149,6 +148,8 @@ bool Block::match(const Block *right, bool ignoreActive) const {
 bool Block::detectAndSetComboState() {
 	Block *horiz = NULL, *vert = NULL;
 	int nleft, nright, nup, ndown;
+	int *interval = new int;
+	*interval = 0;
 
 	nleft = leftMatch();
 	nright = rightMatch();
@@ -156,9 +157,9 @@ bool Block::detectAndSetComboState() {
 	if ( nleft + nright >= 2) {
 		horiz = offsetCol(-nleft);
 		
-		cout << "hori: ";
 		for (int i=-nleft; i <= nright; ++i) {
-			cout << i << " ";
+			*interval += interval_combo;
+			horiz->total_combo_interval = interval;
 			horiz->changeState(combo);
 			nup = horiz->upMatch();
 			ndown = horiz->downMatch();
@@ -167,6 +168,8 @@ bool Block::detectAndSetComboState() {
 				vert = offsetRow(-ndown);
 
 				for (int i=-ndown; i <= nup; ++i) {
+					*interval += interval_combo;
+					vert->total_combo_interval = interval;
 					vert->changeState(combo);
 					vert = vert->up;
 				}
@@ -175,7 +178,6 @@ bool Block::detectAndSetComboState() {
 			horiz = horiz->right;
 		}
 
-		cout << endl;
 		return true;
 	}
 	else {
@@ -186,7 +188,9 @@ bool Block::detectAndSetComboState() {
 			vert = offsetRow(-ndown);
 
 			for (int i=-ndown; i <= nup; ++i) {
-				vert->changeState(combo);
+					*interval += interval_combo;
+					vert->total_combo_interval = interval;
+					vert->changeState(combo);
 
 				nleft = vert->leftMatch();
 				nright = vert->rightMatch();
@@ -195,6 +199,8 @@ bool Block::detectAndSetComboState() {
 					horiz = offsetCol(-nleft);
 
 					for (int i=-nleft; i <= nright; ++i) {
+						*interval += interval_combo;
+						horiz->total_combo_interval = interval;
 						horiz->changeState(combo);
 						horiz = horiz->right;
 					}
