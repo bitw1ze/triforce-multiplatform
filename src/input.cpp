@@ -15,7 +15,7 @@ namespace
 	 * Handle mouse motion
 	 */ 
 	typedef int ActiveState;
-	typedef void (*MouseMotionFunc)(int x, int y);
+	typedef void (*MouseMotionFunc)(void *classInstance, int x, int y);
 	typedef map<ActiveState, MouseMotionFunc>::iterator MouseMotionIter;
 	map<ActiveState, MouseMotionFunc> mouseMotionFuncs;
 	map<ActiveState, MouseMotionFunc> mousePassiveMotionFuncs;
@@ -55,7 +55,7 @@ void declareAction(Action * action)
 	availableActions.push_back(action);
 }
 
-void addMouseMotionFunc(int activeState, void (*mouseMotion)(int x, int y))
+void addMouseMotionFunc(int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
 {
 	pair<MouseMotionIter,bool> ret;
 	ret = mouseMotionFuncs.insert(
@@ -64,7 +64,7 @@ void addMouseMotionFunc(int activeState, void (*mouseMotion)(int x, int y))
 		warnTooManyStateHandlers(__FUNCTION__);
 }
 
-void addMousePassiveMotionFunc(int activeState, void (*mouseMotion)(int x, int y))
+void addMousePassiveMotionFunc(int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
 {
 	pair<MouseMotionIter,bool> ret;
 	ret = mousePassiveMotionFuncs.insert(

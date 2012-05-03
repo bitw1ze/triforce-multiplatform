@@ -10,6 +10,7 @@ Triforce::Triforce()
 	current_frame = 0; 
 	loadImages(); 
 
+	// Create menu buttons
 	int vpWidth = background.getViewportWidth(),
  	    vpHeight = background.getViewportHeight();
 	string playBtns[] = {"playBtn_small.bmp", "playBtnHover_small.bmp", "playBtnPressed_small.bmp"};
@@ -18,8 +19,13 @@ Triforce::Triforce()
 	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
 	menuButtons->add(this, QUIT, setStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
 
+	// Configure input
 	Input::setGSFunc((int(*)()) getState);
-	/*
+	registerActions();
+	Input::addMouseMotionFunc(MENU, mouseMotion);
+	Input::addMousePassiveMotionFunc(MENU, mousePassiveMotion);
+
+	/* This is pseudocode
 	input->addAction(this, doAction, ACTION_UP, "Up");
 	input->addAction(this, doAction, ACTION_DOWN, "Down");
 	input->addAction(this, doAction, ACTION_LEFT, "Left");
@@ -103,6 +109,7 @@ void Triforce::loadImages()
 
 void Triforce::registerActions()
 {
+	//TODO
 }
 
 void Triforce::specialKeys(int key, int x, int y) {
@@ -167,12 +174,15 @@ void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
 	}
 }
 
-void Triforce::mouseMotion(int x, int y) {
-	mousePassiveMotion(x, y);
+void Triforce::mouseMotion(void *tfInstance, int x, int y) {
+	// handle buttons being held down same as passive
+	mousePassiveMotion(tfInstance, x, y);
 }
-void Triforce::mousePassiveMotion(int x, int y) {
+
+void Triforce::mousePassiveMotion(void *tfInstance, int x, int y) {
+	Triforce * t = (Triforce *)tfInstance;
 	if (state == MENU)
-		menuButtons->passiveMouseHover(x, y);
+		t->menuButtons->passiveMouseHover(x, y);
 	else if (state == PLAY)
 		gamePlay->passiveMouseHover(x, y);
 }

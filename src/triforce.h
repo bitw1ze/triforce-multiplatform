@@ -14,6 +14,10 @@ using namespace Globals;
 
 extern CTimer *mainTimer;
 
+ // FIXME: nearly everything is static... either:
+ //   A) change to namespace  (i.e. no triforce class)
+ //   B) use member functions instead (i.e. multiple class instances makes sense)
+
 class Triforce {
 public : enum gameState {MENU, PLAY, PAUSE, QUIT};
 public : enum actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT};
@@ -37,19 +41,27 @@ public:
 
 	Triforce();
 	~Triforce();
+	void display();
+
+	/**
+	 * State
+	 */
 	static void setState(gameState s);
 	static gameState getState() {return state;}
-	void display();
 	// FIXME: now that setState is static, does this wrapper really need to exist?
 	static void setStateWrapper(void *tfInstance, int gameState); // for Button callbacks
 
+	/**
+	 * Input
+	 */
 	static void registerActions();
 	static void doAction(void *tfInstance, actions action); // for Input callback
 
-	/* deprecated */
+	static void mousePassiveMotion(void *tfInstance, int x, int y);
+	static void mouseMotion(void *tfInstance, int x, int y);
+
+	// deprecated
 	void specialKeys(int key, int x, int y);
 	void normalKeys(unsigned char key, int x, int y);
 	void mouseButtons(int button, int mouseState, int x, int y);
-	void mouseMotion(int x, int y);
-	void mousePassiveMotion(int x, int y);
 };

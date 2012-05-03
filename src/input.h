@@ -62,7 +62,7 @@
 
 namespace Input
 {
-	enum state {PRESS, HOLD, RELEASE};
+	enum actionState {PRESS, HOLD, RELEASE};
 
 	/**
 	 *  Each instance of any class that takes actions on input has
@@ -74,7 +74,7 @@ namespace Input
 	private:
 
 		typedef void (*ActionFunc)(void (*actionsClassInstance)(),
-			Input::state inputState, int actionType);
+			Input::actionState state, int actionType);
 		int activeState; // action is only active this matches getState()
 		int actionType; // type of action, which is passed as an arg to the action func
 		string shortDesc; // 1-2 word description of what action does
@@ -117,8 +117,8 @@ namespace Input
 	void declareAction(Action * action); // statically determine actions program supports
 	void defineAction(); // 
 
-	void addMouseMotionFunc(int activeState, void (*mouseMotion)(int x, int y));
-	void addMousePassiveMotionFunc(int activeState, void (*mouseMotion)(int x, int y));
+	void addMouseMotionFunc(int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
+	void addMousePassiveMotionFunc(int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
 
 	/**
 	 * Binding
