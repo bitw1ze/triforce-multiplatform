@@ -16,9 +16,15 @@ namespace
 	 */ 
 	typedef int ActiveState;
 	typedef void (*MouseMotionFunc)(void *classInstance, int x, int y);
-	typedef map<ActiveState, MouseMotionFunc>::iterator MouseMotionIter;
-	map<ActiveState, MouseMotionFunc> mouseMotionFuncs;
-	map<ActiveState, MouseMotionFunc> mousePassiveMotionFuncs;
+	struct MouseCallback
+	{
+		void *classInstance;
+		MouseMotionFunc mouseMotionFunc;
+	};
+	typedef map<ActiveState, MouseCallback>::iterator MouseMotionIter;
+	map<ActiveState, MouseCallback> mouseMotionFuncs;
+	map<ActiveState, MouseCallback> mousePassiveMotionFuncs;
+
 
 	/*
 	 * Keys currently being held down
@@ -55,20 +61,28 @@ void declareAction(Action * action)
 	availableActions.push_back(action);
 }
 
-void addMouseMotionFunc(int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
+void addMouseMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
 {
+	MouseCallback cb;
+	cb.classInstance = classInstance;
+	cb.mouseMotionFunc = mouseMotion;
+
 	pair<MouseMotionIter,bool> ret;
 	ret = mouseMotionFuncs.insert(
-			pair<ActiveState,MouseMotionFunc>(activeState, mouseMotion));
+			pair<ActiveState,MouseCallback>(activeState, cb));
 	if (!ret.second)
 		warnTooManyStateHandlers(__FUNCTION__);
 }
 
-void addMousePassiveMotionFunc(int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
+void addMousePassiveMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
 {
+	MouseCallback cb;
+	cb.classInstance = classInstance;
+	cb.mouseMotionFunc = mouseMotion;
+
 	pair<MouseMotionIter,bool> ret;
 	ret = mousePassiveMotionFuncs.insert(
-			pair<ActiveState,MouseMotionFunc>(activeState, mouseMotion));
+			pair<ActiveState,MouseCallback>(activeState, cb));
 	if (!ret.second)
 		warnTooManyStateHandlers(__FUNCTION__);
 }
@@ -120,7 +134,7 @@ void mouseMotion(int x, int y)
 	MouseMotionIter it;
 	it = mouseMotionFuncs.find(getState());
 	if (it != mouseMotionFuncs.end())
-		it->second(x, y);
+		it->second.mouseMotionFunc(it->second.classInstance, x, y);
 }
 
 /**
@@ -131,7 +145,7 @@ void mousePassiveMotion(int x, int y)
 	MouseMotionIter it;
 	it = mousePassiveMotionFuncs.find(getState());
 	if (it != mousePassiveMotionFuncs.end())
-		it->second(x, y);
+		it->second.mouseMotionFunc(it->second.classInstance, x, y);
 }
 
 } // Input

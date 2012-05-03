@@ -117,8 +117,8 @@ namespace Input
 	void declareAction(Action * action); // statically determine actions program supports
 	void defineAction(); // 
 
-	void addMouseMotionFunc(int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
-	void addMousePassiveMotionFunc(int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
+	void addMouseMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
+	void addMousePassiveMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
 
 	/**
 	 * Binding
