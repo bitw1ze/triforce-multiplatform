@@ -134,7 +134,3 @@ void GamePlay::normalKeys(unsigned char key, int x, int y) {
 
 	glutPostRedisplay();
 }
-
-void GamePlay::passiveMouseHover(int x, int y) {
-	grid->passiveMouseHover(x, y);
-}

@@ -25,7 +25,6 @@ namespace
 	map<ActiveState, MouseCallback> mouseMotionFuncs;
 	map<ActiveState, MouseCallback> mousePassiveMotionFuncs;
 
-
 	/*
 	 * Keys currently being held down
 	 */ 

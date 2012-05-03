@@ -47,6 +47,8 @@ Grid::Grid(GamePlay *gp) {
 		for (int col = 0; col < ncols; ++col) 
 			blocks[row][col]->offsetY( -1 * block_h * row );
 	
+	//Input::addMouseMotionFunc(this, Triforce::gameState.PLAY, mousePassiveMotion);
+	//Input::addMousePassiveMotionFunc(this, Triforce::gameState.PLAY, mousePassiveMotion);
 }
 
 void Grid::changeState(gameState gs) {
@@ -110,15 +112,16 @@ void Grid::composeFrame() {
 	}
 }
 
-void Grid::passiveMouseHover(int x, int y) {
+void Grid::mousePassiveMotion(void *gridInstance, int x, int y) {
 	// see if cursor is even inside playable part of grid, and set cursor type
-	if (!(x > gridPos.x && x < gridPos.x + (int)ncols*block_h))
+	Grid *g = (Grid *)gridInstance;
+	if (!(x > g->gridPos.x && x < g->gridPos.x + (int)ncols*g->block_h))
 		glutSetCursor(GLUT_CURSOR_INHERIT);
-	else if (y > gridPos.y - grid_yoff ||
-	    y < gridPos.y - (int)(nrows)*block_h)
+	else if (y > g->gridPos.y - g->grid_yoff ||
+	    y < g->gridPos.y - (int)(nrows)*g->block_h)
 		glutSetCursor(GLUT_CURSOR_INHERIT);
 	else
-		cursor->passiveMouseHover(x, y);
+		g->cursor->passiveMouseHover(x, y);
 }
 
 int Grid::countEnabledRows() const {

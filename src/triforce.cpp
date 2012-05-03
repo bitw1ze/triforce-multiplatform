@@ -22,8 +22,8 @@ Triforce::Triforce()
 	// Configure input
 	Input::setGSFunc((int(*)()) getState);
 	registerActions();
-	Input::addMouseMotionFunc(this, MENU, mouseMotion);
-	Input::addMousePassiveMotionFunc(this, MENU, mousePassiveMotion);
+	//Input::addMousePassiveMotionFunc(this, MENU, menuButtons->mousePassiveMotion);
+	//Input::addMouseMotionFunc(this, MENU, menuButtons->mousePassiveMotion);  // same as passive motion
 
 	/* This is pseudocode
 	input->addAction(this, doAction, ACTION_UP, "Up");
@@ -172,17 +172,4 @@ void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
 				gamePlay->grid->swapBlocks();
 		}
 	}
-}
-
-void Triforce::mouseMotion(void *tfInstance, int x, int y) {
-	// handle buttons being held down same as passive
-	mousePassiveMotion(tfInstance, x, y);
-}
-
-void Triforce::mousePassiveMotion(void *tfInstance, int x, int y) {
-	Triforce * t = (Triforce *)tfInstance;
-	if (state == MENU)
-		t->menuButtons->passiveMouseHover(x, y);
-	else if (state == PLAY)
-		gamePlay->passiveMouseHover(x, y);
 }

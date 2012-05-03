@@ -14,6 +14,7 @@
 #include <list>
 #include "2DGraphics.h"
 #include "globals.h"
+#include "input.h"
 
 using namespace std;
 using namespace Globals;
@@ -75,7 +76,6 @@ public:
 
 	void changeState(gameState gs);
 	gameState getState();
-	void passiveMouseHover(int x, int y);
 };
 
 /* Grid class holds abstracts all the operations on grid of blocks for a 
@@ -99,6 +99,8 @@ protected:
 	void composeFrame();
 
 public:
+	static void mousePassiveMotion(void *gridInstance, int x, int y);
+
 	Grid(GamePlay *ge);
 	virtual ~Grid();
 	void pushRow();
@@ -123,7 +125,6 @@ public:
 	int countEnabledRows() const;
 
 	Cursor *cursor;
-	void passiveMouseHover(int x, int y);
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 

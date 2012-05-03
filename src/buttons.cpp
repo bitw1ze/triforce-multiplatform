@@ -129,9 +129,10 @@ void Buttons::clickUp(int x, int y) {
 	}
 }
 
-void Buttons::passiveMouseHover(int x, int y) {
-	Button * button = getBtnUnderCursor(x, y);
-	unhoverAll();
+void Buttons::mousePassiveMotion(void *buttonsInstance, int x, int y) {
+	Buttons * b = (Buttons *)buttonsInstance;
+	Button * button = b->getBtnUnderCursor(x, y);
+	b->unhoverAll();
 	if (button)
 		button->hover();
 }

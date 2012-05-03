@@ -12,6 +12,7 @@ class Buttons
 protected:
 	class Button : public CObject
 	{
+
 	public:
 		bool hovering;
 		bool pressing;
@@ -41,6 +42,8 @@ protected:
 		curFrame, lastFrame;
 
 public:
+	static void mousePassiveMotion(void *buttonsInstance, int x, int y);
+
 	Buttons(int viewportWidth, int viewportHeight);
 	~Buttons();
 	void display();
@@ -57,7 +60,6 @@ public:
 
 	// mouse
 	Button * getBtnUnderCursor(int x, int y);
-	void passiveMouseHover(int x, int y);
 	void clickDown(int x, int y);
 	void clickUp(int x, int y);
 };

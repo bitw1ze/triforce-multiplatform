@@ -4,7 +4,6 @@
 #include <vector>
 #include <ctime>
 #include <deque>
-#include "input.h"
 #include "buttons.h"
 #include "2DGraphics.h"
 #include "globals.h"
@@ -23,8 +22,8 @@ public : enum gameState {MENU, PLAY, PAUSE, QUIT};
 public : enum actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT};
 private:
 	static gameState state;
-	static GamePlay *gamePlay; 
-
+	static GamePlay *gamePlay;
+	
 	Buttons * menuButtons;
 	static const string bgFile;
 	BMPClass background;
@@ -56,9 +55,6 @@ public:
 	 */
 	static void registerActions();
 	static void doAction(void *tfInstance, actions action); // for Input callback
-
-	static void mousePassiveMotion(void *tfInstance, int x, int y);
-	static void mouseMotion(void *tfInstance, int x, int y);
 
 	// deprecated
 	void specialKeys(int key, int x, int y);
