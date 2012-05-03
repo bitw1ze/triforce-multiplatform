@@ -92,7 +92,7 @@ void Block::display() {
 		draw(0);
 		break;
 	case combo:
-		draw(0);
+		draw(1);
 		break;
 	case fall:
 		draw(0);
@@ -134,19 +134,16 @@ bool Block::match(const Block *right, bool ignoreActive) const {
 	gameState ls = getState();
 	gameState rs = right->getState();
 
-	if (getSprite() != right->getSprite())
-		return false;
-
 	if (ignoreActive) {
-		if (!(ls == inactive || ls == enabled && rs == inactive || rs == enabled))
+		if (!( (ls == inactive || ls == enabled) && (rs == inactive || rs == enabled)))
 			return false;
 	}
 	else {
 		if (!(ls == enabled && rs == enabled)) 
 			return false;
 	}
-	
-	return true;
+
+	return (getSprite() == right->getSprite());
 }
 
 /*	detectAndSetComboState

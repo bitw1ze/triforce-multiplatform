@@ -43,6 +43,7 @@ protected:
 	/* bitmap files */
 	static const string 
 		blockFiles[],
+		blockComboFiles[],
 		cursorFile,
 		gridBorderFile,
 		bgFile;
