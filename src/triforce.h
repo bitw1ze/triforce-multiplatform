@@ -8,6 +8,7 @@
 #include "2DGraphics.h"
 #include "globals.h"
 #include "game.h"
+#include "input.h"
 
 using namespace Globals;
 

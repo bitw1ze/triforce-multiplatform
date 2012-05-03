@@ -14,7 +14,6 @@
 #include <list>
 #include "2DGraphics.h"
 #include "globals.h"
-#include "input.h"
 
 using namespace std;
 using namespace Globals;
@@ -99,8 +98,6 @@ protected:
 	void composeFrame();
 
 public:
-	static void mousePassiveMotion(void *gridInstance, int x, int y);
-
 	Grid(GamePlay *ge);
 	virtual ~Grid();
 	void pushRow();
@@ -125,6 +122,7 @@ public:
 	int countEnabledRows() const;
 
 	Cursor *cursor;
+	static void mousePassiveMotion(void *gridInstance, int x, int y);
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 
