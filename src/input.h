@@ -108,20 +108,21 @@ namespace Input
 	                        int actionType, string shortDesc);
 	};
 
-	/**
-	 * Setup
-	 */
-
 	// getStateFunc returns state of program, and only uses actions with the same state
 	void setGSFunc(int (*getStateFunc)()); 
-	// determine actions program supports before instantiation of objects that use actions
-	void declareAction(Action * action); 
-	// set action functions of each object that uses actions once they're instantiated
-	void defineAction();
-	void removeActions(void *classInstance);
 
 	/**
-	 * Motions
+	 * Button/key Inputs
+	 */
+
+	void keyPress(unsigned char key, int x, int y);
+	void keyRelease(unsigned char key, int x, int y);
+	void keySpecialPress(int key, int x, int y);
+	void keySpecialRelease(int key, int x, int y);
+	void mousePress(int button, int mouseState, int x, int y);
+
+	/**
+	 * Motion Inputs
 	 */
 
 	// The x/y args will be passed to the member functions of the other classes
@@ -131,12 +132,23 @@ namespace Input
 	// but in practice it shouldn't be a problem, and it adds a little more
 	// flexibility this way.
 
-	void addMouseMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
-	void addMousePassiveMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
-
 	void mouseMotion(int x, int y);
 	void mousePassiveMotion(int x, int y);
+
+	void addMouseMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
+	void addMousePassiveMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
 	void removeMotions(void *classInstance);
+
+	/**
+	 * Actions
+	 */
+
+	// determine actions program supports before instantiation of objects that use actions
+	void declareAction(int activeState, int actionType, string shortDesc); 
+	// set action functions of each object that uses actions once they're instantiated
+	void defineAction();
+	void removeActions(void *classInstance);
+	void doAction(int actionType);
 
 	/**
 	 * Binding
@@ -147,18 +159,5 @@ namespace Input
 	void bindKey(Action action, unsigned char key);
 	void bindSpecialKey(Action action, int key);
 	void bindButton(Action action, int button);
-
-	/**
-	 * Inputs and actions
-	 */
-
-	void doAction(int actionType);
-
-	void keyPress(unsigned char key, int x, int y);
-	void keyRelease(unsigned char key, int x, int y);
-	void keySpecialPress(int key, int x, int y);
-	void keySpecialRelease(int key, int x, int y);
-	void mousePress(int button, int mouseState, int x, int y);
-
 
 } //Input

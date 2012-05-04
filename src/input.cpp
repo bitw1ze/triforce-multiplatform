@@ -55,19 +55,52 @@ void setGSFunc(int (*getStateFunc)())
 	getState = getStateFunc;
 }
 
-void declareAction(Action * action)
+/**
+ * Button/key Inputs
+ */
+
+void keyPress(unsigned char key, int x, int y)
 {
-	availableActions.push_back(action);
 }
 
-void removeMotions(void *classInstance)
+void keyRelease(unsigned char key, int x, int y)
 {
-	for (MouseMotionIter m = mouseMotionFuncs.begin(); m != mouseMotionFuncs.end(); ++m)
-		if (m->second.classInstance == classInstance)
-			mouseMotionFuncs.erase(m);
-	for (MouseMotionIter m = mousePassiveMotionFuncs.begin(); m != mousePassiveMotionFuncs.end(); ++m)
-		if (m->second.classInstance == classInstance)
-			mousePassiveMotionFuncs.erase(m);
+}
+
+void keySpecialPress(int key, int x, int y)
+{
+	
+}
+
+void keySpecialRelease(int key, int x, int y)
+{
+}
+
+void mousePress(int button, int mouseState, int x, int y)
+{
+}
+
+
+/**
+ * Motion Inputs
+ */
+
+// Activated when mouse moves while a mouse button IS held down.
+void mouseMotion(int x, int y)
+{
+	MouseMotionIter it;
+	it = mouseMotionFuncs.find(getState());
+	if (it != mouseMotionFuncs.end())
+		it->second.mouseMotionFunc(it->second.classInstance, x, y);
+}
+
+// Activated when mouse moves while a mouse button ISN'T held down.
+void mousePassiveMotion(int x, int y)
+{
+	MouseMotionIter it;
+	it = mousePassiveMotionFuncs.find(getState());
+	if (it != mousePassiveMotionFuncs.end())
+		it->second.mouseMotionFunc(it->second.classInstance, x, y);
 }
 
 void addMouseMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
@@ -96,6 +129,30 @@ void addMousePassiveMotionFunc(void *classInstance, int activeState, void (*mous
 		warnTooManyStateHandlers(__FUNCTION__);
 }
 
+void removeMotions(void *classInstance)
+{
+	for (MouseMotionIter m = mouseMotionFuncs.begin(); m != mouseMotionFuncs.end(); ++m)
+		if (m->second.classInstance == classInstance)
+			mouseMotionFuncs.erase(m);
+	for (MouseMotionIter m = mousePassiveMotionFuncs.begin(); m != mousePassiveMotionFuncs.end(); ++m)
+		if (m->second.classInstance == classInstance)
+			mousePassiveMotionFuncs.erase(m);
+}
+
+/**
+ * Actions
+ */
+
+void declareAction(int activeState, int actionType, string shortDesc)
+{
+	Action *a = new Action(activeState, actionType, shortDesc);
+	availableActions.push_back(a);
+}
+
+/**
+ * Binding
+ */
+
 void bindKey(Action action, unsigned char key)
 {
 }
@@ -112,49 +169,6 @@ void doAction(int actionType)
 {
 	int activeState = getState();
 	// FIXME: incomplete
-}
-
-void keySpecialPress(int key, int x, int y)
-{
-	
-}
-
-void keySpecialRelease(int key, int x, int y)
-{
-}
-
-void keyPress(unsigned char key, int x, int y)
-{
-}
-
-void keyRelease(unsigned char key, int x, int y)
-{
-}
-
-void mousePress(int button, int mouseState, int x, int y)
-{
-}
-
-/**
- *  Activated when mouse moves while a mouse button IS held down.
- */
-void mouseMotion(int x, int y)
-{
-	MouseMotionIter it;
-	it = mouseMotionFuncs.find(getState());
-	if (it != mouseMotionFuncs.end())
-		it->second.mouseMotionFunc(it->second.classInstance, x, y);
-}
-
-/**
- *  Activated when mouse moves while a mouse button ISN'T held down.
- */
-void mousePassiveMotion(int x, int y)
-{
-	MouseMotionIter it;
-	it = mousePassiveMotionFuncs.find(getState());
-	if (it != mousePassiveMotionFuncs.end())
-		it->second.mouseMotionFunc(it->second.classInstance, x, y);
 }
 
 } // Input
