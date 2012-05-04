@@ -1,5 +1,11 @@
 #include "triforce.h"
 
+const string Triforce::gameStateLabels[Triforce::_NUMBER_OF_STATES] = {
+	"Menu", "Play", "Pause", "Quit"
+};
+const string Triforce::menuActionLabels[Triforce::_NUMBER_OF_ACTIONS] = {
+	"Up", "Down", "Left", "Right", "Activate", "Quit"
+};
 const string Triforce::bgFile = "bg.bmp";
 Triforce::gameState Triforce::state = MENU;
 GamePlay * Triforce::gamePlay = NULL;
@@ -19,21 +25,21 @@ Triforce::Triforce()
 	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
 	menuButtons->add(this, QUIT, setStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
 
-	// Configure input
+	// Configure Input
 	Input::setGSFunc((int(*)()) getState);
+	Input::setGSLabels(gameStateLabels);
 
+	// Since the Buttons class be instanced multiple times (for different states),
+    //   and it's better for reuse if it doesn't depend upon Input, lets declare
+    //   it's actions wherever it is instanced.
 	Input::addMousePassiveMotionFunc(menuButtons, MENU, menuButtons->mousePassiveMotion);
 	Input::addMouseMotionFunc(menuButtons, MENU, menuButtons->mousePassiveMotion);  // same as passive motion
-
-	Input::declareAction(new Input::Action(MENU, ACT_UP, "Up"));
-
-	//Input::declareAction();
-	/* This is pseudocode
-	input->addAction(this, doAction, ACTION_UP, "Up");
-	input->addAction(this, doAction, ACTION_DOWN, "Down");
-	input->addAction(this, doAction, ACTION_LEFT, "Left");
-	input->addAction(this, doAction, ACTION_RIGHT, "Right");
-	*/
+	Input::declareAction(MENU, ACT_UP, menuActionLabels[ACT_UP]);
+	Input::declareAction(MENU, ACT_DOWN, menuActionLabels[ACT_DOWN]);
+	Input::declareAction(MENU, ACT_LEFT, menuActionLabels[ACT_LEFT]);
+	Input::declareAction(MENU, ACT_RIGHT, menuActionLabels[ACT_RIGHT]);
+	Input::declareAction(MENU, ACT_ACTIVATE, menuActionLabels[ACT_ACTIVATE]);
+	Input::declareAction(MENU, ACT_QUIT, menuActionLabels[ACT_QUIT]);
 }
 
 Triforce::~Triforce()

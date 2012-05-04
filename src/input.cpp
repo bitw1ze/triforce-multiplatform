@@ -10,6 +10,8 @@ namespace
 	list<Action *> availableActions;
 	list<Player> players;
 	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
+	const string *stateLabels; // array of labels; indices are states returned by getState()
+	int numStates;
 
 	/*
 	 * Handle mouse motion
@@ -53,6 +55,11 @@ void Player::addAction(void *classInstance, void (*action)(void *, int),
 void setGSFunc(int (*getStateFunc)())
 {
 	getState = getStateFunc;
+}
+
+void setGSLabels(const string * labels)
+{
+	stateLabels = labels;
 }
 
 /**

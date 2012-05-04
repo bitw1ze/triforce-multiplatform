@@ -19,8 +19,12 @@ extern CTimer *mainTimer;
  //   B) use member functions instead (i.e. multiple class instances makes sense)
 
 class Triforce {
-public : enum gameState {MENU, PLAY, PAUSE, QUIT};
-public : enum actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT, ACTIVATE};
+public :
+	enum gameState {MENU, PLAY, PAUSE, QUIT, _NUMBER_OF_STATES};
+	const static string gameStateLabels[_NUMBER_OF_STATES];
+
+	enum actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT, ACT_ACTIVATE, ACT_QUIT, _NUMBER_OF_ACTIONS};
+	const static string menuActionLabels[_NUMBER_OF_ACTIONS];
 private:
 	static gameState state;
 	static GamePlay *gamePlay;

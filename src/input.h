@@ -110,6 +110,7 @@ namespace Input
 
 	// getStateFunc returns state of program, and only uses actions with the same state
 	void setGSFunc(int (*getStateFunc)()); 
+	void setGSLabels(const string *labels); 
 
 	/**
 	 * Button/key Inputs
@@ -149,6 +150,7 @@ namespace Input
 	void defineAction();
 	void removeActions(void *classInstance);
 	void doAction(int actionType);
+	void setActionLabels(int activeState, const string *labels);
 
 	/**
 	 * Binding
