@@ -14,6 +14,10 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	Input::addMousePassiveMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
 }
 
+Cursor::~Cursor() {
+	Input::removeActions(this);
+}
+
 bool Cursor::moveLeft(bool doDraw) {
 	if (col > 0) {
 		--col;

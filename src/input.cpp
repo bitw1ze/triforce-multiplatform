@@ -60,6 +60,21 @@ void declareAction(Action * action)
 	availableActions.push_back(action);
 }
 
+void removeActions(void *classInstance)
+{
+	for (MouseMotionIter m = mouseMotionFuncs.begin(); m != mouseMotionFuncs.end(); ++m)
+	{
+		if (m->second.classInstance == classInstance)
+			mouseMotionFuncs.erase(m);
+	}
+	for (MouseMotionIter m = mousePassiveMotionFuncs.begin(); m != mousePassiveMotionFuncs.end(); ++m)
+	{
+		if (m->second.classInstance == classInstance)
+			mousePassiveMotionFuncs.erase(m);
+	}
+
+}
+
 void addMouseMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
 {
 	MouseCallback cb;

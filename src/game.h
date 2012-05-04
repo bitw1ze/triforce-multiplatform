@@ -185,6 +185,7 @@ public:
 	static void mousePassiveMotion(void *gridInstance, int x, int y);
 
 	Cursor(Grid *, CBaseSprite *);
+	~Cursor();
 	bool moveUp(bool doDraw=true);
 	bool moveDown(bool doDraw=true);
 	bool moveLeft(bool doDraw=true);

@@ -35,6 +35,7 @@ Triforce::Triforce()
 
 Triforce::~Triforce()
 {
+	Input::removeActions(menuButtons);
 	delete menuButtons;
 }
 

@@ -114,11 +114,28 @@ namespace Input
 
 	// getStateFunc returns state of program, and only uses actions with the same state
 	void setGSFunc(int (*getStateFunc)()); 
-	void declareAction(Action * action); // statically determine actions program supports
-	void defineAction(); // 
+	// determine actions program supports before instantiation of objects that use actions
+	void declareAction(Action * action); 
+	// set action functions of each object that uses actions once they're instantiated
+	void defineAction();
+	void removeActions(void *classInstance);
+
+	/**
+	 * Motions
+	 */
+
+	// The x/y args will be passed to the member functions of the other classes
+	// to be handled entirely; Input is only choosing which function to send to
+    // based on the state. It is left up to the caller to ensure that no two
+	// motion functions handle the same x/y area. It could be handled here,
+	// but in practice it shouldn't be a problem, and it adds a little more
+	// flexibility this way.
 
 	void addMouseMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
 	void addMousePassiveMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
+
+	void mouseMotion(int x, int y);
+	void mousePassiveMotion(int x, int y);
 
 	/**
 	 * Binding
@@ -142,14 +159,5 @@ namespace Input
 	void keySpecialRelease(int key, int x, int y);
 	void mousePress(int button, int mouseState, int x, int y);
 
-	/**
-	 * Motions
-	 */
-
-	// The x/y args will be passed to the member functions of the other classes
-	// to be handled entirely; Input is only choosing which function to send to
-    // based on the state.
-	void mouseMotion(int x, int y);
-	void mousePassiveMotion(int x, int y);
 
 } //Input
