@@ -136,6 +136,7 @@ namespace Input
 
 	void mouseMotion(int x, int y);
 	void mousePassiveMotion(int x, int y);
+	void removeMotions(void *classInstance);
 
 	/**
 	 * Binding

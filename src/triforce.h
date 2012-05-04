@@ -20,7 +20,7 @@ extern CTimer *mainTimer;
 
 class Triforce {
 public : enum gameState {MENU, PLAY, PAUSE, QUIT};
-public : enum actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT};
+public : enum actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT, ACTIVATE};
 private:
 	static gameState state;
 	static GamePlay *gamePlay;
@@ -54,7 +54,6 @@ public:
 	/**
 	 * Input
 	 */
-	static void registerActions();
 	static void doAction(void *tfInstance, actions action); // for Input callback
 
 	// deprecated

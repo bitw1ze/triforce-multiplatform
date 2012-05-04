@@ -15,7 +15,7 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 }
 
 Cursor::~Cursor() {
-	Input::removeActions(this);
+	Input::removeMotions(this);
 }
 
 bool Cursor::moveLeft(bool doDraw) {

@@ -21,9 +21,10 @@ Triforce::Triforce()
 
 	// Configure input
 	Input::setGSFunc((int(*)()) getState);
-	registerActions();
 	Input::addMousePassiveMotionFunc(menuButtons, MENU, menuButtons->mousePassiveMotion);
 	Input::addMouseMotionFunc(menuButtons, MENU, menuButtons->mousePassiveMotion);  // same as passive motion
+
+	//Input::declareAction();
 
 	/* This is pseudocode
 	input->addAction(this, doAction, ACTION_UP, "Up");
@@ -35,7 +36,7 @@ Triforce::Triforce()
 
 Triforce::~Triforce()
 {
-	Input::removeActions(menuButtons);
+	Input::removeMotions(menuButtons);
 	delete menuButtons;
 }
 
@@ -106,11 +107,6 @@ void Triforce::loadImages()
 {
   background.load(themeDirectory + bgFile);
   background.loadGLTextures();
-}
-
-void Triforce::registerActions()
-{
-	//TODO
 }
 
 void Triforce::specialKeys(int key, int x, int y) {
