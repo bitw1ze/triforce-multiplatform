@@ -144,7 +144,6 @@ void Grid::pushRow() {
 	that is the player's job.	*/
 void Grid::addRow() {
 	if (blocks.size() > nrows) {
-		delete [] blocks[nrows];
 		blocks.pop_back();
 	}
 
@@ -152,15 +151,14 @@ void Grid::addRow() {
 		for (int col=0; col<ncols; ++col)
 			blocks[0][col].changeState(Block::enabled);
 	
-	Block *newRow = new Block[ncols];
-	/*
+	vector<Block> newRow;
 	for (int i=0; i<ncols; ++i)
 		newRow[i].grid = this;
-		*/
+	
 	blocks.push_front(newRow);
 
 	for (int col=0; col<ncols; ++col) {
-		/* Randomize the blocks without generating combos */
+		// Randomize the blocks without generating combos
 		do    ( blocks[0][col].init(blockSprites[ rand() % nblocktypes ], gridPos.x + col * block_w, gridPos.y) );
 		while ( leftMatch(0, col, true).size() >= 2 || upMatch(0, col, true).size() >= 2 );
 	}
@@ -168,7 +166,6 @@ void Grid::addRow() {
 	if (blocks.size() > 3) 
 		for (int i=0; i<ncols; ++i)  
 			setComboState(detectCombo(1, i));
-
 }
 
 /*	swapBlocks()
@@ -208,6 +205,7 @@ void Grid::swapBlocks() {
 	horizontal match.  */
 list<Block> & Grid::detectCombo(int r, int c) {
 	list<Block> *combo = new list<Block>();
+	/*
 	list<Block> match1 = leftMatch(r, c);
 	list<Block> match2 = rightMatch(r, c);
 	
@@ -254,7 +252,7 @@ list<Block> & Grid::detectCombo(int r, int c) {
 			}
 		}
 	}
-
+	*/
 	return *combo;
 }
 
@@ -280,7 +278,6 @@ list<Block> & Grid::detectFalls(int r, int c) {
 			falls->push_back(blocks[i][c]);
 
 	}
-
 	return *falls;
 }
 
@@ -344,7 +341,7 @@ list<Block> & Grid::upMatch(int r, int c, bool ignoreActive) {
 }
 
 list<Block> & Grid::downMatch(int r, int c, bool ignoreActive) {
-	list<Block> *matches;
+	list<Block> *matches = new list<Block>();
 
 	if (r > 0)
 		for (int i=r-1; i > 0; --i)

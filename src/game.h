@@ -92,7 +92,7 @@ protected:
 		last_fall, timer_fall;
 	Point gridPos;
 	GamePlay *gamePlay;
-	deque<Block *> blocks;
+	deque< vector<Block> > blocks;
 	CBaseSprite** blockSprites;
 	gameState state;
 
@@ -149,6 +149,9 @@ protected:
 	//static int interval_combo;
 public:
 	Block();
+	Block(const Block &block);
+	Block & operator =(Block &block);
+	~Block() {}
 	bool swap(Block &right);
 	void changeState(gameState gs);
 	void display();

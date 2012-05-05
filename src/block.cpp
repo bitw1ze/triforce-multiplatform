@@ -48,6 +48,18 @@ Block::Block() : CObject() {
 	state = inactive; 
 }
 
+Block::Block(const Block &block) {
+	state = block.state;
+	setSprite(block.getSprite());
+}
+
+Block & Block::operator =(Block &block) {
+	state = block.state;
+	setSprite(block.getSprite());
+
+	return *this;
+}
+
 /*	changeState
 	Changes the state of the block. Much to be done with this function */
 void Block::changeState(gameState gs) {
