@@ -165,7 +165,7 @@ void Grid::addRow() {
 
 	if (blocks.size() > 3) 
 		for (int i=0; i<ncols; ++i)  
-			setComboState(detectCombo(1, i));
+			;//setComboState(detectCombo(1, i));
 }
 
 /*	swapBlocks()
@@ -185,10 +185,9 @@ void Grid::swapBlocks() {
 	int nfalls;
 	if (blocks[r][c1].swap(blocks[r][c2])) {
 		if (detectCombo(r, c1).size() == 0)
-			setFallState( detectFalls(r, c1) );
-		if (detectCombo(r, c2).size() == 0) {
-			setFallState( detectFalls(r, c2) );
-		}
+			;//setFallState( detectFalls(r, c1) );
+		if (detectCombo(r, c2).size() == 0) 
+			;//setFallState( detectFalls(r, c2) );
 	}
 }
 
@@ -205,10 +204,10 @@ void Grid::swapBlocks() {
 	horizontal match.  */
 list<Block> & Grid::detectCombo(int r, int c) {
 	list<Block> *combo = new list<Block>();
-	/*
 	list<Block> match1 = leftMatch(r, c);
 	list<Block> match2 = rightMatch(r, c);
 	
+	/*
 
 	if (combo->size() >= 2) {
 		combo->insert(match1.begin(), match1.end());
@@ -257,7 +256,7 @@ list<Block> & Grid::detectCombo(int r, int c) {
 }
 
 list<Block> & Grid::detectFalls(int r, int c) {
-	list<Block> *falls = new list<Block>;
+	list<Block> *falls = new list<Block>();
 
 	if (r >= countEnabledRows())
 		return *falls;
