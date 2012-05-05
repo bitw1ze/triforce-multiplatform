@@ -8,10 +8,10 @@
 #pragma once
 
 #include <string>
-#include <vector>
+#include <list>
 #include <ctime>
 #include <deque>
-#include <list>
+#include <vector>
 #include "2DGraphics.h"
 #include "globals.h"
 
@@ -92,25 +92,22 @@ protected:
 		last_fall, timer_fall;
 	Point gridPos;
 	GamePlay *gamePlay;
-	deque<Block **> blocks;
+	deque<Block *> blocks;
 	CBaseSprite** blockSprites;
 	gameState state;
-	void composeFrame();
 
 public:
-	Grid(GamePlay *ge);
+	Grid(GamePlay *gp);
 	virtual ~Grid();
-	void pushRow();
-	void addRow();
+
 	void loadImages();
 	void display();
-	void setCoords();
-	void swapBlocks();
-	Block * getBlock(int row, int col);
+	void composeFrame();
 
-	bool containsPoint(int x, int y);
-	void onCombo();
-	void onPlay();
+	void pushRow();
+	void addRow();
+	void swapBlocks();
+
 	void changeState(gameState gs);
 	gameState getState() const { return state; }
 
@@ -118,14 +115,25 @@ public:
 	int getYOffset() { return grid_yoff; }
 	int getX() { return gridPos.x; }
 	int getY() { return gridPos.y; }
-	int getBlockWidth() { return block_w; }
-	int getBlockHeight() { return block_h; }
+	int getBlockLength() { return block_h; }
 	int countEnabledRows() const;
 
+	list<Block> & downMatch(int r, int c, bool ignoreActive = false);
+	list<Block> & upMatch(int r, int c, bool ignoreActive = false);
+	list<Block> & leftMatch(int r, int c, bool ignoreActive = false);
+	list<Block> & rightMatch(int r, int c, bool ignoreActive = false);
+
+	list<Block> & detectCombo(int r, int c);
+	list<Block> & setComboState(list<Block> &);
+	list<Block> & detectFalls(int r, int c);
+	list<Block> & setFallState(list<Block> &);
+
+	bool containsPoint(int x, int y);
 	Cursor *cursor;
 };
 
-/* The Block class abstracts operations on a single block, such as getting and 
+/* T:w
+he Block class abstracts operations on a single block, such as getting and 
    setting the x and y values and setting states */
 
 class Block : public CObject {
@@ -137,12 +145,10 @@ protected:
 	int last_combo;
 	int last_fall, interval_fall, total_falls, count_falls, fall_factor;
 	int total_combo_interval;
-	Grid *grid;
 
 	//static int interval_combo;
 public:
-	Block(Grid *g);
-	Block *left, *right, *up, *down;
+	Block();
 	bool swap(Block &right);
 	void changeState(gameState gs);
 	void display();
@@ -150,24 +156,13 @@ public:
 	void setFallCount(int falls) { total_falls = falls * fall_factor; count_falls = 0; }
 	gameState getState() const { return state; }
 
-	bool match(const Block *right, bool ignoreActive = false) const;
-	int downMatch(bool ignoreActive = false);
-	int upMatch(bool ignoreActive = false);
-	int leftMatch(bool ignoreActive = false);
-	int rightMatch(bool ignoreActive = false);
-	bool detectAndSetComboState();
-	void detectAndSetFallState();
-	int downDistance( Block *) const;
-	int upDistance(Block *) const;
-	int leftDistance(Block *) const;
-	int rightDistance(Block *) const;
-	void transferDown();
-	Block * offsetRow(int n);
-	Block * offsetCol(int n);
+	bool match(const Block &right, bool ignoreActive = false) const;
 	
 	static int interval_combo;
-	//static int getComboInterval() { return interval_combo; }
-	//static void setComboInterval(int n) { interval_combo = n; }
+	int getComboInterval() { return total_combo_interval; }
+	void setComboInterval(int n) { total_combo_interval = n; }
+
+	Grid *grid;
 };
 
 /* The Cursor class controls the operations on the player's cursor, like moving
