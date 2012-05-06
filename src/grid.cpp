@@ -93,10 +93,9 @@ void Grid::composeFrame() {
 		}
 		break;
 	case combo:
-		if (!Combo::areCombos(combos)) {
-			combos.clear();	
-			// change blocks back to enabled
+		if (Combo::finish(combos)) {
 			changeState(play);
+			combos.clear();
 		}
 		/*
 		else

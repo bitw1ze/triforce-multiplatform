@@ -45,12 +45,12 @@ Block::Block() : CObject() {
 }
 
 Block::Block(const Block &block) {
-	state = block.state;
+	changeState(block.getState());
 	setSprite(block.getSprite());
 }
 
 Block & Block::operator =(const Block &block) {
-	state = block.state;
+	changeState(block.getState());
 	setSprite(block.getSprite());
 
 	return *this;

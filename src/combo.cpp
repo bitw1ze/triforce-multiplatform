@@ -4,7 +4,6 @@ int Combo::comboInterval = 500;
 
 Combo::Combo(Grid *g) {
 	grid = g;
-	blocks = grid->blocks;
 	_left = _right = _up = _down = _mid = NULL;
 	interval = 0;
 }
@@ -108,27 +107,27 @@ bool Combo::initComboState() {
 	if (isVertCombo()) {
 		int c = down()->col;
 		for (int r = down()->row; r <= up()->row; ++r) {
-			combo.push_back(blocks[r][c]);
+			combo.push_back(Cell(r, c));
 		}
 		
 	}
 	else if (isHoriCombo()) {
 		int r = left()->row;
 		for (int c = left()->col; c <= right()->col; ++c) {
-			combo.push_back(blocks[r][c]);
+			combo.push_back(Cell(r, c));
 		}
 	}
 	else if (isMultiCombo()) {
 		int r = left()->row;
 		int c = left()->col;
 		for (c; c <= right()->col; ++c) {
-			combo.push_back(blocks[r][c]);
+			combo.push_back(Cell(r, c));
 		}
 		
 		c = down()->col;
 		for (r = down()->row; r <= up()->row; ++r) {
 			if (r != mid()->row)
-				combo.push_back(blocks[r][c]);
+				combo.push_back(Cell(r, c));
 		}
 	}
 
@@ -142,16 +141,8 @@ bool Combo::initComboState() {
 }
 
 void Combo::setBlockStates(Block::gameState gs) {
-	for (list<Block>::iterator it = combo.begin(); it != combo.cend(); ++it)
-		(*it).changeState(gs);
-}
-
-bool Combo::areCombos( list<Combo> &combos) {
-	for (list<Combo>::iterator it = combos.begin(); it != combos.cend(); ++it)
-		if (!(*it).isFinished())
-			return true;
-	
-	return false;
+	for (list<Cell>::iterator it = combo.begin(); it != combo.cend(); ++it)
+		grid->blocks[(*it).row][(*it).col].changeState(gs);
 }
 
 void Combo::printDebug() {
@@ -168,10 +159,28 @@ void Combo::printDebug() {
 }
 
 void Combo::printStates() {
-	for (list<Block>::iterator it = combo.begin(); it != combo.cend(); ++it) {
-		if ((*it).getState() == Block::combo)
+	for (list<Cell>::iterator it = combo.begin(); it != combo.cend(); ++it) {
+		if (grid->blocks[(*it).row][(*it).col].getState() == Block::combo)
 			cout << "state == combo\n";
 		else
 			cout << "state == not combo\n";
 	}
+}
+
+bool Combo::areFinished(list<Combo> &combos) {
+	for (list<Combo>::iterator it = combos.begin(); it != combos.cend(); ++it)
+		if (!(*it).isFinished())
+			return false;
+	
+	return true;
+}
+
+bool Combo::finish(list<Combo> &combos) {
+	if (areFinished(combos)) {
+		for (list<Combo>::iterator c = combos.begin(); c != combos.end(); ++c)
+			(*c).setBlockStates(Block::disabled);
+		return true;
+	}
+	
+	return false;
 }

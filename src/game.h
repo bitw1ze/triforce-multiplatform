@@ -34,7 +34,10 @@ struct Point {
 	int x, y;
 };
 
-struct Cell {
+class Cell {
+public:
+	Cell() { row = 0; col = 0; }
+	Cell(int r, int c) { row = r, col = c; }
 	int row, col;
 };
 
@@ -166,11 +169,10 @@ class Combo {
 protected:
 	Cell *_left, *_right, *_up, *_down, *_mid;
 	Grid *grid;
-	deque< vector<Block> > blocks;
 	CTimer timer;
 	int interval;
 	int startTime;
-	list<Block> combo;
+	list<Cell> combo;
 
 	static int comboInterval;
 
@@ -196,7 +198,8 @@ public:
 	bool isHoriCombo() const;
 	bool isMultiCombo() const;
 
-	static bool areCombos(list<Combo> &combos);
+	static bool areFinished(list<Combo> &combos);
+	static bool finish(list<Combo> &combos);
 
 	void startTimer();
 	bool initComboState();
