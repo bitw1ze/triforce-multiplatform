@@ -240,7 +240,7 @@ Combo &Grid::detectCombo(int r, int c) {
 		if ( match1 + match2 >= 2) {
 			combo->mid(r, c);
 			combo->down(r - match1, c);
-			combo->up(r + match1, c);
+			combo->up(r + match2, c);
 
 			for (int row=combo->down()->row; row <= combo->up()->row; ++row) {
 				match1 = leftMatch(row, c);
@@ -248,7 +248,7 @@ Combo &Grid::detectCombo(int r, int c) {
 
 				if (match1 + match2 >= 2) {
 					combo->left(row, c - match1);
-					combo->right(row, c + match1);
+					combo->right(row, c + match2);
 
 					break;
 				} 
