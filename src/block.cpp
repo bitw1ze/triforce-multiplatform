@@ -29,9 +29,6 @@
 
 #include "game.h"
 
-int Block::interval_combo = 500;
-
-
 Block::Block() : CObject() {
 	timer = new CTimer(); 
 	timer->start();

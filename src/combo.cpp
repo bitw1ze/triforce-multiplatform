@@ -1,5 +1,7 @@
 #include "game.h"
 
+int Combo::comboInterval = 500;
+
 Combo::Combo(Grid *g) {
 	grid = g;
 	blocks = grid->blocks;
@@ -99,11 +101,9 @@ bool Combo::initComboState() {
 	if (!isCombo())
 		return false;
 
-	interval = count() * Block::interval_combo;
+	interval = count() * Combo::comboInterval;
 	timer.start();
 	startTime = timer.time();
-
-	int interval = count() * Block::interval_combo;
 
 	if (isVertCombo()) {
 		int c = down()->col;
@@ -133,7 +133,7 @@ bool Combo::initComboState() {
 	}
 
 	printDebug();
-	grid->incComboTimer(interval);
+	grid->incComboInterval(interval);
 	grid->changeState(Grid::combo);
 	setBlockStates(Block::combo);
 

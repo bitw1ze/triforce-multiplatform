@@ -321,7 +321,7 @@ void Grid::setFallState(Combo &fall) {
 }
 */
 
-void Grid::incComboTimer(int interval) {
+void Grid::incComboInterval(int interval) {
 	timer_combo += interval;
 }
 

@@ -127,7 +127,7 @@ public:
 	Combo & detectCombo(int r, int c);
 	int detectFalls(int r, int c);
 	void setFallState(Combo &);
-	void incComboTimer(int interval);
+	void incComboInterval(int interval);
 
 	bool containsPoint(int x, int y);
 
@@ -139,15 +139,13 @@ public:
    setting the x and y values and setting states */
 
 class Block : public CObject {
-public: enum gameState { enabled, disabled, combo, fall, inactive };
+public: enum gameState { inactive, enabled, disabled, combo, fall };
 protected:
 	gameState state;
 	CTimer *timer;
 	int last_combo;
 	int last_fall, interval_fall, total_falls, count_falls, fall_factor;
-	int total_combo_interval;
 
-	//static int interval_combo;
 public:
 	Block();
 	Block(const Block &block);
@@ -162,10 +160,6 @@ public:
 
 	bool match(const Block &right, bool ignoreActive = false) const;
 	
-	static int interval_combo;
-	int getComboInterval() { return total_combo_interval; }
-	void setComboInterval(int n) { total_combo_interval = n; }
-
 	Grid *grid;
 };
 
@@ -178,6 +172,8 @@ protected:
 	int interval;
 	int startTime;
 	list<Block> combo;
+
+	static int comboInterval;
 
 	bool isVert() const;
 	bool isHori() const;
