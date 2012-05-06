@@ -7,7 +7,6 @@
 		- documented all the methods
 */
 
-#include <algorithm>
 #include "game.h"
 #include "input.h"
 
@@ -277,8 +276,8 @@ list<Cell> & Grid::detectFalls(int r, int c) {
 	return *falls;
 }
 
-list<Cell> & Grid::setComboState(list<Cell> &combo) {
-	if (combo.size() < 1)
+int Grid::setComboState(Combo &combo) {
+	if (combo.isCombo() < 1)
 		return combo;
 
 	int interval = combo.size() * Block::interval_combo;
@@ -292,7 +291,7 @@ list<Cell> & Grid::setComboState(list<Cell> &combo) {
 	return combo;
 }
 
-list<Cell> & Grid::setFallState(list<Cell> &falls) {
+int Grid::setFallState(list<Cell> &falls) {
 	for (list<Cell>::iterator cell = falls.begin(); cell != falls.cend(); ++cell) {
 		int r = (*cell).row;
 		int c = (*cell).col;
@@ -308,65 +307,65 @@ list<Cell> & Grid::setFallState(list<Cell> &falls) {
 	that match the block passed to the direction in the function's name.
 	e.g. a 3 combo will return 2		*/
 
-list<Cell> & Grid::leftMatch(int r, int c, bool ignoreActive) {
-	list<Cell> *matches = new list<Cell>();
+int Grid::leftMatch(int r, int c, bool ignoreActive) {
+	int matches = 0;
 
 	if (c > 0) {
 		for (int i=c-1; i >= 0; --i) {
-			if (blocks[r][c].match(blocks[r][i], ignoreActive)) {
-				Cell cell = {r, i};
-				matches->push_back(cell);
-			}
+			if (blocks[r][c].match(blocks[r][i], ignoreActive)) 
+				++matches;
+			else
+				break;
 		}
 	}
 
-	return *matches;
+	return matches;
 }
 
-list<Cell> & Grid::rightMatch(int r, int c, bool ignoreActive) {
-	list<Cell> *matches = new list<Cell>();
+int Grid::rightMatch(int r, int c, bool ignoreActive) {
+	int matches = 0;
 
 	if (c < ncols - 1) {
 		for (int i=c+1; i < ncols; --i) {
-			if (blocks[r][c].match(blocks[r][i], ignoreActive)) {
-				Cell cell = {r, i};
-				matches->push_back(cell);
-			}
+			if (blocks[r][c].match(blocks[r][i], ignoreActive)) 
+				++matches;
+			else
+				break;
 		}
 	}
 
-	return *matches;
+	return matches;
 }
 
 
-list<Cell> & Grid::upMatch(int r, int c, bool ignoreActive) {
-	list<Cell> *matches = new list<Cell>();
+int Grid::upMatch(int r, int c, bool ignoreActive) {
+	int matches = 0;
 
 	if (r < countEnabledRows() - 1) {
 		for (int i=r+1; i < countEnabledRows(); ++i) {
-			if (blocks[r][c].match(blocks[i][c], ignoreActive)) {
-				Cell cell = {i, c};
-				matches->push_back(cell);
-			}
+			if (blocks[r][c].match(blocks[i][c], ignoreActive)) 
+				++matches;
+			else
+				break;
 		}
 	}
 
-	return *matches;
+	return matches;
 }
 
-list<Cell> & Grid::downMatch(int r, int c, bool ignoreActive) {
-	list<Cell> *matches = new list<Cell>();
+int Grid::downMatch(int r, int c, bool ignoreActive) {
+	int matches = 0;
 
 	if (r > 0) {
 		for (int i=r-1; i > 0; --i) {
-			if (blocks[r][c].match(blocks[i][c], ignoreActive)) {
-				Cell cell = {i, c};
-				matches->push_back(cell);
-			}
+			if (blocks[r][c].match(blocks[i][c], ignoreActive)) 
+				++matches;
+			else
+				break;
 		}
 	}
 
-	return *matches;
+	return matches;
 }
 
 /* destructor */

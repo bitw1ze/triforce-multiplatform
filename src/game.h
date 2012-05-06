@@ -38,23 +38,6 @@ struct Cell {
 	int row, col;
 };
 
-class Combo {
-protected:
-	Cell *_left, *_right, *_up, *_down, *_mid;
-public:
-	Combo();
-	Cell *left();
-	Cell *left(int r, int c);
-	Cell *right();
-	Cell *right(int r, int c);
-	Cell *down();
-	Cell *down(int r, int c);
-	Cell *up();
-	Cell *up(int r, int c);
-	Cell *mid();
-	Cell *mid(int r, int c);
-};
-
 class GamePlay {
 protected:
 
@@ -136,15 +119,15 @@ public:
 	int getBlockLength() { return block_h; }
 	int countEnabledRows() const;
 
-	list<Cell> & downMatch(int r, int c, bool ignoreActive = false);
-	list<Cell> & upMatch(int r, int c, bool ignoreActive = false);
-	list<Cell> & leftMatch(int r, int c, bool ignoreActive = false);
-	list<Cell> & rightMatch(int r, int c, bool ignoreActive = false);
+	int downMatch(int r, int c, bool ignoreActive = false);
+	int upMatch(int r, int c, bool ignoreActive = false);
+	int leftMatch(int r, int c, bool ignoreActive = false);
+	int rightMatch(int r, int c, bool ignoreActive = false);
 
-	list<Cell> & detectCombo(int r, int c);
-	list<Cell> & setComboState(list<Cell> &);
-	list<Cell> & detectFalls(int r, int c);
-	list<Cell> & setFallState(list<Cell> &);
+	int detectCombo(int r, int c);
+	int setComboState(Combo &);
+	int detectFalls(int r, int c);
+	int setFallState(Combo &);
 
 	bool containsPoint(int x, int y);
 	Cursor *cursor;
@@ -183,6 +166,31 @@ public:
 	void setComboInterval(int n) { total_combo_interval = n; }
 
 	Grid *grid;
+};
+
+class Combo {
+protected:
+	Cell *_left, *_right, *_up, *_down, *_mid;
+	CTimer timer;
+	int interval;
+	
+public:
+	Combo();
+	Cell *left() const { return _left; }
+	Cell *left(int r, int c);
+	Cell *right() const { return _right; }
+	Cell *right(int r, int c);
+	Cell *down() const { return _down; }
+	Cell *down(int r, int c);
+	Cell *up() const { return _up; }
+	Cell *up(int r, int c);
+	Cell *mid() const { return _mid; }
+	Cell *mid(int r, int c);
+
+	bool isCombo() const;
+	bool isVertCombo() const;
+	bool isHoriCombo() const;
+	bool isMultiCombo() const;
 };
 
 /* The Cursor class controls the operations on the player's cursor, like moving
