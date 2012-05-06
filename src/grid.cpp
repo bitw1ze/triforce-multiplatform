@@ -200,28 +200,25 @@ void Grid::swapBlocks() {
 	This function computes the cells by first finding a horizontal match. If a match
 	is found, it will then iteratively search for a vertical from each block in the
 	horizontal match.  */
-list<Cell> & Grid::detectCombo(int r, int c) {
-	list<Cell> *combo = new list<Cell>();
-	list<Cell> match1 = leftMatch(r, c);
-	list<Cell> match2 = rightMatch(r, c);
-	/*
-	
+Combo &Grid::detectCombo(int r, int c) {
+	Combo *combo = new Combo(this);
 
-	if (combo->size() >= 2) {
-		combo->insert(match1.begin(), match1.end());
-		combo->push_back(blocks[r][c]);
-		combo->insert(match2.begin(), match2.end());	
-		
-		int c1 = c - match1.size();
-		int c2 = c + match2.size();
-		for (int col = c1; col < c2; ++col) {
+	int match1 = leftMatch(r, c);
+	int match2 = rightMatch(r, c);
+
+	if (match1 + match2 >= 2) {
+		combo->mid(r, c);
+		combo->left(r, c - match1);
+		combo->right(r, c + match2);
+
+		for (int col = combo->left()->col; col <= combo->right()->col; ++col) {
 			match1 = downMatch(r, col);
 			match2 = upMatch(r, col);
 
-			if (match1.size() + match2.size() >= 2) {
-				combo->insert(match1.begin(), match1.end());
-				combo->insert(match2.begin(), match2.end());
-				
+			if (match1 + match2 >= 2) {
+				combo->down(r - match1, col);
+				combo->up(r + match2, col);
+
 				break;
 			}
 		}
@@ -230,26 +227,25 @@ list<Cell> & Grid::detectCombo(int r, int c) {
 		match1 = downMatch(r, c);
 		match2 = upMatch(r, c);
 
-		if ( match1.size() + match2.size() >= 2) {
-			combo->insert(match1.begin(), match1.end());
-			combo->push_back(blocks[r][c]);
-			combo->insert(match2.begin(), match2.end());
+		if ( match1 + match2 >= 2) {
+			combo->mid(r, c);
+			combo->down(r - match1, c);
+			combo->up(r + match1, c);
 
-			int r1 = r - match1.size();
-			int r2 = r + match2.size();
-			for (int row=r1; row < r2; ++row) {
+			for (int row=combo->down()->row; row <= combo->up()->row; ++row) {
 				match1 = leftMatch(row, c);
 				match2 = rightMatch(row, c);
 
-				if (match1.size() + match2.size() >= 2) {
-					combo->insert(match1.begin(), match1.end());
-					combo->insert(match2.begin(), match2.end());
+				if (match1 + match2 >= 2) {
+					combo->left(row, c - match1);
+					combo->right(row, c + match1);
 
+					break;
 				} 
 			}
 		}
 	}
-	*/
+
 	return *combo;
 }
 
@@ -276,22 +272,8 @@ list<Cell> & Grid::detectFalls(int r, int c) {
 	return *falls;
 }
 
-int Grid::setComboState(Combo &combo) {
-	if (combo.isCombo() < 1)
-		return combo;
-
-	int interval = combo.size() * Block::interval_combo;
-	for (list<Cell>::iterator cell = combo.begin(); cell != combo.cend(); cell++) {
-		int r = (*cell).row;
-		int c = (*cell).col;
-		blocks[r][c].setComboInterval(interval);
-		blocks[r][c].changeState(Block::combo);
-	}
-
-	return combo;
-}
-
-int Grid::setFallState(list<Cell> &falls) {
+void Grid::setFallState(Combo &fall) {
+	
 	for (list<Cell>::iterator cell = falls.begin(); cell != falls.cend(); ++cell) {
 		int r = (*cell).row;
 		int c = (*cell).col;

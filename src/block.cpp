@@ -29,7 +29,7 @@
 
 #include "game.h"
 
-int Block::interval_combo;
+int Block::interval_combo = 500;
 
 
 Block::Block() : CObject() {
@@ -37,7 +37,6 @@ Block::Block() : CObject() {
 	timer->start();
 
 	last_combo = -1;
-	interval_combo = 500;
 
 	last_fall = -1;
 	interval_fall = 20;
@@ -65,10 +64,6 @@ Block & Block::operator =(Block &block) {
 void Block::changeState(gameState gs) {
 	switch (gs) {
 	case combo:
-		if (state != combo) {
-			last_combo = timer->time();
-			grid->changeState(Grid::combo);
-		}
 		break;
 	case fall:
 		last_fall = timer->time();

@@ -93,7 +93,6 @@ protected:
 		last_fall, timer_fall;
 	Point gridPos;
 	GamePlay *gamePlay;
-	deque< vector<Block> > blocks;
 	CBaseSprite** blockSprites;
 	gameState state;
 
@@ -124,13 +123,14 @@ public:
 	int leftMatch(int r, int c, bool ignoreActive = false);
 	int rightMatch(int r, int c, bool ignoreActive = false);
 
-	int detectCombo(int r, int c);
-	int setComboState(Combo &);
+	Combo & detectCombo(int r, int c);
 	int detectFalls(int r, int c);
-	int setFallState(Combo &);
+	void setFallState(Combo &);
 
 	bool containsPoint(int x, int y);
+
 	Cursor *cursor;
+	deque< vector<Block> > blocks;
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 
@@ -140,7 +140,6 @@ class Block : public CObject {
 public: enum gameState { enabled, disabled, combo, fall, inactive };
 protected:
 	gameState state, nextState;
-	void onCombo();
 	CTimer *timer;
 	int last_combo;
 	int last_fall, interval_fall, total_falls, count_falls, fall_factor;
@@ -171,11 +170,19 @@ public:
 class Combo {
 protected:
 	Cell *_left, *_right, *_up, *_down, *_mid;
+	Grid *grid;
+	deque< vector<Block> > blocks;
 	CTimer timer;
 	int interval;
+	int startTime;
+	list<Block> combo;
+
+	bool isVert() const;
+	bool isHori() const;
+	bool isMulti() const;
 	
 public:
-	Combo();
+	Combo(Grid *grid);
 	Cell *left() const { return _left; }
 	Cell *left(int r, int c);
 	Cell *right() const { return _right; }
@@ -191,6 +198,11 @@ public:
 	bool isVertCombo() const;
 	bool isHoriCombo() const;
 	bool isMultiCombo() const;
+
+	void startTimer();
+	void initComboState();
+	bool isFinished();
+	int count() const;
 };
 
 /* The Cursor class controls the operations on the player's cursor, like moving
