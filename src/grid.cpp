@@ -202,7 +202,7 @@ void Grid::swapBlocks() {
 	//int nfalls;
 	Combo combo1(this), combo2(this);
 
-	if (blocks[r][c1].swap(blocks[r][c2])) {
+	if (swap(blocks[r][c1], blocks[r][c2])) {
 		combo1 = detectCombo(r, c1);
 		combo2 = detectCombo(r, c2);
 
@@ -335,7 +335,7 @@ int Grid::leftMatch(int r, int c, bool ignoreActive) {
 
 	if (c > 0) {
 		for (int i=c-1; i >= 0; --i) {
-			if (blocks[r][c].match(blocks[r][i], ignoreActive)) 
+			if (match(blocks[r][c], blocks[r][i], ignoreActive)) 
 				++matches;
 			else
 				break;
@@ -350,7 +350,7 @@ int Grid::rightMatch(int r, int c, bool ignoreActive) {
 
 	if (c < ncols - 1) {
 		for (int i=c+1; i < ncols; ++i) {
-			if (blocks[r][c].match(blocks[r][i], ignoreActive)) 
+			if (match(blocks[r][c], blocks[r][i], ignoreActive)) 
 				++matches;
 			else
 				break;
@@ -366,7 +366,7 @@ int Grid::upMatch(int r, int c, bool ignoreActive) {
 
 	if (r < countEnabledRows() - 1) {
 		for (int i=r+1; i < countEnabledRows(); ++i) {
-			if (blocks[r][c].match(blocks[i][c], ignoreActive)) 
+			if (match(blocks[r][c], blocks[i][c], ignoreActive)) 
 				++matches;
 			else
 				break;
@@ -381,7 +381,7 @@ int Grid::downMatch(int r, int c, bool ignoreActive) {
 
 	if (r > 0) {
 		for (int i=r-1; i > 0; --i) {
-			if (blocks[r][c].match(blocks[i][c], ignoreActive)) 
+			if (match(blocks[r][c], blocks[i][c], ignoreActive)) 
 				++matches;
 			else
 				break;
@@ -394,4 +394,36 @@ int Grid::downMatch(int r, int c, bool ignoreActive) {
 /* destructor */
 Grid::~Grid() {
 	delete cursor;
+}
+
+/*	swap
+	Swap two adjacent blocks that the cursor has selected. */
+bool swap(Block &left, Block &right) {
+	if ( left.getState() == Block::combo || left.getState() == Block::fall ||
+		right.getState() == Block::combo || right.getState() == Block::fall)
+		return false;
+
+	Block temp = left;
+	left = right;
+	right = temp;
+
+	return true;
+}
+
+/*	match
+	Detect a single match of one block to another block based on the sprite.
+	ignoreActive should be enabled when only testing if block states and sprites
+	match, such as when generating blocks */
+bool match(const Block &left, const Block &right, bool ignoreActive) { 
+
+	Block::gameState ls = left.getState();
+	Block::gameState rs = right.getState();
+
+	if (left.getSprite() != right.getSprite())
+		return false;
+
+	if (ignoreActive) 
+		return (ls == Block::enabled || ls == Block::inactive) && (rs == Block::enabled || rs == Block::inactive);
+	else
+		return (ls == Block::enabled && rs == Block::enabled);
 }

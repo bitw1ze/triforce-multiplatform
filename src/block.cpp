@@ -33,8 +33,6 @@ Block::Block() : CObject() {
 	timer = new CTimer(); 
 	timer->start();
 
-	last_combo = -1;
-
 	last_fall = -1;
 	interval_fall = 20;
 	total_falls = 0;
@@ -138,36 +136,3 @@ void Block::display() {
 		break;
 	}
 }
-
-/*	swap
-	Swap two adjacent blocks that the cursor has selected. */
-bool Block::swap(Block &right) {
-	if ( getState() == combo || getState() == fall ||
-		right.getState() == combo || right.getState() == fall)
-		return false;
-
-	Block temp = *this;
-	*this = right;
-	right = temp;
-
-	return true;
-}
-
-/*	match
-	Detect a single match of one block to another block based on the sprite.
-	ignoreActive should be enabled when only testing if block states and sprites
-	match, such as when generating blocks */
-bool Block::match(const Block &right, bool ignoreActive) const { 
-
-	gameState ls = getState();
-	gameState rs = right.getState();
-
-	if (getSprite() != right.getSprite())
-		return false;
-
-	if (ignoreActive) 
-		return (ls == enabled || ls == inactive) && (rs == enabled || rs == inactive);
-	else
-		return (ls == enabled && rs == enabled);
-}
-
