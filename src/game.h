@@ -149,7 +149,7 @@ protected:
 public:
 	Block();
 	Block(const Block &block);
-	Block & operator =(Block &block);
+	Block & operator =(const Block &block);
 	~Block() {}
 	bool swap(Block &right);
 	void changeState(gameState gs);

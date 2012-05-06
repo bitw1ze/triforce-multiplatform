@@ -49,7 +49,7 @@ Block::Block(const Block &block) {
 	setSprite(block.getSprite());
 }
 
-Block & Block::operator =(Block &block) {
+Block & Block::operator =(const Block &block) {
 	state = block.state;
 	setSprite(block.getSprite());
 
