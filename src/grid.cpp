@@ -173,11 +173,16 @@ void Grid::addRow() {
 		newRow[col].grid = this;
 	}
 
-	/*
-	if (blocks.size() > 3) 
-		for (int i=0; i<ncols; ++i)  
-			setComboState(detectCombo(1, i));
-			*/
+	Combo combo(this);
+	if (blocks.size() > 3) {
+		for (int i=0; i<ncols; ++i) { 
+			combo = detectCombo(1, i);
+			if (combo.isCombo()) {
+				combo.initComboState();
+				combos.push_back(combo);
+			}
+		}
+	}
 }
 
 /*	swapBlocks()
