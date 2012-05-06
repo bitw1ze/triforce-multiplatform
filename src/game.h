@@ -126,6 +126,7 @@ public:
 	Combo & detectCombo(int r, int c);
 	int detectFalls(int r, int c);
 	void setFallState(Combo &);
+	void incComboTimer(int interval);
 
 	bool containsPoint(int x, int y);
 
@@ -200,8 +201,9 @@ public:
 	bool isMultiCombo() const;
 
 	void startTimer();
-	void initComboState();
+	bool initComboState();
 	bool isFinished();
+	void setBlockStates(Block::gameState gs);
 	int count() const;
 };
 

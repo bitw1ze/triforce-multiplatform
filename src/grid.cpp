@@ -157,7 +157,7 @@ void Grid::addRow() {
 		// Randomize the blocks without generating combos
 		do {
 			blocks[0][col].init(blockSprites[rand() % nblocktypes], gridPos.x + col * block_w, gridPos.y);
-		} while ( leftMatch(0, col, true).size() >= 2 || upMatch(0, col, true).size() >= 2 );
+		} while ( leftMatch(0, col, true) >= 2 || upMatch(0, col, true) >= 2 );
 		newRow[col].grid = this;
 	}
 
@@ -181,11 +181,21 @@ void Grid::swapBlocks() {
 		return;
 
 	int nfalls;
+	Combo combo1(this), combo2(this);
+
 	if (blocks[r][c1].swap(blocks[r][c2])) {
-		if (detectCombo(r, c1).size() == 0)
-			setFallState( detectFalls(r, c1) );
-		if (detectCombo(r, c2).size() == 0) 
-			setFallState( detectFalls(r, c2) );
+		combo1 = detectCombo(r, c1);
+		combo2 = detectCombo(r, c2);
+
+		if (combo1.isCombo())
+			combo1.initComboState();
+
+		if (combo2.isCombo())
+			combo2.initComboState();
+			
+			//setFallState( detectFalls(r, c1) );
+		//if (!detectCombo(r, c2).initComboState())
+			//setFallState( detectFalls(r, c2) );
 	}
 }
 
@@ -249,6 +259,7 @@ Combo &Grid::detectCombo(int r, int c) {
 	return *combo;
 }
 
+/*
 list<Cell> & Grid::detectFalls(int r, int c) {
 	list<Cell> *falls = new list<Cell>();
 
@@ -282,6 +293,11 @@ void Grid::setFallState(Combo &fall) {
 	}
 
 	return falls;
+}
+*/
+
+void Grid::incComboTimer(int interval) {
+	timer_combo += interval;
 }
 
 /*	leftMatch, rightMatch, downMatch, and upMatch
