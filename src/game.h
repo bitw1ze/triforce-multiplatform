@@ -141,7 +141,7 @@ public:
 class Block : public CObject {
 public: enum gameState { enabled, disabled, combo, fall, inactive };
 protected:
-	gameState state, nextState;
+	gameState state;
 	CTimer *timer;
 	int last_combo;
 	int last_fall, interval_fall, total_falls, count_falls, fall_factor;
@@ -201,7 +201,7 @@ public:
 	bool isHoriCombo() const;
 	bool isMultiCombo() const;
 
-	static bool areCombos( list<Combo> &combos);
+	static bool areCombos(list<Combo> &combos);
 
 	void startTimer();
 	bool initComboState();
@@ -210,6 +210,7 @@ public:
 	int count() const;
 
 	void printDebug();
+	void printStates();
 };
 
 /* The Cursor class controls the operations on the player's cursor, like moving

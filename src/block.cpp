@@ -62,23 +62,17 @@ Block & Block::operator =(Block &block) {
 /*	changeState
 	Changes the state of the block. Much to be done with this function */
 void Block::changeState(gameState gs) {
-	if (state == combo && gs != combo)
-		cout << "No longer a combo\n";
 	state = gs;
 	switch (gs) {
 	case combo:
-		cout << "I'm a combo!\n";
 		break;
 	case fall:
-		cout << "I'm a fall!\n";
 		last_fall = timer->time();
 		count_falls = 0;
 		break;
 	case disabled:
-		cout << "I'm disabled :(\n";
 		break;
 	case enabled:
-		cout << "I am enabled!\n";
 		break;
 	}
 }
@@ -86,10 +80,6 @@ void Block::changeState(gameState gs) {
 void Block::composeFrame() {
 	switch (state) {
 	case enabled:
-		break;
-
-	case combo:
-		cout << "I'm still a combo!\n";
 		break;
 
 	case fall:
@@ -118,7 +108,19 @@ void Block::composeFrame() {
 			*/
 
 		break;
+
+	case inactive:
+		break;
+
+	case disabled:
+		break;
+
+	default:
+		cout << "Composing frame\n";
+		break;
 	}
+	if (state != enabled && state != inactive)
+	cout << state << " ";
 }
 
 void Block::display() {
@@ -127,7 +129,6 @@ void Block::display() {
 		draw(0);
 		break;
 	case combo:
-		cout << "Hi combo\n";
 		draw(1);
 		break;
 	case fall:
@@ -148,13 +149,9 @@ bool Block::swap(Block &right) {
 		right.getState() == combo || right.getState() == fall)
 		return false;
 
-	CBaseSprite *temp = getSprite();
-	setSprite( right.getSprite() );
-	right.setSprite( temp );
-
-	gameState st = state;
-	state = right.state;
-	right.state = st;
+	Block temp = *this;
+	*this = right;
+	right = temp;
 
 	return true;
 }

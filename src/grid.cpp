@@ -97,6 +97,11 @@ void Grid::composeFrame() {
 			combos.clear();	
 			changeState(play);
 		}
+		/*
+		else
+			for (list<Combo>::iterator it = combos.begin(); it != combos.cend(); ++it)
+				(*it).printStates();
+				*/
 		break;
 	}
 }
@@ -188,7 +193,7 @@ void Grid::swapBlocks() {
 	if (r >= countEnabledRows())
 		return;
 
-	int nfalls;
+	//int nfalls;
 	Combo combo1(this), combo2(this);
 
 	if (blocks[r][c1].swap(blocks[r][c2])) {
@@ -227,7 +232,6 @@ Combo &Grid::detectCombo(int r, int c) {
 
 	int match1 = leftMatch(r, c);
 	int match2 = rightMatch(r, c);
-	printf("left: %d, right: %d\n", match1, match2);
 
 	if (match1 + match2 >= 2) {
 		combo->mid(r, c);
@@ -249,7 +253,6 @@ Combo &Grid::detectCombo(int r, int c) {
 	else {
 		match1 = downMatch(r, c);
 		match2 = upMatch(r, c);
-		printf("down: %d, up: %d\n", match1, match2);
 
 		if ( match1 + match2 >= 2) {
 			combo->mid(r, c);

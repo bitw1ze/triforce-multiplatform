@@ -146,6 +146,14 @@ void Combo::setBlockStates(Block::gameState gs) {
 		(*it).changeState(gs);
 }
 
+bool Combo::areCombos( list<Combo> &combos) {
+	for (list<Combo>::iterator it = combos.begin(); it != combos.cend(); ++it)
+		if (!(*it).isFinished())
+			return true;
+	
+	return false;
+}
+
 void Combo::printDebug() {
 	if (isVertCombo())
 		printf("count = %d: (%d, %d)->(%d, %d)\n", count(), down()->row, down()->col, up()->row, up()->col);
@@ -159,10 +167,11 @@ void Combo::printDebug() {
 	}
 }
 
-bool Combo::areCombos( list<Combo> &combos) {
-	for (list<Combo>::iterator it = combos.begin(); it != combos.cend(); ++it)
-		if (!(*it).isFinished())
-			return true;
-	
-	return false;
+void Combo::printStates() {
+	for (list<Block>::iterator it = combo.begin(); it != combo.cend(); ++it) {
+		if ((*it).getState() == Block::combo)
+			cout << "state == combo\n";
+		else
+			cout << "state == not combo\n";
+	}
 }
