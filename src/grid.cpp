@@ -117,15 +117,15 @@ int Grid::countEnabledRows() const {
 	uint32 count;
 
 	for (count=0; count<blocks.size(); ++count) {
-		bool disabled = true;
+		bool isDisabled = true;
 		for (int i=0; i<ncols; ++i) {
 			if (blocks[count][i].getState() == Block::enabled || blocks[count][i].getState() == Block::inactive) {
-				disabled = false;
+				isDisabled = false;
 				break;
 			}
 		}
 	
-		if (disabled == true)
+		if (isDisabled == true)
 			break;
 	}
 
@@ -138,8 +138,8 @@ void Grid::pushRow() {
 	grid_yoff += grid_yspeed;
 
 	cursor->offsetY(-grid_yspeed);
-	for (int i=0; i<countEnabledRows(); ++i) 
-		for (int j=0; j<ncols; ++j) 
+	for (uint32 i=0; i<blocks.size(); ++i) 
+		for (uint32 j=0; j<ncols; ++j) 
 			blocks[i][j].offsetY(-grid_yspeed);
 	
 	if (grid_yoff >= block_h) {
@@ -159,8 +159,8 @@ void Grid::addRow() {
 	}
 
 	if (blocks.size() > 0)
-		for (int col=0; col<ncols; ++col)
-			blocks[0][col].changeState(Block::enabled);
+		for (vector<Block>::iterator it = blocks[0].begin(); it != blocks[0].cend(); ++it)
+			(*it).changeState(Block::enabled);
 	
 	vector<Block> newRow(ncols);
 	blocks.push_front(newRow);

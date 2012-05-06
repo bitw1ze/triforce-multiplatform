@@ -33,11 +33,13 @@ Block::Block() : CObject() {
 	timer = new CTimer(); 
 	timer->start();
 
+	/*
 	last_fall = -1;
 	interval_fall = 20;
 	total_falls = 0;
 	fall_factor = 6;
 	count_falls = 0;
+	*/
 
 	state = inactive; 
 }
@@ -62,8 +64,10 @@ void Block::changeState(gameState gs) {
 	case combo:
 		break;
 	case fall:
+		/*
 		last_fall = timer->time();
 		count_falls = 0;
+		*/
 		break;
 	case disabled:
 		break;
