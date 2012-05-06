@@ -74,15 +74,15 @@ void Grid::changeState(gameState gs) {
 void Grid::display() {
 	composeFrame();
 
-	for (int i=0; i<blocks.size(); ++i)
-		for (int j=0; j<ncols; ++j)
+	for (uint32 i=0; i<blocks.size(); ++i)
+		for (uint32 j=0; j<ncols; ++j)
 			blocks[i][j].display();
 	cursor->draw(0);
 }
 
 void Grid::composeFrame() {
-	for (int i=0; i<blocks.size(); ++i) 
-		for (int j=0; j<ncols; ++j)
+	for (uint32 i=0; i<blocks.size(); ++i) 
+		for (uint32 j=0; j<ncols; ++j)
 			blocks[i][j].composeFrame();
 
 	switch (state) {
@@ -95,6 +95,7 @@ void Grid::composeFrame() {
 	case combo:
 		if (!Combo::areCombos(combos)) {
 			combos.clear();	
+			// change blocks back to enabled
 			changeState(play);
 		}
 		/*
@@ -201,11 +202,13 @@ void Grid::swapBlocks() {
 		combo2 = detectCombo(r, c2);
 
 		if (combo1.isCombo()) {
+			cout << "Left combo\n";
 			combo1.initComboState();
 			combos.push_back(combo1);
 		}
 
 		if (combo2.isCombo()) {
+			cout << "Right combo\n";
 			combo2.initComboState();
 			combos.push_back(combo2);
 		}
@@ -341,7 +344,7 @@ int Grid::rightMatch(int r, int c, bool ignoreActive) {
 	int matches = 0;
 
 	if (c < ncols - 1) {
-		for (int i=c+1; i < ncols; --i) {
+		for (int i=c+1; i < ncols; ++i) {
 			if (blocks[r][c].match(blocks[r][i], ignoreActive)) 
 				++matches;
 			else

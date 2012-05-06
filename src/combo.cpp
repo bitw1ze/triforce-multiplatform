@@ -158,10 +158,10 @@ void Combo::printDebug() {
 	if (isVertCombo())
 		printf("count = %d: (%d, %d)->(%d, %d)\n", count(), down()->row, down()->col, up()->row, up()->col);
 	else if (isHoriCombo()) {
-		printf("(%d, %d)->(%d, %d)\n", left()->row, left()->col, right()->row, right()->col);
+		printf("count = %d: (%d, %d)->(%d, %d)\n", count(), left()->row, left()->col, right()->row, right()->col);
 	}
 	else if (isMultiCombo()) {
-		printf("(%d, %d)->(%d, %d) (%d, %d)->(%d, %d)\n", 
+		printf("count = %d: (%d, %d)->(%d, %d) (%d, %d)->(%d, %d)\n", count(),
 			left()->row, left()->col, right()->row, right()->col,
 			down()->row, down()->col, up()->row, up()->col);
 	}
