@@ -22,6 +22,7 @@ class GamePlay;
 class Grid;
 class Block;
 class Cursor;
+class Combo;
 extern CTimer *mainTimer;
 
 /* GamePlay is the main interface for controlling everything else within the 
@@ -35,6 +36,23 @@ struct Point {
 
 struct Cell {
 	int row, col;
+};
+
+class Combo {
+protected:
+	Cell *_left, *_right, *_up, *_down, *_mid;
+public:
+	Combo();
+	Cell *left();
+	Cell *left(int r, int c);
+	Cell *right();
+	Cell *right(int r, int c);
+	Cell *down();
+	Cell *down(int r, int c);
+	Cell *up();
+	Cell *up(int r, int c);
+	Cell *mid();
+	Cell *mid(int r, int c);
 };
 
 class GamePlay {
