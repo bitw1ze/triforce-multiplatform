@@ -62,19 +62,25 @@ Block & Block::operator =(Block &block) {
 /*	changeState
 	Changes the state of the block. Much to be done with this function */
 void Block::changeState(gameState gs) {
+	if (state == combo && gs != combo)
+		cout << "No longer a combo\n";
+	state = gs;
 	switch (gs) {
 	case combo:
+		cout << "I'm a combo!\n";
 		break;
 	case fall:
+		cout << "I'm a fall!\n";
 		last_fall = timer->time();
 		count_falls = 0;
 		break;
 	case disabled:
+		cout << "I'm disabled :(\n";
 		break;
 	case enabled:
+		cout << "I am enabled!\n";
 		break;
 	}
-	state = gs;
 }
 
 void Block::composeFrame() {
@@ -83,13 +89,11 @@ void Block::composeFrame() {
 		break;
 
 	case combo:
-		if (timer->elapsed(last_combo, total_combo_interval)) {
-			changeState(disabled);
-			//detectAndSetFallState();
-		}
+		cout << "I'm still a combo!\n";
 		break;
 
 	case fall:
+		/*
 		if (timer->elapsed(last_fall, interval_fall)) {
 			last_fall = timer->time();
 			offsetY(getHeight() / fall_factor);
@@ -99,6 +103,7 @@ void Block::composeFrame() {
 			int n = (total_falls / fall_factor);
 			offsetY(n * -getHeight());
 			state = enabled;
+			*/
 			/*
 			FIXME
 			Block *temp = this;
@@ -109,8 +114,8 @@ void Block::composeFrame() {
 			state = disabled;
 
 			temp->detectAndSetComboState();
-			*/
 		}
+			*/
 
 		break;
 	}
@@ -122,6 +127,7 @@ void Block::display() {
 		draw(0);
 		break;
 	case combo:
+		cout << "Hi combo\n";
 		draw(1);
 		break;
 	case fall:

@@ -95,6 +95,7 @@ protected:
 	GamePlay *gamePlay;
 	CBaseSprite** blockSprites;
 	gameState state;
+	list<Combo> combos;
 
 public:
 	Grid(GamePlay *gp);
@@ -200,11 +201,15 @@ public:
 	bool isHoriCombo() const;
 	bool isMultiCombo() const;
 
+	static bool areCombos( list<Combo> &combos);
+
 	void startTimer();
 	bool initComboState();
 	bool isFinished();
 	void setBlockStates(Block::gameState gs);
 	int count() const;
+
+	void printDebug();
 };
 
 /* The Cursor class controls the operations on the player's cursor, like moving

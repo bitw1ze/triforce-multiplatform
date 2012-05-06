@@ -51,12 +51,16 @@ Grid::Grid(GamePlay *gp) {
 void Grid::changeState(gameState gs) {
 	switch (gs) {
 	case combo:
+		
+		/*
 		if (state != combo) {
 			timer_combo = Block::interval_combo;
 			last_combo = mainTimer->time();
 		}
 		else
 			timer_combo += Block::interval_combo;
+			*/
+
 		break;
 	case play:
 		last_push = mainTimer->time();
@@ -70,14 +74,14 @@ void Grid::changeState(gameState gs) {
 void Grid::display() {
 	composeFrame();
 
-	for (int i=0; i<countEnabledRows(); ++i)
+	for (int i=0; i<blocks.size(); ++i)
 		for (int j=0; j<ncols; ++j)
 			blocks[i][j].display();
 	cursor->draw(0);
 }
 
 void Grid::composeFrame() {
-	for (int i=0; i<countEnabledRows(); ++i) 
+	for (int i=0; i<blocks.size(); ++i) 
 		for (int j=0; j<ncols; ++j)
 			blocks[i][j].composeFrame();
 
@@ -89,12 +93,14 @@ void Grid::composeFrame() {
 		}
 		break;
 	case combo:
-		if (mainTimer->elapsed(last_combo, timer_combo)) {
+		if (!Combo::areCombos(combos)) {
+			combos.clear();	
 			changeState(play);
 		}
 		break;
 	}
 }
+
 bool Grid::containsPoint(int x, int y) {
 	bool containsX = x > gridPos.x && x < gridPos.x + (int)ncols*block_h;
 	bool containsY = !(y > gridPos.y - grid_yoff || y < gridPos.y - (int)(nrows)*block_h);
@@ -161,9 +167,11 @@ void Grid::addRow() {
 		newRow[col].grid = this;
 	}
 
+	/*
 	if (blocks.size() > 3) 
 		for (int i=0; i<ncols; ++i)  
-			;//setComboState(detectCombo(1, i));
+			setComboState(detectCombo(1, i));
+			*/
 }
 
 /*	swapBlocks()
@@ -187,11 +195,15 @@ void Grid::swapBlocks() {
 		combo1 = detectCombo(r, c1);
 		combo2 = detectCombo(r, c2);
 
-		if (combo1.isCombo())
+		if (combo1.isCombo()) {
 			combo1.initComboState();
+			combos.push_back(combo1);
+		}
 
-		if (combo2.isCombo())
+		if (combo2.isCombo()) {
 			combo2.initComboState();
+			combos.push_back(combo2);
+		}
 			
 			//setFallState( detectFalls(r, c1) );
 		//if (!detectCombo(r, c2).initComboState())
@@ -215,6 +227,7 @@ Combo &Grid::detectCombo(int r, int c) {
 
 	int match1 = leftMatch(r, c);
 	int match2 = rightMatch(r, c);
+	printf("left: %d, right: %d\n", match1, match2);
 
 	if (match1 + match2 >= 2) {
 		combo->mid(r, c);
@@ -236,6 +249,7 @@ Combo &Grid::detectCombo(int r, int c) {
 	else {
 		match1 = downMatch(r, c);
 		match2 = upMatch(r, c);
+		printf("down: %d, up: %d\n", match1, match2);
 
 		if ( match1 + match2 >= 2) {
 			combo->mid(r, c);

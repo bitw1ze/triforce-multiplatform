@@ -82,11 +82,11 @@ bool Combo::isCombo() const {
 
 int Combo::count() const {
 	if (isVert() && !isHori())
-		return _up->row - _down->row;
-	else if (!isVert() && !isHori())
-		return _right->col - _left->col;
+		return _up->row - _down->row + 1;
+	else if (!isVert() && isHori())
+		return _right->col - _left->col + 1;
 	else if (isMulti())
-		return (_up->row - _down->row) + (_right->col - _left->col) - 1;
+		return (_up->row - _down->row) + (_right->col - _left->col);
 	else
 		return 0;
 }
@@ -105,19 +105,20 @@ bool Combo::initComboState() {
 
 	int interval = count() * Block::interval_combo;
 
-	if (isVert()) {
+	if (isVertCombo()) {
 		int c = down()->col;
 		for (int r = down()->row; r <= up()->row; ++r) {
 			combo.push_back(blocks[r][c]);
 		}
+		
 	}
-	else if (isHori()) {
+	else if (isHoriCombo()) {
 		int r = left()->row;
 		for (int c = left()->col; c <= right()->col; ++c) {
 			combo.push_back(blocks[r][c]);
 		}
 	}
-	else if (isMulti()) {
+	else if (isMultiCombo()) {
 		int r = left()->row;
 		int c = left()->col;
 		for (c; c <= right()->col; ++c) {
@@ -131,9 +132,11 @@ bool Combo::initComboState() {
 		}
 	}
 
+	printDebug();
 	grid->incComboTimer(interval);
 	grid->changeState(Grid::combo);
 	setBlockStates(Block::combo);
+
 
 	return true;
 }
@@ -141,4 +144,25 @@ bool Combo::initComboState() {
 void Combo::setBlockStates(Block::gameState gs) {
 	for (list<Block>::iterator it = combo.begin(); it != combo.cend(); ++it)
 		(*it).changeState(gs);
+}
+
+void Combo::printDebug() {
+	if (isVertCombo())
+		printf("count = %d: (%d, %d)->(%d, %d)\n", count(), down()->row, down()->col, up()->row, up()->col);
+	else if (isHoriCombo()) {
+		printf("(%d, %d)->(%d, %d)\n", left()->row, left()->col, right()->row, right()->col);
+	}
+	else if (isMultiCombo()) {
+		printf("(%d, %d)->(%d, %d) (%d, %d)->(%d, %d)\n", 
+			left()->row, left()->col, right()->row, right()->col,
+			down()->row, down()->col, up()->row, up()->col);
+	}
+}
+
+bool Combo::areCombos( list<Combo> &combos) {
+	for (list<Combo>::iterator it = combos.begin(); it != combos.cend(); ++it)
+		if (!(*it).isFinished())
+			return true;
+	
+	return false;
 }
