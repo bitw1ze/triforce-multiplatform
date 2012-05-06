@@ -6,7 +6,7 @@
 	a linked data structure where every object has direct access to every
 	adjacent Block.
 
-	A Block can be in one of four (5) states, as described below:
+	A Block can be in one of five (5) states, as described below:
 		inactive:	The Block has just entered the Grid area on the bottom but
 					cannot be interacted with yet.
 		enabled:	The Block is in a normal play state. It can be swapped, made

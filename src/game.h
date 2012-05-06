@@ -118,22 +118,21 @@ public:
 	int getBlockLength() { return block_h; }
 	int countEnabledRows() const;
 
-	list<Block> & downMatch(int r, int c, bool ignoreActive = false);
-	list<Block> & upMatch(int r, int c, bool ignoreActive = false);
-	list<Block> & leftMatch(int r, int c, bool ignoreActive = false);
-	list<Block> & rightMatch(int r, int c, bool ignoreActive = false);
+	list<Cell> & downMatch(int r, int c, bool ignoreActive = false);
+	list<Cell> & upMatch(int r, int c, bool ignoreActive = false);
+	list<Cell> & leftMatch(int r, int c, bool ignoreActive = false);
+	list<Cell> & rightMatch(int r, int c, bool ignoreActive = false);
 
-	list<Block> & detectCombo(int r, int c);
-	list<Block> & setComboState(list<Block> &);
-	list<Block> & detectFalls(int r, int c);
-	list<Block> & setFallState(list<Block> &);
+	list<Cell> & detectCombo(int r, int c);
+	list<Cell> & setComboState(list<Cell> &);
+	list<Cell> & detectFalls(int r, int c);
+	list<Cell> & setFallState(list<Cell> &);
 
 	bool containsPoint(int x, int y);
 	Cursor *cursor;
 };
 
-/* T:w
-he Block class abstracts operations on a single block, such as getting and 
+/* The Block class abstracts operations on a single block, such as getting and 
    setting the x and y values and setting states */
 
 class Block : public CObject {
