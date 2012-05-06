@@ -143,7 +143,7 @@ public: enum gameState { inactive, enabled, disabled, combo, fall };
 protected:
 	gameState state;
 	CTimer *timer;
-	int last_fall, interval_fall, total_falls, count_falls, fall_factor;
+	//int last_fall, interval_fall, total_falls, count_falls, fall_factor;
 
 public:
 	Block();
@@ -153,7 +153,7 @@ public:
 	friend bool swap(Block &left, Block &right);
 	void display();
 	void composeFrame();
-	void setFallCount(int falls) { total_falls = falls * fall_factor; count_falls = 0; }
+	//void setFallCount(int falls) { total_falls = falls * fall_factor; count_falls = 0; }
 	void changeState(gameState gs);
 	gameState getState() const { return state; }
 
