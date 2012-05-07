@@ -91,13 +91,13 @@ void Grid::composeFrame() {
 		}
 		break;
 	case combo:
-		if (GridEvent::finish(combos)) {
+		if (GridEvent::finish(events)) {
 			changeState(play);
-			combos.clear();
+			events.clear();
 		}
 		/*
 		else
-			for (list<GridEvent>::iterator it = combos.begin(); it != combos.cend(); ++it)
+			for (list<GridEvent>::iterator it = events.begin(); it != events.cend(); ++it)
 				(*it).printStates();
 				*/
 		break;
@@ -173,13 +173,16 @@ void Grid::addRow() {
 	GridEvent combo(this);
 	if (blocks.size() > 3) {
 		for (int i=0; i<ncols; ++i) { 
-			combo = detectCombo(1, i);
-			if (combo.isCombo()) {
+			if (combo.detectCombo(Cell(1, i))) {
 				combo.initComboState();
-				combos.push_back(combo);
+				events.push_back(combo);
 			}
 		}
 	}
+}
+
+void Grid::incComboInterval(int interval) {
+	timer_combo += interval;
 }
 
 /*	swapBlocks()
@@ -196,91 +199,27 @@ void Grid::swapBlocks() {
 	if (r >= countEnabledRows())
 		return;
 
-	//int nfalls;
-	GridEvent combo1(this), combo2(this);
+	GridEvent event1(this), event2(this);
 
 	if (swap(blocks[r][c1], blocks[r][c2])) {
-		combo1 = detectCombo(r, c1);
-		combo2 = detectCombo(r, c2);
-
-		if (combo1.isCombo()) {
-			combo1.initComboState();
-			combos.push_back(combo1);
+		if (event1.detectCombo(Cell(r, c1))) {
+			event1.initComboState();
+			events.push_back(event1);
 		}
-
-		if (combo2.isCombo()) {
-			combo2.initComboState();
-			combos.push_back(combo2);
+		else if (event1.detectSwapFall(Cell(r, c1))) {
+			//event1.initFallState();
+			events.push_back(event1);
 		}
-			
-			//setFallState( detectFalls(r, c1) );
-		//if (!detectCombo(r, c2).initComboState())
-			//setFallState( detectFalls(r, c2) );
-	}
-}
-
-
-/*	detectAndSetComboState
-	This function uses the match<direction> functions to find all possible combos.
-	A combo can be stored as a set of Cells, where a Cell is a struct that holds the
-	row and column of a block. A combo in one direction (e.g. 3 blocks in a row 
-	horizontal) is stored in 2 cells, and a combo in two directions (e.g. 5 blocks 
-	vertical and 3 blocks horizontal) is stored in 4 cells.
-	
-	This function computes the cells by first finding a horizontal match. If a match
-	is found, it will then iteratively search for a vertical from each block in the
-	horizontal match.  */
-GridEvent &Grid::detectCombo(int r, int c) {
-	GridEvent *combo = new GridEvent(this);
-
-	int match1 = leftMatch(r, c);
-	int match2 = rightMatch(r, c);
-
-	if (match1 + match2 >= 2) {
-		combo->mid(r, c);
-		combo->left(r, c - match1);
-		combo->right(r, c + match2);
-
-		for (int col = combo->left()->col; col <= combo->right()->col; ++col) {
-			match1 = downMatch(r, col);
-			match2 = upMatch(r, col);
-
-			if (match1 + match2 >= 2) {
-				combo->down(r - match1, col);
-				combo->up(r + match2, col);
-
-				break;
-			}
+		
+		if (event2.detectCombo(Cell(r, c2))) {
+			event2.initComboState();
+			events.push_back(event2);		
+		}
+		else if (event2.detectSwapFall(Cell(r, c2))) {
+			//events.initFallState();
+			events.push_back(event2);
 		}
 	}
-	else {
-		match1 = downMatch(r, c);
-		match2 = upMatch(r, c);
-
-		if ( match1 + match2 >= 2) {
-			combo->mid(r, c);
-			combo->down(r - match1, c);
-			combo->up(r + match2, c);
-
-			for (int row=combo->down()->row; row <= combo->up()->row; ++row) {
-				match1 = leftMatch(row, c);
-				match2 = rightMatch(row, c);
-
-				if (match1 + match2 >= 2) {
-					combo->left(row, c - match1);
-					combo->right(row, c + match2);
-
-					break;
-				} 
-			}
-		}
-	}
-
-	return *combo;
-}
-
-void Grid::incComboInterval(int interval) {
-	timer_combo += interval;
 }
 
 /*	leftMatch, rightMatch, downMatch, and upMatch

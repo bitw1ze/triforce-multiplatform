@@ -101,7 +101,7 @@ protected:
 	GamePlay *gamePlay;
 	CBaseSprite** blockSprites;
 	gameState state;
-	list<GridEvent> combos;
+	list<GridEvent> events;
 
 public:
 	Grid(GamePlay *gp);
@@ -130,7 +130,6 @@ public:
 	int leftMatch(int r, int c, bool ignoreActive = false);
 	int rightMatch(int r, int c, bool ignoreActive = false);
 
-	GridEvent & detectCombo(int r, int c);
 	int detectFalls(int r, int c);
 	void setFallState(GridEvent &);
 	void incComboInterval(int interval);
@@ -169,7 +168,10 @@ public:
 };
 
 class GridEvent {
-public: enum EventState { COMBO, FALL };
+public: 
+	enum EventState { COMBO, FALL, NONE };
+	enum ComboType { HORI, VERT, MULTI };
+	enum FallType { AFTERSWAP, AFTERCOMBO };
 protected:
 	Cell *_left, *_right, *_up, *_down, *_mid;
 	Grid *grid;
@@ -179,15 +181,16 @@ protected:
 	list<Cell> combo;
 	list<Cell> falls;
 	EventState state;
+	ComboType comboType;
+	FallType fallType;
 
 	static int comboInterval;
-
-	bool isVert() const;
-	bool isHori() const;
-	bool isMulti() const;
 	
 public:
 	GridEvent(Grid *grid);
+	GridEvent(const GridEvent &ge);
+	GridEvent & operator =(const GridEvent &ge);
+	void clone(const GridEvent &ge);
 	Cell *left() const { return _left; }
 	Cell *left(int r, int c);
 	Cell *right() const { return _right; }
@@ -202,14 +205,10 @@ public:
 	EventState getState() { return state; }
 	void changeState(EventState st) { state = st; }
 
-	bool isCombo() const;
-	bool isVertCombo() const;
-	bool isHoriCombo() const;
-	bool isMultiCombo() const;
-
 	static bool areFinished(list<GridEvent> &combos);
 	static bool finish(list<GridEvent> &combos);
 
+	bool detectCombo(Cell &cell);
 	bool detectComboFall();
 	bool detectSwapFall(Cell &cell);
 

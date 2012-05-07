@@ -6,6 +6,38 @@ GridEvent::GridEvent(Grid *g) {
 	grid = g;
 	_left = _right = _up = _down = _mid = NULL;
 	interval = 0;
+	state = NONE;
+}
+
+GridEvent::GridEvent(const GridEvent &src) {
+	clone(src);
+}
+
+GridEvent & GridEvent::operator =(const GridEvent &src) {
+	clone(src);
+
+	return *this;
+}
+
+void GridEvent::clone(const GridEvent &src) {
+	grid = src.grid;
+
+	_left = src._left;
+	_right = src._right;
+	_up = src._up;
+	_down = src._down;
+
+	interval = src.interval;
+	startTime = src.startTime;
+
+	state = src.state;
+	comboType = src.comboType;
+	fallType = src.fallType;
+
+	timer.start();
+
+	combo = src.combo;
+	falls = src.falls;
 }
 
 Cell * GridEvent::left(int r, int c) { 
@@ -53,43 +85,21 @@ Cell * GridEvent::mid(int r, int c) {
 	return _mid;
 }
 
-bool GridEvent::isVert() const {
-	return (_up && _down) && !(_left && _right);
-}
-
-bool GridEvent::isHori() const {
-	return (_left && _right) && !(_up && _down);
-}
-
-bool GridEvent::isMulti() const {
-	return (_up && _down) && (_left && _right);
-}
-
-bool GridEvent::isVertCombo() const {
-	return isVert() && count() >= 3;
-}
-
-bool GridEvent::isHoriCombo() const {
-	return isHori() && count() >= 3;
-}
-
-bool GridEvent::isMultiCombo() const {
-	return isMulti() && count() >= 3;
-}
-
-bool GridEvent::isCombo() const {
-	return (isVertCombo() || isHoriCombo() || isMultiCombo());
-}
-
 int GridEvent::count() const {
-	if (isVert() && !isHori())
-		return _up->row - _down->row + 1;
-	else if (!isVert() && isHori())
+	switch (comboType) {
+	case HORI:
 		return _right->col - _left->col + 1;
-	else if (isMulti())
+
+	case VERT:
+		return _up->row - _down->row + 1;
+
+	case MULTI:
 		return (_up->row - _down->row) + (_right->col - _left->col);
-	else
+
+	default:
 		return 0;
+
+	}
 }
 
 bool GridEvent::isFinished() {
@@ -97,29 +107,33 @@ bool GridEvent::isFinished() {
 }
 
 bool GridEvent::initComboState() {
-	if (!isCombo())
+	if (state != COMBO)
 		return false;
 
 	interval = count() * GridEvent::comboInterval;
 	timer.start();
 	startTime = timer.time();
 
-	if (isVertCombo()) {
-		int c = down()->col;
-		for (int r = down()->row; r <= up()->row; ++r) {
+	int r, c;
+
+	switch (comboType) {
+	case VERT:
+		c = down()->col;
+		for (r = down()->row; r <= up()->row; ++r) {
 			combo.push_back(Cell(r, c));
 		}
-		
-	}
-	else if (isHoriCombo()) {
-		int r = left()->row;
-		for (int c = left()->col; c <= right()->col; ++c) {
+		break;
+
+	case HORI:
+		r = left()->row;
+		for (c = left()->col; c <= right()->col; ++c) {
 			combo.push_back(Cell(r, c));
 		}
-	}
-	else if (isMultiCombo()) {
-		int r = left()->row;
-		int c = left()->col;
+		break;
+
+	case MULTI:
+		r = left()->row;
+		c = left()->col;
 		for (c; c <= right()->col; ++c) {
 			combo.push_back(Cell(r, c));
 		}
@@ -136,7 +150,6 @@ bool GridEvent::initComboState() {
 	grid->changeState(Grid::combo);
 	setBlockStates(Block::combo);
 
-
 	return true;
 }
 
@@ -146,15 +159,23 @@ void GridEvent::setBlockStates(Block::gameState gs) {
 }
 
 void GridEvent::printDebug() {
-	if (isVertCombo())
+	if (state != COMBO)
+		return;
+
+	switch (comboType) {
+	case VERT:
 		printf("count = %d: (%d, %d)->(%d, %d)\n", count(), down()->row, down()->col, up()->row, up()->col);
-	else if (isHoriCombo()) {
+		break;
+
+	case HORI:
 		printf("count = %d: (%d, %d)->(%d, %d)\n", count(), left()->row, left()->col, right()->row, right()->col);
-	}
-	else if (isMultiCombo()) {
+		break;
+
+	case MULTI:
 		printf("count = %d: (%d, %d)->(%d, %d) (%d, %d)->(%d, %d)\n", count(),
 			left()->row, left()->col, right()->row, right()->col,
 			down()->row, down()->col, up()->row, up()->col);
+		break;
 	}
 }
 
@@ -186,20 +207,27 @@ bool GridEvent::finish(list<GridEvent> &combos) {
 }
 
 bool GridEvent::detectComboFall() {
-	if (isHoriCombo()) {
-		int r = left()->row + 1;
+	if (state != COMBO)
+		return false;
+
+	int r, c;
+
+	switch (comboType) {
+
+	case HORI:
+		r = left()->row + 1;
 		if (r >= (int)grid->blocks.size())
 			return false;
 
-		for (int c = left()->col; c <= right()->col; ++c) {
+		for (c = left()->col; c <= right()->col; ++c) {
 			if (grid->blocks[r][c].getState() == Block::enabled)
 				falls.push_back(Cell(r, c));
 		}
 		return falls.size() > 0;
-	}
-	else if (isVertCombo()) {
-		int r = up()->row + 1;
-		int c = up()->col;
+
+	case VERT:
+		r = up()->row + 1;
+		c = up()->col;
 		if (r >= (int)grid->blocks.size())
 			return false;
 		else {
@@ -207,12 +235,12 @@ bool GridEvent::detectComboFall() {
 				falls.push_back(Cell(r, c));
 		}
 		return falls.size() > 0;
-	}
-	else if (isMultiCombo()) {
-		int r = left()->row + 1;
+
+	case MULTI:
+		r = left()->row + 1;
 		if (r >= (int)grid->blocks.size())
 			return false;
-		for (int c = left()->col; c <= right()->col; ++c) {
+		for (c = left()->col; c <= right()->col; ++c) {
 			if (grid->blocks[r+1][c].getState() == Block::enabled)
 				falls.push_back(Cell(r, c));
 		}
@@ -236,4 +264,77 @@ bool GridEvent::detectSwapFall(Cell & cell) {
 		falls.push_back(Cell(r, c));
 
 	return falls.size() > 0;
+}
+
+/*	detectCombo
+	This function uses the match<direction> functions to find all possible combos.
+	A combo can be stored as a set of Cells, where a Cell is a struct that holds the
+	row and column of a block. A combo in one direction (e.g. 3 blocks in a row 
+	horizontal) is stored in 2 cells, and a combo in two directions (e.g. 5 blocks 
+	vertical and 3 blocks horizontal) is stored in 4 cells.
+	
+	This function computes the cells by first finding a horizontal match. If a match
+	is found, it will then iteratively search for a vertical from each block in the
+	horizontal match.  */
+bool GridEvent::detectCombo(Cell &cell) {
+	int r = cell.row;
+	int c = cell.col;
+
+	int match1 = grid->leftMatch(r, c);
+	int match2 = grid->rightMatch(r, c);
+
+	if (match1 + match2 >= 2) {
+		mid(r, c);
+		left(r, c - match1);
+		right(r, c + match2);
+
+		for (int col = left()->col; col <= right()->col; ++col) {
+			match1 = grid->downMatch(r, col);
+			match2 = grid->upMatch(r, col);
+
+			if (match1 + match2 >= 2) {
+				down(r - match1, col);
+				up(r + match2, col);
+
+				state = COMBO;
+				comboType = MULTI;
+				return true;
+			}
+		}
+
+		state = COMBO;
+		comboType = HORI;
+		return true;
+	}
+	else {
+		match1 = grid->downMatch(r, c);
+		match2 = grid->upMatch(r, c);
+
+		if ( match1 + match2 >= 2) {
+			mid(r, c);
+			down(r - match1, c);
+			up(r + match2, c);
+
+			for (int row=down()->row; row <= up()->row; ++row) {
+				match1 = grid->leftMatch(row, c);
+				match2 = grid->rightMatch(row, c);
+
+				if (match1 + match2 >= 2) {
+					left(row, c - match1);
+					right(row, c + match2);
+
+					state = COMBO;
+					comboType = MULTI;
+					return true;
+				} 
+			}
+
+			state = COMBO;
+			comboType = VERT;
+			return true;
+		}
+
+		state = NONE;
+		return false;
+	}
 }
