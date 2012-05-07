@@ -27,7 +27,7 @@ void Buttons::display() {
  */
 void Buttons::add(void *classInstance, int actionArg,
 				  void (*action)(void *classInstance, int actionArg), 
-			      string btnFiles[3], int xpos, int ypos)
+			      const string btnFiles[3], int xpos, int ypos)
 {
 	// load image
 	const int frameCount = 3;

@@ -48,7 +48,7 @@ public:
 	void display();
 	void add(void *classInstance, int actionArg,
 	         void (*action)(void *classInstance, int actionArg), 
- 	         string btnFiles[3], int xpos = 0, int ypos = 0);
+ 	         const string btnFiles[3], int xpos = 0, int ypos = 0);
 	void unhoverAll();
 	void unpressAll();
 

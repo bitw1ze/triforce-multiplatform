@@ -7,6 +7,8 @@ const string Triforce::menuActionLabels[Triforce::_NUMBER_OF_ACTIONS] = {
 	"Up", "Down", "Left", "Right", "Activate", "Quit"
 };
 const string Triforce::bgFile = "bg-menu.bmp";
+const string playBtns[] = {"playBtn_small.bmp", "playBtnHover_small.bmp", "playBtnPressed_small.bmp"};
+const string quitBtns[] = {"quitBtn_small.bmp", "quitBtnHover_small.bmp", "quitBtnPressed_small.bmp"};
 Triforce::gameState Triforce::state = MENU;
 GamePlay * Triforce::gamePlay = NULL;
 
@@ -75,20 +77,17 @@ void Triforce::loadImages()
 
 Triforce::Triforce()
 { 
-//	state = MENU; // initialize before using changeState
 	current_frame = 0; 
 	loadImages(); 
 
-	// Create menu buttons
+	// create menu buttons
 	int vpWidth = background.getViewportWidth(),
  	    vpHeight = background.getViewportHeight();
-	string playBtns[] = {"playBtn_small.bmp", "playBtnHover_small.bmp", "playBtnPressed_small.bmp"};
-	string quitBtns[] = {"quitBtn_small.bmp", "quitBtnHover_small.bmp", "quitBtnPressed_small.bmp"};
 	menuButtons = new Buttons(vpWidth, vpHeight);
 	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
 	menuButtons->add(this, QUIT, setStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
 
-	// Configure Input
+	// configure Input
 	Input::setGSFunc((int(*)()) getState);
 	Input::setGSLabels(gameStateLabels);
 	declareActions(this);

@@ -26,11 +26,17 @@ public :
 	enum actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT, ACT_ACTIVATE, ACT_QUIT, _NUMBER_OF_ACTIONS};
 	const static string menuActionLabels[_NUMBER_OF_ACTIONS];
 private:
+	/**
+	  * Files
+	  */
+	static const string playBtns[],
+		                quitBtns[];
+	static const string bgFile;
+
 	static gameState state;
 	static GamePlay *gamePlay;
 	
 	Buttons * menuButtons;
-	static const string bgFile;
 	BMPClass background;
 
 	int current_frame,
