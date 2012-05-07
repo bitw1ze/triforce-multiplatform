@@ -106,6 +106,9 @@ void GamePlay::loadImages()
 }
 
 void GamePlay::specialKeys(int key, int x, int y) {
+	if (state == pause)
+		return;
+
 	switch(key) {
 	case GLUT_KEY_LEFT:
 		grid->cursor->moveLeft(); //FIXME: this really begs for refactoring
