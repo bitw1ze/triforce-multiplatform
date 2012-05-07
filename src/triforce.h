@@ -39,7 +39,7 @@ private:
 	/**
 	 * Input actions routines
 	 */
-	static void declareActions();
+	static void declareActions(void *tfInstance);
 	void defineActions();
 
 	/**

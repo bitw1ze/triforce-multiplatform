@@ -13,10 +13,26 @@ GamePlay * Triforce::gamePlay = NULL;
 /**
  * Input actions routines
  */
-void Triforce::declareActions() {
+void Triforce::declareActions(void *tfInstance) {
+	Triforce *t = (Triforce *)tfInstance;
+
+	// Since the Buttons class be instanced multiple times (for different states),
+    //   and it's better for reuse if it doesn't depend upon Input, lets declare
+    //   it's actions wherever it is instanced.
+	Input::addMousePassiveMotionFunc(t->menuButtons, MENU,
+								 	 t->menuButtons->mousePassiveMotion);
+	Input::addMouseMotionFunc(t->menuButtons, MENU, // same as passive
+	                          t->menuButtons->mousePassiveMotion);
+	Input::declareAction(MENU, ACT_UP, menuActionLabels[ACT_UP]);
+	Input::declareAction(MENU, ACT_DOWN, menuActionLabels[ACT_DOWN]);
+	Input::declareAction(MENU, ACT_LEFT, menuActionLabels[ACT_LEFT]);
+	Input::declareAction(MENU, ACT_RIGHT, menuActionLabels[ACT_RIGHT]);
+	Input::declareAction(MENU, ACT_ACTIVATE, menuActionLabels[ACT_ACTIVATE]);
+	Input::declareAction(MENU, ACT_QUIT, menuActionLabels[ACT_QUIT]);
 }
 
 void Triforce::defineActions() {
+
 }
 
 
@@ -72,22 +88,10 @@ Triforce::Triforce()
 	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
 	menuButtons->add(this, QUIT, setStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
 
-	declareActions();
 	// Configure Input
 	Input::setGSFunc((int(*)()) getState);
 	Input::setGSLabels(gameStateLabels);
-
-	// Since the Buttons class be instanced multiple times (for different states),
-    //   and it's better for reuse if it doesn't depend upon Input, lets declare
-    //   it's actions wherever it is instanced.
-	Input::addMousePassiveMotionFunc(menuButtons, MENU, menuButtons->mousePassiveMotion);
-	Input::addMouseMotionFunc(menuButtons, MENU, menuButtons->mousePassiveMotion);  // same as passive motion
-	Input::declareAction(MENU, ACT_UP, menuActionLabels[ACT_UP]);
-	Input::declareAction(MENU, ACT_DOWN, menuActionLabels[ACT_DOWN]);
-	Input::declareAction(MENU, ACT_LEFT, menuActionLabels[ACT_LEFT]);
-	Input::declareAction(MENU, ACT_RIGHT, menuActionLabels[ACT_RIGHT]);
-	Input::declareAction(MENU, ACT_ACTIVATE, menuActionLabels[ACT_ACTIVATE]);
-	Input::declareAction(MENU, ACT_QUIT, menuActionLabels[ACT_QUIT]);
+	declareActions(this);
 }
 
 Triforce::~Triforce()
