@@ -36,6 +36,15 @@ private:
 	int current_frame,
 		last_time;
 
+	/**
+	 * Input actions routines
+	 */
+	static void declareActions();
+	void defineActions();
+
+	/**
+	 * Display routines
+	 */
 	void displayMenu();
 	void composeFrame();
 	void processFrame();
@@ -51,12 +60,12 @@ public:
 	 * State
 	 */
 	static void setState(gameState s);
-	static gameState getState() {return state;}
 	// FIXME: now that setState is static, does this wrapper really need to exist?
 	static void setStateWrapper(void *tfInstance, int gameState); // for Button callbacks
+	static gameState getState() {return state;}
 
 	/**
-	 * Input
+	 * Input Actions
 	 */
 	static void doAction(void *tfInstance, actions action); // for Input callback
 

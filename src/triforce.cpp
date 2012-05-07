@@ -10,6 +10,53 @@ const string Triforce::bgFile = "bg-menu.bmp";
 Triforce::gameState Triforce::state = MENU;
 GamePlay * Triforce::gamePlay = NULL;
 
+/**
+ * Input actions routines
+ */
+void Triforce::declareActions() {
+}
+
+void Triforce::defineActions() {
+}
+
+
+/**
+ * Display routines
+ */
+void Triforce::displayMenu()
+{
+	composeFrame();
+	background.drawGLbackground();
+	menuButtons->display();
+	glutSwapBuffers();
+}
+
+void Triforce::composeFrame()
+{
+	/*
+	if(mainTimer->elapsed(last_time, 300))
+	{
+		processFrame();
+		last_time=mainTimer->time();
+	}
+	*/
+	glutPostRedisplay();
+}
+
+void Triforce::processFrame()
+{
+}
+
+void Triforce::loadImages()
+{
+  background.load(themeDirectory + bgFile);
+  background.loadGLTextures();
+}
+
+/**
+ * Public
+ */
+
 Triforce::Triforce()
 { 
 //	state = MENU; // initialize before using changeState
@@ -25,6 +72,7 @@ Triforce::Triforce()
 	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
 	menuButtons->add(this, QUIT, setStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
 
+	declareActions();
 	// Configure Input
 	Input::setGSFunc((int(*)()) getState);
 	Input::setGSLabels(gameStateLabels);
@@ -47,6 +95,26 @@ Triforce::~Triforce()
 	Input::removeMotions(menuButtons);
 	delete menuButtons;
 }
+
+
+// Main display driver for the program.
+void Triforce::display()
+{
+	switch (state)
+	{
+	case MENU: // fall through
+	case PAUSE:
+		displayMenu();
+		break;
+	case PLAY:
+		gamePlay->display();
+		break;
+	}
+}
+
+/**
+ * State
+ */
 
 void Triforce::setState(gameState s)
 {
@@ -75,46 +143,10 @@ void Triforce::setStateWrapper(void *tfInstance, int gameState)
 }
 
 /**
- * Main display driver for the program.
+ * Input Actions
  */
-void Triforce::display()
-{
-	switch (state)
-	{
-	case MENU: // fall through
-	case PAUSE:
-		displayMenu();
-		break;
-	case PLAY:
-		gamePlay->display();
-		break;
-	}
-}
 
-void Triforce::displayMenu()
-{
-	composeFrame();
-	background.drawGLbackground();
-	menuButtons->display();
-	glutSwapBuffers();
-}
-
-void Triforce::composeFrame()
-{
-	/*
-	if(mainTimer->elapsed(last_time, 300))
-	{
-		processFrame();
-		last_time=mainTimer->time();
-	}
-	*/
-	glutPostRedisplay();
-}
-
-void Triforce::loadImages()
-{
-  background.load(themeDirectory + bgFile);
-  background.loadGLTextures();
+void Triforce::doAction(void *tfInstance, actions action) {
 }
 
 void Triforce::specialKeys(int key, int x, int y) {
