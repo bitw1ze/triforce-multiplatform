@@ -92,7 +92,6 @@ void GamePlay::loadImages()
 	  blockSprites[i]->loadGLTextures();
   }
 
-  r = 255, g = 255, b = 255;
   cursorSprite = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
   cursorSprite->loadFrame(frame, themeDirectory + cursorFile, r, g, b);
   cursorSprite->loadGLTextures();
