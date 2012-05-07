@@ -6,7 +6,7 @@ const string Triforce::gameStateLabels[Triforce::_NUMBER_OF_STATES] = {
 const string Triforce::menuActionLabels[Triforce::_NUMBER_OF_ACTIONS] = {
 	"Up", "Down", "Left", "Right", "Activate", "Quit"
 };
-const string Triforce::bgFile = "bg.bmp";
+const string Triforce::bgFile = "bg-menu.bmp";
 Triforce::gameState Triforce::state = MENU;
 GamePlay * Triforce::gamePlay = NULL;
 

@@ -8,7 +8,7 @@
 #include "game.h"
 
 // Constants
-const string GamePlay::bgFile = "bg.bmp";
+const string GamePlay::bgFile = "bg-play.bmp";
 const string GamePlay::gridBorderFile = "gridborder.bmp";
 const string GamePlay::blockFiles[] = {
 	"block-blue.bmp",
