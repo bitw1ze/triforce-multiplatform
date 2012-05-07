@@ -55,6 +55,8 @@ public:
 	//keyboard
 	void hoverPrev();
 	void hoverNext();
+	void pressCurrent();
+	void unpressCurrent();
 	void activateCurrent();
 
 	// mouse

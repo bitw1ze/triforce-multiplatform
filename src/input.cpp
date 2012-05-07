@@ -156,6 +156,14 @@ void declareAction(int activeState, int actionType, string shortDesc)
 	availableActions.push_back(a);
 }
 
+void defineAction(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action)
+{
+}
+
+void defineActions(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action)
+{
+}
+
 /**
  * Binding
  */

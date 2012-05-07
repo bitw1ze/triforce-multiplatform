@@ -62,7 +62,6 @@
 
 namespace Input
 {
-	enum actionState {PRESS, HOLD, RELEASE};
 
 	/**
 	 *  Each instance of any class that takes actions on input has
@@ -71,10 +70,13 @@ namespace Input
 	 */
 	class Action
 	{
+	public:
+		enum ActionState {STATE_PRESS, STATE_HOLD, STATE_RELEASE};
+		enum ActionScope {SCOPE_GLOBAL, SCOPE_PLAYER};
+		typedef void (*ActionFunc)(void *actionsClassInstance,
+								   int actionState, int actionType);
 	private:
 
-		typedef void (*ActionFunc)(void (*actionsClassInstance)(),
-			Input::actionState state, int actionType);
 		int activeState; // action is only active this matches getState()
 		int actionType; // type of action, which is passed as an arg to the action func
 		string shortDesc; // 1-2 word description of what action does
@@ -146,8 +148,10 @@ namespace Input
 
 	// determine actions program supports before instantiation of objects that use actions
 	void declareAction(int activeState, int actionType, string shortDesc); 
-	// set action functions of each object that uses actions once they're instantiated
-	void defineAction();
+	// define an action function for a particular action
+	void defineAction(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action);
+	// convenience function; define every action for a given scope/state at once
+	void defineActions(Action::ActionScope scope, int activeState, void *classInstance, Action::ActionFunc action);
 	void removeActions(void *classInstance);
 	void doAction(int actionType);
 	void setActionLabels(int activeState, const string *labels);

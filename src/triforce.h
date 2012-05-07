@@ -20,20 +20,20 @@ extern CTimer *mainTimer;
 
 class Triforce {
 public :
-	enum gameState {MENU, PLAY, PAUSE, QUIT, _NUMBER_OF_STATES};
+	enum GameState {MENU, PLAY, PAUSE, QUIT, _NUMBER_OF_STATES};
 	const static string gameStateLabels[_NUMBER_OF_STATES];
 
-	enum actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT, ACT_ACTIVATE, ACT_QUIT, _NUMBER_OF_ACTIONS};
+	enum Actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT, ACT_ACTIVATE, ACT_QUIT, _NUMBER_OF_ACTIONS};
 	const static string menuActionLabels[_NUMBER_OF_ACTIONS];
 private:
 	/**
 	  * Files
 	  */
-	static const string playBtns[],
+	static const string bgFile,
+		                playBtns[],
 		                quitBtns[];
-	static const string bgFile;
 
-	static gameState state;
+	static GameState state;
 	static GamePlay *gamePlay;
 	
 	Buttons * menuButtons;
@@ -46,7 +46,6 @@ private:
 	 * Input actions routines
 	 */
 	static void declareActions(void *tfInstance);
-	void defineActions();
 
 	/**
 	 * Display routines
@@ -65,15 +64,16 @@ public:
 	/**
 	 * State
 	 */
-	static void setState(gameState s);
+	static void setState(GameState s);
 	// FIXME: now that setState is static, does this wrapper really need to exist?
 	static void setStateWrapper(void *tfInstance, int gameState); // for Button callbacks
-	static gameState getState() {return state;}
+	static GameState getState() {return state;}
 
 	/**
 	 * Input Actions
 	 */
-	static void doAction(void *tfInstance, actions action); // for Input callback
+	// for callback by Input
+	static void doAction(void *tfInstance, int actionState, int actionType);
 
 	// deprecated
 	void specialKeys(int key, int x, int y);

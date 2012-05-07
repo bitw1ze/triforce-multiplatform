@@ -77,6 +77,15 @@ void Buttons::hoverNext() {
 	(*currentBtn)->hover();
 }
 
+void Buttons::pressCurrent() {
+	if ((*currentBtn)->hovering)
+		(*currentBtn)->pressing = true;
+}
+
+void Buttons::unpressCurrent() {
+	(*currentBtn)->pressing = false;
+}
+
 void Buttons::unhoverAll() {
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 		(*button)->unhover();
@@ -94,6 +103,7 @@ void Buttons::activateCurrent() {
 		for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 			if ((*button)->hovering)
 				(*button)->activate();
+	unpressCurrent();
 }
 
 Buttons::Button * Buttons::getBtnUnderCursor(int x, int y) {

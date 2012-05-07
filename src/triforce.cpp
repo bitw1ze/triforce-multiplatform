@@ -6,10 +6,16 @@ const string Triforce::gameStateLabels[Triforce::_NUMBER_OF_STATES] = {
 const string Triforce::menuActionLabels[Triforce::_NUMBER_OF_ACTIONS] = {
 	"Up", "Down", "Left", "Right", "Activate", "Quit"
 };
+
 const string Triforce::bgFile = "bg-menu.bmp";
-const string playBtns[] = {"playBtn_small.bmp", "playBtnHover_small.bmp", "playBtnPressed_small.bmp"};
-const string quitBtns[] = {"quitBtn_small.bmp", "quitBtnHover_small.bmp", "quitBtnPressed_small.bmp"};
-Triforce::gameState Triforce::state = MENU;
+const string Triforce::playBtns[] = {
+	"playBtn_small.bmp", "playBtnHover_small.bmp", "playBtnPressed_small.bmp"
+};
+const string Triforce::quitBtns[] = {
+	"quitBtn_small.bmp", "quitBtnHover_small.bmp", "quitBtnPressed_small.bmp"
+};
+
+Triforce::GameState Triforce::state = MENU;
 GamePlay * Triforce::gamePlay = NULL;
 
 /**
@@ -32,11 +38,6 @@ void Triforce::declareActions(void *tfInstance) {
 	Input::declareAction(MENU, ACT_ACTIVATE, menuActionLabels[ACT_ACTIVATE]);
 	Input::declareAction(MENU, ACT_QUIT, menuActionLabels[ACT_QUIT]);
 }
-
-void Triforce::defineActions() {
-
-}
-
 
 /**
  * Display routines
@@ -91,6 +92,7 @@ Triforce::Triforce()
 	Input::setGSFunc((int(*)()) getState);
 	Input::setGSLabels(gameStateLabels);
 	declareActions(this);
+	Input::defineActions(Input::Action::SCOPE_GLOBAL, MENU, this, doAction);
 }
 
 Triforce::~Triforce()
@@ -119,7 +121,7 @@ void Triforce::display()
  * State
  */
 
-void Triforce::setState(gameState s)
+void Triforce::setState(GameState s)
 {
 	switch (s)
 	{
@@ -142,14 +144,47 @@ void Triforce::setState(gameState s)
 void Triforce::setStateWrapper(void *tfInstance, int gameState)
 {
 	Triforce * t = (Triforce *)tfInstance;
-	t->setState((enum gameState)gameState);
+	t->setState((enum GameState)gameState);
 }
 
 /**
  * Input Actions
  */
 
-void Triforce::doAction(void *tfInstance, actions action) {
+void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
+	Triforce *t = (Triforce *)tfInstance;
+
+	switch ((enum Input::Action::ActionState)actionState)
+	{
+	case Input::Action::STATE_RELEASE:
+		switch((enum Actions)actionType)
+		{
+		case ACT_LEFT:
+		case ACT_UP:
+			t->menuButtons->hoverPrev();
+			break;
+		case ACT_RIGHT:
+		case ACT_DOWN:
+			t->menuButtons->hoverNext();
+			break;
+		case ACT_ACTIVATE:
+			t->menuButtons->activateCurrent();
+			break;
+		case ACT_QUIT:
+			exit(0);
+			break;
+		}
+		break;
+	case Input::Action::STATE_PRESS:
+	case Input::Action::STATE_HOLD:
+		switch((enum Actions)actionType)
+		{
+		case ACT_ACTIVATE:
+			t->menuButtons->pressCurrent();
+			break;
+		}
+		break;
+	}
 }
 
 void Triforce::specialKeys(int key, int x, int y) {
