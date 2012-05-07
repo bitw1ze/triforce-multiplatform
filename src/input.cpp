@@ -160,7 +160,7 @@ void defineAction(Action::ActionScope scope, int activeState, int actionType, vo
 {
 }
 
-void defineActions(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action)
+void defineActions(Action::ActionScope scope, int activeState, void *classInstance, Action::ActionFunc action)
 {
 }
 
