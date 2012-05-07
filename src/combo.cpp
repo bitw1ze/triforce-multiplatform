@@ -131,7 +131,7 @@ bool Combo::initComboState() {
 		}
 	}
 
-	printDebug();
+	//printDebug();
 	grid->incComboInterval(interval);
 	grid->changeState(Grid::combo);
 	setBlockStates(Block::combo);

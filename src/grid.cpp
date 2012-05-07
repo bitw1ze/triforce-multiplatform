@@ -72,8 +72,6 @@ void Grid::changeState(gameState gs) {
 /*	display
 	Call the draw function on all blocks, then draw the cursor over it. */
 void Grid::display() {
-	composeFrame();
-
 	for (uint32 i=0; i<blocks.size(); ++i)
 		for (uint32 j=0; j<ncols; ++j)
 			blocks[i][j].display();
@@ -206,13 +204,11 @@ void Grid::swapBlocks() {
 		combo2 = detectCombo(r, c2);
 
 		if (combo1.isCombo()) {
-			cout << "Left combo\n";
 			combo1.initComboState();
 			combos.push_back(combo1);
 		}
 
 		if (combo2.isCombo()) {
-			cout << "Right combo\n";
 			combo2.initComboState();
 			combos.push_back(combo2);
 		}

@@ -115,11 +115,8 @@ void Block::composeFrame() {
 		break;
 
 	default:
-		cout << "Composing frame\n";
 		break;
 	}
-	if (state != enabled && state != inactive)
-	cout << state << " ";
 }
 
 void Block::display() {

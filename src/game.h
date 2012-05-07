@@ -42,6 +42,8 @@ public:
 };
 
 class GamePlay {
+public:
+	enum gameState {play, pause, quit};
 protected:
 
 	/* bitmap files */
@@ -58,8 +60,9 @@ protected:
 
 	BMPClass background;
 
+	gameState state;
+
 public:
-	enum gameState {play, pause, quit, combo, fall};
 	CBaseSprite *blockSprites[nblocktypes],
 	            *cursorSprite,
 				*gridBorderSprite;
@@ -78,7 +81,7 @@ public:
 	void keyUp(unsigned char key, int x, int y);
 
 	void changeState(gameState gs);
-	gameState getState();
+	gameState getState() const;
 };
 
 /* Grid class holds abstracts all the operations on grid of blocks for a 

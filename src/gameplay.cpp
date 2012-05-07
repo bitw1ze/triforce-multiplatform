@@ -32,6 +32,7 @@ const string GamePlay::cursorFile = "cursor.bmp";
 /* GamePlay methods */
 
 GamePlay::GamePlay() { 
+	state = play;
 	current_frame = 0; 
 	
 	last_time=mainTimer->time();
@@ -46,6 +47,7 @@ void GamePlay::display() {
 	background.drawGLbackground ();
 
 	grid->display();
+
     gridBorderSprite->draw(0, grid->getX() - 21,
 	                       grid->getY() - 35 - (grid->getBlockLength() * (nrows)));
 	glutSwapBuffers();
@@ -58,12 +60,17 @@ void GamePlay::processFrame()
 
 void GamePlay::composeFrame()
 {
-	if(mainTimer->elapsed(last_time,300))
-	{
-		processFrame();
-		last_time=mainTimer->time();
-		if(++current_frame>=1)
-			current_frame=0;
+	switch (state) {
+	case play:
+		grid->composeFrame();
+		if(mainTimer->elapsed(last_time,300))
+		{
+			processFrame();
+			last_time=mainTimer->time();
+			if(++current_frame>=1)
+				current_frame=0;
+		}
+		break;
 	}
 	glutPostRedisplay();
 }
@@ -129,7 +136,24 @@ void GamePlay::normalKeys(unsigned char key, int x, int y) {
 		if (grid->getState() == Grid::play)
 			grid->pushRow();
 		break;
+	case 'p':
+		if (getState() == pause) {
+			changeState(play);
+		}
+		else if (getState() == play) {
+			cout << "pressed p\n";
+			changeState(pause);
+		}
+		break;
 	}
 
 	glutPostRedisplay();
+}
+
+void GamePlay::changeState(gameState gs) {
+	state = gs;
+}
+
+GamePlay::gameState GamePlay::getState() const {
+	return state;
 }
