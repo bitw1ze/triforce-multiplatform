@@ -22,7 +22,7 @@ class GamePlay;
 class Grid;
 class Block;
 class Cursor;
-class Combo;
+class GridEvent;
 extern CTimer *mainTimer;
 
 /* GamePlay is the main interface for controlling everything else within the 
@@ -101,7 +101,7 @@ protected:
 	GamePlay *gamePlay;
 	CBaseSprite** blockSprites;
 	gameState state;
-	list<Combo> combos;
+	list<GridEvent> combos;
 
 public:
 	Grid(GamePlay *gp);
@@ -130,9 +130,9 @@ public:
 	int leftMatch(int r, int c, bool ignoreActive = false);
 	int rightMatch(int r, int c, bool ignoreActive = false);
 
-	Combo & detectCombo(int r, int c);
+	GridEvent & detectCombo(int r, int c);
 	int detectFalls(int r, int c);
-	void setFallState(Combo &);
+	void setFallState(GridEvent &);
 	void incComboInterval(int interval);
 
 	bool containsPoint(int x, int y);
@@ -168,7 +168,8 @@ public:
 	Grid *grid;
 };
 
-class Combo {
+class GridEvent {
+public: enum EventState { COMBO, FALL };
 protected:
 	Cell *_left, *_right, *_up, *_down, *_mid;
 	Grid *grid;
@@ -176,6 +177,8 @@ protected:
 	int interval;
 	int startTime;
 	list<Cell> combo;
+	list<Cell> falls;
+	EventState state;
 
 	static int comboInterval;
 
@@ -184,7 +187,7 @@ protected:
 	bool isMulti() const;
 	
 public:
-	Combo(Grid *grid);
+	GridEvent(Grid *grid);
 	Cell *left() const { return _left; }
 	Cell *left(int r, int c);
 	Cell *right() const { return _right; }
@@ -196,13 +199,19 @@ public:
 	Cell *mid() const { return _mid; }
 	Cell *mid(int r, int c);
 
+	EventState getState() { return state; }
+	void changeState(EventState st) { state = st; }
+
 	bool isCombo() const;
 	bool isVertCombo() const;
 	bool isHoriCombo() const;
 	bool isMultiCombo() const;
 
-	static bool areFinished(list<Combo> &combos);
-	static bool finish(list<Combo> &combos);
+	static bool areFinished(list<GridEvent> &combos);
+	static bool finish(list<GridEvent> &combos);
+
+	bool detectComboFall();
+	bool detectSwapFall(Cell &cell);
 
 	void startTimer();
 	bool initComboState();

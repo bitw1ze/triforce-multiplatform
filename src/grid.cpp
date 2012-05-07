@@ -91,13 +91,13 @@ void Grid::composeFrame() {
 		}
 		break;
 	case combo:
-		if (Combo::finish(combos)) {
+		if (GridEvent::finish(combos)) {
 			changeState(play);
 			combos.clear();
 		}
 		/*
 		else
-			for (list<Combo>::iterator it = combos.begin(); it != combos.cend(); ++it)
+			for (list<GridEvent>::iterator it = combos.begin(); it != combos.cend(); ++it)
 				(*it).printStates();
 				*/
 		break;
@@ -170,7 +170,7 @@ void Grid::addRow() {
 		newRow[col].grid = this;
 	}
 
-	Combo combo(this);
+	GridEvent combo(this);
 	if (blocks.size() > 3) {
 		for (int i=0; i<ncols; ++i) { 
 			combo = detectCombo(1, i);
@@ -197,7 +197,7 @@ void Grid::swapBlocks() {
 		return;
 
 	//int nfalls;
-	Combo combo1(this), combo2(this);
+	GridEvent combo1(this), combo2(this);
 
 	if (swap(blocks[r][c1], blocks[r][c2])) {
 		combo1 = detectCombo(r, c1);
@@ -230,8 +230,8 @@ void Grid::swapBlocks() {
 	This function computes the cells by first finding a horizontal match. If a match
 	is found, it will then iteratively search for a vertical from each block in the
 	horizontal match.  */
-Combo &Grid::detectCombo(int r, int c) {
-	Combo *combo = new Combo(this);
+GridEvent &Grid::detectCombo(int r, int c) {
+	GridEvent *combo = new GridEvent(this);
 
 	int match1 = leftMatch(r, c);
 	int match2 = rightMatch(r, c);
@@ -279,43 +279,6 @@ Combo &Grid::detectCombo(int r, int c) {
 	return *combo;
 }
 
-/*
-list<Cell> & Grid::detectFalls(int r, int c) {
-	list<Cell> *falls = new list<Cell>();
-
-	if (r >= countEnabledRows())
-		return *falls;
-
-	if (blocks[r][c].getState() == Block::disabled && blocks[r+1][c].getState() == Block::enabled) {
-		for (int i=r+1; blocks[r][c].getState() == Block::enabled; ++i) {
-			Cell cell = {i, c};
-			falls->push_back(cell);
-		}
-
-	}
-	else if (blocks[r][c].getState() == Block::enabled && blocks[r-1][c].getState() == Block::disabled) {
-		
-		for (int i=r; blocks[r][c].getState() == Block::disabled; --i) {
-			Cell cell = {i, c};
-			falls->push_back(cell);
-		}
-	}
-	return *falls;
-}
-
-void Grid::setFallState(Combo &fall) {
-	
-	for (list<Cell>::iterator cell = falls.begin(); cell != falls.cend(); ++cell) {
-		int r = (*cell).row;
-		int c = (*cell).col;
-
-		blocks[r][c].changeState(Block::fall);
-	}
-
-	return falls;
-}
-*/
-
 void Grid::incComboInterval(int interval) {
 	timer_combo += interval;
 }
@@ -354,7 +317,6 @@ int Grid::rightMatch(int r, int c, bool ignoreActive) {
 
 	return matches;
 }
-
 
 int Grid::upMatch(int r, int c, bool ignoreActive) {
 	int matches = 0;

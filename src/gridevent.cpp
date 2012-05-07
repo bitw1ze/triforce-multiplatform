@@ -1,14 +1,14 @@
 #include "game.h"
 
-int Combo::comboInterval = 500;
+int GridEvent::comboInterval = 500;
 
-Combo::Combo(Grid *g) {
+GridEvent::GridEvent(Grid *g) {
 	grid = g;
 	_left = _right = _up = _down = _mid = NULL;
 	interval = 0;
 }
 
-Cell * Combo::left(int r, int c) { 
+Cell * GridEvent::left(int r, int c) { 
 	if (!_left) 
 		_left = new Cell; 
 	_left->row = r; 
@@ -17,7 +17,7 @@ Cell * Combo::left(int r, int c) {
 	return _left;
 }
 
-Cell * Combo::right(int r, int c) { 
+Cell * GridEvent::right(int r, int c) { 
 	if (!_right) 
 		_right = new Cell; 
 	_right->row = r;
@@ -26,7 +26,7 @@ Cell * Combo::right(int r, int c) {
 	return _right;
 }
 
-Cell * Combo::down(int r, int c) { 
+Cell * GridEvent::down(int r, int c) { 
 	if (!_down) 
 		_down = new Cell; 
 	_down->row = r;
@@ -35,7 +35,7 @@ Cell * Combo::down(int r, int c) {
 	return _down;
 }
 
-Cell * Combo::up(int r, int c) { 
+Cell * GridEvent::up(int r, int c) { 
 	if (!_up) 
 		_up = new Cell; 
 	_up->row = r; 
@@ -44,7 +44,7 @@ Cell * Combo::up(int r, int c) {
 	return _up;
 }
 
-Cell * Combo::mid(int r, int c) { 
+Cell * GridEvent::mid(int r, int c) { 
 	if (!_mid) 
 		_mid = new Cell; 
 	_mid->row = r; 
@@ -53,35 +53,35 @@ Cell * Combo::mid(int r, int c) {
 	return _mid;
 }
 
-bool Combo::isVert() const {
+bool GridEvent::isVert() const {
 	return (_up && _down) && !(_left && _right);
 }
 
-bool Combo::isHori() const {
+bool GridEvent::isHori() const {
 	return (_left && _right) && !(_up && _down);
 }
 
-bool Combo::isMulti() const {
+bool GridEvent::isMulti() const {
 	return (_up && _down) && (_left && _right);
 }
 
-bool Combo::isVertCombo() const {
+bool GridEvent::isVertCombo() const {
 	return isVert() && count() >= 3;
 }
 
-bool Combo::isHoriCombo() const {
+bool GridEvent::isHoriCombo() const {
 	return isHori() && count() >= 3;
 }
 
-bool Combo::isMultiCombo() const {
+bool GridEvent::isMultiCombo() const {
 	return isMulti() && count() >= 3;
 }
 
-bool Combo::isCombo() const {
+bool GridEvent::isCombo() const {
 	return (isVertCombo() || isHoriCombo() || isMultiCombo());
 }
 
-int Combo::count() const {
+int GridEvent::count() const {
 	if (isVert() && !isHori())
 		return _up->row - _down->row + 1;
 	else if (!isVert() && isHori())
@@ -92,15 +92,15 @@ int Combo::count() const {
 		return 0;
 }
 
-bool Combo::isFinished() {
+bool GridEvent::isFinished() {
 	return timer.elapsed(startTime, interval);
 }
 
-bool Combo::initComboState() {
+bool GridEvent::initComboState() {
 	if (!isCombo())
 		return false;
 
-	interval = count() * Combo::comboInterval;
+	interval = count() * GridEvent::comboInterval;
 	timer.start();
 	startTime = timer.time();
 
@@ -140,12 +140,12 @@ bool Combo::initComboState() {
 	return true;
 }
 
-void Combo::setBlockStates(Block::gameState gs) {
+void GridEvent::setBlockStates(Block::gameState gs) {
 	for (list<Cell>::iterator it = combo.begin(); it != combo.cend(); ++it)
 		grid->blocks[(*it).row][(*it).col].changeState(gs);
 }
 
-void Combo::printDebug() {
+void GridEvent::printDebug() {
 	if (isVertCombo())
 		printf("count = %d: (%d, %d)->(%d, %d)\n", count(), down()->row, down()->col, up()->row, up()->col);
 	else if (isHoriCombo()) {
@@ -158,7 +158,7 @@ void Combo::printDebug() {
 	}
 }
 
-void Combo::printStates() {
+void GridEvent::printStates() {
 	for (list<Cell>::iterator it = combo.begin(); it != combo.cend(); ++it) {
 		if (grid->blocks[(*it).row][(*it).col].getState() == Block::combo)
 			cout << "state == combo\n";
@@ -167,20 +167,73 @@ void Combo::printStates() {
 	}
 }
 
-bool Combo::areFinished(list<Combo> &combos) {
-	for (list<Combo>::iterator it = combos.begin(); it != combos.cend(); ++it)
+bool GridEvent::areFinished(list<GridEvent> &combos) {
+	for (list<GridEvent>::iterator it = combos.begin(); it != combos.cend(); ++it)
 		if (!(*it).isFinished())
 			return false;
 	
 	return true;
 }
 
-bool Combo::finish(list<Combo> &combos) {
+bool GridEvent::finish(list<GridEvent> &combos) {
 	if (areFinished(combos)) {
-		for (list<Combo>::iterator c = combos.begin(); c != combos.end(); ++c)
+		for (list<GridEvent>::iterator c = combos.begin(); c != combos.end(); ++c)
 			(*c).setBlockStates(Block::disabled);
 		return true;
 	}
 	
 	return false;
+}
+
+bool GridEvent::detectComboFall() {
+	if (isHoriCombo()) {
+		int r = left()->row + 1;
+		if (r >= (int)grid->blocks.size())
+			return false;
+
+		for (int c = left()->col; c <= right()->col; ++c) {
+			if (grid->blocks[r][c].getState() == Block::enabled)
+				falls.push_back(Cell(r, c));
+		}
+		return falls.size() > 0;
+	}
+	else if (isVertCombo()) {
+		int r = up()->row + 1;
+		int c = up()->col;
+		if (r >= (int)grid->blocks.size())
+			return false;
+		else {
+			if (grid->blocks[r][c].getState() == Block::enabled)
+				falls.push_back(Cell(r, c));
+		}
+		return falls.size() > 0;
+	}
+	else if (isMultiCombo()) {
+		int r = left()->row + 1;
+		if (r >= (int)grid->blocks.size())
+			return false;
+		for (int c = left()->col; c <= right()->col; ++c) {
+			if (grid->blocks[r+1][c].getState() == Block::enabled)
+				falls.push_back(Cell(r, c));
+		}
+		r = up()->row + 1;
+		int c = up()->col;
+		if (r < (int)grid->blocks.size() - 1) {
+			if (grid->blocks[r][c].getState() == Block::enabled)
+				falls.push_back(Cell(r, c));
+		}
+		return falls.size() > 0;
+	}
+
+	return false;
+}
+
+bool GridEvent::detectSwapFall(Cell & cell) {
+	int r = cell.row;
+	int c = cell.col;
+
+	if (grid->blocks[r-1][c].getState() == Block::disabled || grid->blocks[r-1][c].getState() == Block::fall) 
+		falls.push_back(Cell(r, c));
+
+	return falls.size() > 0;
 }
