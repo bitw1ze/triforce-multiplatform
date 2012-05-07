@@ -37,7 +37,10 @@ Grid::Grid(GamePlay *gp) {
 	timer_combo = 0;
 	last_fall = 0;
 	timer_fall = 0;
+	last_cursor_anim = 0;
+	timer_cursor_anim = 50;
 	state = play;
+	current_cursor_frame = 0;
 
 	int startingRows = nrows / 2 - 1;
 
@@ -80,7 +83,7 @@ void Grid::display() {
 		}
 		row = row->up;
 	}
-	cursor->draw(0);
+	cursor->draw(current_cursor_frame);
 }
 
 void Grid::composeFrame() {
@@ -93,6 +96,12 @@ void Grid::composeFrame() {
 			col = col->right;
 		}
 		row = row->up;
+	}
+
+	if (mainTimer->elapsed(last_cursor_anim, timer_cursor_anim)) {
+		if (++current_cursor_frame >= 10)
+			current_cursor_frame = 0;
+		last_cursor_anim = mainTimer->time();
 	}
 
 	switch (state) {

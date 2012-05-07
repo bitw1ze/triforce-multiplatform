@@ -44,9 +44,10 @@ protected:
 	static const string 
 		blockFiles[],
 		blockComboFiles[],
-		cursorFile,
+		cursorFiles[],
 		gridBorderFile,
 		bgFile;
+	static const int numCursorFiles;
 
 	/* frame stuff */
 	int current_frame, 
@@ -89,7 +90,8 @@ protected:
 		grid_yspeed, grid_yoff,
 		last_push, last_combo,
 		timer_push, timer_combo,
-		last_fall, timer_fall;
+		last_fall, timer_fall,
+		last_cursor_anim, timer_cursor_anim, current_cursor_frame;
 	Point gridPos;
 	GamePlay *gamePlay;
 	deque<Block **> blocks;

@@ -27,7 +27,11 @@ const string GamePlay::blockComboFiles[] = {
 	"block-teal-combo.bmp",
 	"block-yellow-combo.bmp"};
 
-const string GamePlay::cursorFile = "cursor.bmp";
+const int GamePlay::numCursorFiles = 10;
+const string GamePlay::cursorFiles[] = {
+	"cursor1.bmp", "cursor2.bmp", "cursor3.bmp", "cursor4.bmp", "cursor5.bmp",
+	"cursor6.bmp", "cursor7.bmp", "cursor8.bmp", "cursor9.bmp", "cursor10.bmp"
+};
 
 /* GamePlay methods */
 
@@ -62,7 +66,7 @@ void GamePlay::composeFrame()
 	{
 		processFrame();
 		last_time=mainTimer->time();
-		if(++current_frame>=1)
+		if(++current_frame>=0)
 			current_frame=0;
 	}
 	glutPostRedisplay();
@@ -92,8 +96,9 @@ void GamePlay::loadImages()
 	  blockSprites[i]->loadGLTextures();
   }
 
-  cursorSprite = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
-  cursorSprite->loadFrame(frame, themeDirectory + cursorFile, r, g, b);
+  cursorSprite = new CBaseSprite(numCursorFiles, background.getViewportWidth(), background.getViewportHeight());
+  for (int i = 0; i < numCursorFiles; ++i)
+	  cursorSprite->loadFrame(i, themeDirectory + cursorFiles[i], r, g, b);
   cursorSprite->loadGLTextures();
 }
 
