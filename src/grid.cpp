@@ -69,7 +69,7 @@ void Grid::display() {
 }
 
 void Grid::composeFrame() {
-	GridEvent::composeFrame(this, events);
+	GridEvent::composeFrame(this);
 
 	for (uint32 i=0; i<blocks.size(); ++i) 
 		for (uint32 j=0; j<ncols; ++j)
@@ -178,7 +178,7 @@ void Grid::swapBlocks() {
 	c2 = c1 + 1;
 	r = cursor->getRow();
 
-	if (r >= blocks.size())
+	if (r >= (int)blocks.size())
 		return;
 
 	GridEvent event1(this), event2(this);
@@ -187,20 +187,20 @@ void Grid::swapBlocks() {
 		if (event1.detectCombo(Cell(r, c1))) {
 			events.push_back(event1);
 		}
-		else if (event1.detectFallAfterSwap(Cell(r, c1))) {
+		else if (event1.detectFallAfterSwap(this, Fall(r, c1))) {
 			events.push_back(event1);
 		}
-		else if (event1.detectFallAfterSwap(Cell(r + 1, c1))) {
+		else if (event1.detectFallAfterSwap(this, Fall(r + 1, c1))) {
 			events.push_back(event1);
 		}
 		
 		if (event2.detectCombo(Cell(r, c2))) {
 			events.push_back(event2);		
 		}
-		else if (event2.detectFallAfterSwap(Cell(r, c2))) {
+		else if (event2.detectFallAfterSwap(this, Fall(r, c2))) {
 			events.push_back(event2);
 		}
-		else if (event2.detectFallAfterSwap(Cell(r + 1, c2))) {
+		else if (event2.detectFallAfterSwap(this, Fall(r + 1, c2))) {
 			events.push_back(event2);
 		}
 	}
@@ -244,8 +244,8 @@ int Grid::rightMatch(int r, int c, bool ignoreActive) {
 int Grid::upMatch(int r, int c, bool ignoreActive) {
 	int matches = 0;
 
-	if (r < blocks.size() - 1 && r >= 0 && c >= 0 && c < ncols) {
-		for (int i=r+1; i < blocks.size(); ++i) {
+	if (r < (int)blocks.size() - 1 && r >= 0 && c >= 0 && c < ncols) {
+		for (int i=r+1; i < (int)blocks.size(); ++i) {
 			if (match(blocks[r][c], blocks[i][c], ignoreActive)) 
 				++matches;
 			else

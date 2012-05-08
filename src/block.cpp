@@ -70,7 +70,6 @@ void Block::fallDown() {
 void Block::resetFall() {
 	fallOffset = 0;
 	offsetY(-getHeight());
-	cout << "resetted fall" << endl;
 }
 
 int Block::getFallOffset() const {

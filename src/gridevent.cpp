@@ -1,7 +1,8 @@
 #include "game.h"
 
 int GridEvent::comboInterval = 500;
-int GridEvent::fallInterval = 50;
+int GridEvent::fallInterval = 20;
+CTimer GridEvent::timer;
 
 GridEvent::GridEvent(Grid *g) {
 	grid = g;
@@ -36,10 +37,15 @@ void GridEvent::clone(const GridEvent &src) {
 
 	state = src.state;
 	comboType = src.comboType;
-	fallType = src.fallType;
 
 	combo = src.combo;
-	falls = src.falls;
+}
+
+bool GridEvent::operator ==(const GridEvent &ev) {
+	return 
+		left() == ev.left() && right() == ev.right() &&
+		up() == ev.up() && down() == ev.down() &&
+		mid() == ev.mid();
 }
 
 Cell * GridEvent::left(int r, int c) { 
@@ -104,10 +110,10 @@ int GridEvent::count() const {
 	}
 }
 
-bool GridEvent::checkComboFinished() {
-	if (state == COMBO && timer.elapsed(startTime, interval)) {
-		setBlockStates(Block::disabled);
-		detectFallAfterCombo();
+bool GridEvent::checkComboFinished(Grid *grid, GridEvent &ev) {
+	if (ev.state == COMBO && timer.elapsed(ev.startTime, ev.interval)) {
+		ev.setBlockStates(Block::disabled);
+		detectFallAfterCombo(grid, ev);
 		return true;
 	}
 
@@ -167,30 +173,44 @@ void GridEvent::setBlockStates(Block::gameState gs) {
 		grid->blocks[(*it).row][(*it).col].changeState(gs);
 }
 
-bool GridEvent::areCombos(list<GridEvent> &combos) {
-	for (list<GridEvent>::iterator it = combos.begin(); it != combos.cend(); ++it)
-		if (!(*it).checkComboFinished())
-			return false;
-	
-	return true;
-}
-
-void GridEvent::checkFallResult(Grid *grid, list<GridEvent> &events) {
-}
-
-void GridEvent::composeFrame(Grid *g, list<GridEvent> &events) {
-	Grid *grid = g;
-	if (g == NULL)
+void GridEvent::composeFrame(Grid *grid) {
+	if (grid == NULL)
 		return;
 
-	if (!GridEvent::areCombos(events)) {
-		grid->changeState(Grid::play);
+	list<GridEvent> eventRemovals;
+	list<Fall> fallRemovals;
 
-		if (!GridEvent::areFalling(events))
-			events.clear();
-
-		return;
+	for (list<GridEvent>::iterator ev = grid->events.begin(); ev != grid->events.cend(); ++ev) {
+		if ((*ev).checkComboFinished(grid, *ev)) {
+			eventRemovals.push_back(*ev);
+		}
 	}
+	
+	if (eventRemovals.size() > 0) {
+		for (list<GridEvent>::iterator ev = eventRemovals.begin(); ev != eventRemovals.cend(); ++ev) 
+			grid->events.remove(*ev);
+
+		eventRemovals.clear();
+
+		if (grid->events.size() == 0)
+			grid->changeState(Grid::play);
+	}
+
+	for (list<Fall>::iterator fl = grid->falls.begin(); fl != grid->falls.cend(); ++fl) {
+		doFall(grid, *fl);
+		if (!(*fl).enabled) {
+			cleanupFall(grid, *fl);
+			fallRemovals.push_back(*fl);
+		}
+	}
+
+	if (fallRemovals.size() > 0) {
+		for (list<Fall>::iterator fl = fallRemovals.begin(); fl != fallRemovals.cend(); ++fl) 
+			grid->falls.remove(*fl);
+
+		fallRemovals.clear();
+	}
+
 
 	/* detect combos after fall
 	while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::enabled) {
@@ -199,32 +219,20 @@ void GridEvent::composeFrame(Grid *g, list<GridEvent> &events) {
 	}
 	*/
 
-	for (list<GridEvent>::iterator ev = events.begin(); ev != events.end(); ++ev) {
-		switch ((*ev).getState()) {
-		case COMBO:
-			(*ev).checkComboFinished();
-
-			break;
-			
-		case FALL:
-			for (list<Cell>::iterator fl = (*ev).falls.begin(); fl != (*ev).falls.cend(); ++fl) {
-				if ( (*fl).enabled )
-					(*ev).doFall(*fl);
-			}
-
-			break;
-		}
-	}
 }
 
-void GridEvent::doFall(Cell &cell) {
+void GridEvent::cleanupFall(Grid *grid, Fall &fall) {
+	
+}
+
+void GridEvent::doFall(Grid *grid, Fall &cell) {
 	// row and column begin at the block immediately above a broken combo block
 	int r = cell.row;
 	int c = cell.col;
 	int row;
 
-	if (state == FALL && timer.elapsed(lastFall, fallInterval)) 
-		lastFall = timer.time();
+	if (cell.enabled == true && timer.elapsed(cell.lastFall, fallInterval)) 
+		cell.lastFall = timer.time();
 	else
 		return;
 	
@@ -261,30 +269,6 @@ void GridEvent::doFall(Cell &cell) {
 		// decrement the current row that we begin from.
 		r = --cell.row;
 	}
-}
-
-
-
-bool GridEvent::hasFalling() {
-	if (state != FALL)
-		return false;
-
-	for (list<Cell>::iterator fl = falls.begin(); fl != falls.cend(); ++fl) {
-		if ( (*fl).enabled )
-			return true;
-	}
-
-	changeState(DONE_FALLING);
-	return false;
-}
-
-bool GridEvent::areFalling(list<GridEvent> &events) {
-	for (list<GridEvent>::iterator ev = events.begin(); ev != events.cend(); ++ev) {
-		if ( (*ev).hasFalling() )
-			return true;
-	}
-
-	return false;
 }
 
 /*	detectCombo
@@ -367,71 +351,76 @@ bool GridEvent::detectCombo(Cell &cell) {
 /*	detectFallAfterCombo
 	This fall detection subroutine passes the highest block for each row in the combo */
 
-bool GridEvent::detectFallAfterCombo() {
-	if (state != COMBO)
+bool GridEvent::detectFallAfterCombo(Grid *grid, GridEvent &ev) {
+	if (ev.state != COMBO)
 		return false;
+
+	list<Fall> falls;
 
 	int r, c;
 
-	switch (comboType) {
+	switch (ev.comboType) {
 	
 	case HORI:
-		r = left()->row + 1;
+		r = ev.left()->row + 1;
 		if (r >= (int)grid->blocks.size())
 			return false;
 
-		for (c = left()->col; c <= right()->col; ++c) {
+		for (c = ev.left()->col; c <= ev.right()->col; ++c) {
 			if (grid->blocks[r][c].getState() == Block::enabled)
-				falls.push_back(Cell(r, c));
+				falls.push_back(Fall(r, c));
 		}
 
 		break;
 
 	case VERT:
-		r = up()->row + 1;
-		c = up()->col;
+		r = ev.up()->row + 1;
+		c = ev.up()->col;
 		if (r >= (int)grid->blocks.size())
 			return false;
 		else {
 			if (grid->blocks[r][c].getState() == Block::enabled)
-				falls.push_back(Cell(r, c));
+				falls.push_back(Fall(r, c));
 		}
 		
 		break;
 
 	case MULTI:
-		r = left()->row + 1;
+		r = ev.left()->row + 1;
 		if (r >= (int)grid->blocks.size())
 			return false;
-		for (c = left()->col; c <= right()->col; ++c) {
-			if (grid->blocks[r][c].getState() == Block::enabled && r != mid()->row)
-				falls.push_back(Cell(r, c));
+		for (c = ev.left()->col; c <= ev.right()->col; ++c) {
+			if (grid->blocks[r][c].getState() == Block::enabled && r != ev.mid()->row)
+				falls.push_back(Fall(r, c));
 		}
-		r = up()->row + 1;
-		c = up()->col;
+		r = ev.up()->row + 1;
+		c = ev.up()->col;
 		if (r < (int)grid->blocks.size()) {
 			if (grid->blocks[r][c].getState() == Block::enabled)
-				falls.push_back(Cell(r, c));
+				falls.push_back(Fall(r, c));
 		}
 
 		break;
 
 	default:
-		state = NONE;
+		ev.changeState(NONE);
 		return false;
 	}
 	
 	bool isFall = falls.size() > 0;
 	if (isFall) {
-		changeState(FALL);
-		fallType = AFTERCOMBO;
-		initFallState();
+		for (list<Fall>::iterator it = falls.begin(); it != falls.cend(); ++it) {
+			initFallState(grid, *it);
+		}
 	}
+
+	ev.changeState(NONE);
+	grid->falls.insert(grid->falls.end(), falls.begin(), falls.end());
 
 	return isFall;
 }
 
-bool GridEvent::detectFallAfterSwap(const Cell &cell) {
+bool GridEvent::detectFallAfterSwap(Grid *grid, Fall &cell) {
 	int r = cell.row;
 	int c = cell.col;
 
@@ -439,31 +428,28 @@ bool GridEvent::detectFallAfterSwap(const Cell &cell) {
 		return false;
 
 	if (grid->blocks[r-1][c].getState() == Block::disabled || grid->blocks[r-1][c].getState() == Block::fall) 
-		falls.push_back(cell);
+		grid->falls.push_back(cell);
 
-	bool isFall = falls.size() > 0;
-	if (falls.size() > 0) {
-		changeState(FALL);
-		fallType = AFTERSWAP;
-		initFallState();
+	if (cell.enabled) {
+		initFallState(grid, cell);
+		return true;
 	}
-
-	return isFall;
+	else return false;
 }
 
-void GridEvent::initFallState() {
-	for (list<Cell>::iterator fl = falls.begin(); fl != falls.cend(); ++fl) {
-		int r = (*fl).row;
-		int c = (*fl).col;
+void GridEvent::initFallState(Grid *grid, Fall &cell) {
+	int r = cell.row;
+	int c = cell.col;
 
-		while (r < (int)grid->blocks.size() && grid->blocks[r][c].getState() == Block::enabled) {
-			grid->blocks[r][c].changeState(Block::fall);
-			++r;
-		}
+	cell.enabled = true;
+	while (r < (int)grid->blocks.size() && grid->blocks[r][c].getState() == Block::enabled) {
+		grid->blocks[r][c].changeState(Block::fall);
+		++r;
 	}
 
-	lastFall = timer.time();
+	cell.lastFall = timer.time();
 }
+
 
 void GridEvent::printDebug() {
 	if (state != COMBO)

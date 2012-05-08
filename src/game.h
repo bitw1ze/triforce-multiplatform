@@ -36,11 +36,24 @@ struct Point {
 
 class Cell {
 public:
-	Cell() { row = 0; col = 0; enabled = true; }
-	Cell(const Cell &src) { row = src.row; col = src.col; enabled = src.enabled; }
-	Cell(int r, int c, bool e = true) { row = r, col = c; enabled = e; }
+	Cell() { row = 0; col = 0; }
+	Cell(const Cell &src) { row = src.row; col = src.col; }
+	Cell(int r, int c, bool e = true) { row = r, col = c; }
+	bool operator ==(const Cell &cell) { return row == cell.row && col == cell.col; }
 	int row, col;
+};
+
+class Fall : public Cell {
+public:
+	int lastFall;
 	bool enabled;
+	Fall() : Cell() { init(); }
+	Fall(int r, int c) : Cell(r, c) { init(); }
+	Fall(const Fall &src) : Cell(src) { clone(src); }
+	Fall & operator =(const Fall &src) { __super::operator =(src); clone(src); }
+	bool operator ==(const Fall &fl) { return __super::operator ==(fl); }
+	void init() { lastFall = -1; enabled = false; }
+	void clone(const Fall &src) { lastFall = src.lastFall; enabled = src.enabled; }
 };
 
 class GamePlay {
@@ -103,7 +116,6 @@ protected:
 	GamePlay *gamePlay;
 	CBaseSprite** blockSprites;
 	gameState state;
-	list<GridEvent> events;
 
 public:
 	Grid(GamePlay *gp);
@@ -140,6 +152,8 @@ public:
 
 	Cursor *cursor;
 	deque< vector<Block> > blocks;
+	list<GridEvent> events;
+	list<Fall> falls;
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 
@@ -178,29 +192,27 @@ public:
 
 class GridEvent {
 public: 
-	static enum EventState { NONE, COMBO, FALL, DONE_FALLING };
+	static enum EventState { NONE, COMBO };
 	static enum ComboType { HORI, VERT, MULTI };
-	static enum FallType { AFTERSWAP, AFTERCOMBO };
 protected:
 	Cell *_left, *_right, *_up, *_down, *_mid;
 	Grid *grid;
-	CTimer timer;
 	int interval;
 	int startTime;
 	list<Cell> combo;
-	list<Cell> falls;
 	EventState state;
 	ComboType comboType;
-	FallType fallType;
 
 	int lastFall;
 	static int comboInterval;
 	static int fallInterval;
+	static CTimer timer;
 	
 public:
 	GridEvent(Grid *grid);
 	GridEvent(const GridEvent &ge);
 	GridEvent & operator =(const GridEvent &ge);
+	bool operator ==(const GridEvent &ev);
 	void clone(const GridEvent &ge);
 	Cell *left() const { return _left; }
 	Cell *left(int r, int c);
@@ -216,24 +228,21 @@ public:
 	EventState getState() { return state; }
 	void changeState(EventState st) { state = st; }
 
-	bool hasFalling();
+	static void composeFrame(Grid *grid);
 
-	static bool areFalling(list<GridEvent> &events);
-	static bool areCombos(list<GridEvent> &events);
-	static void composeFrame(Grid *grid, list<GridEvent> &events);
-	static void checkFallResult(Grid *grid, list<GridEvent> &events);
+	static bool checkComboFinished(Grid *grid, GridEvent &ev);
+	static bool detectFallAfterCombo(Grid *g, GridEvent &e);
+
+	static bool detectFallAfterSwap(Grid *grid,  Fall &cell);
+	static void initFallState(Grid *grid, Fall &fall);
+	static void cleanupFall(Grid *grid, Fall &fall);
+	static void doFall(Grid *grid, Fall &cell);
 
 	bool detectCombo(Cell &cell);
-	bool detectFallAfterCombo();
-	bool detectFallAfterSwap(const Cell &cell);
 
 	void startTimer();
-
 	void initComboState();
-	void initFallState();
 	
-	bool checkComboFinished();
-	void doFall(Cell &cell);
 	void setBlockStates(Block::gameState gs);
 	int count() const;
 
