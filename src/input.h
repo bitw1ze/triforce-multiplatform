@@ -91,6 +91,7 @@ namespace Input
 		  activeState(activeState), actionType(actionType), shortDesc(shortDesc){}
 		bool isSameAction(ActionScope scope, int activeState, int actionType);
 		bool isRelatedAction(ActionScope scope, int activeState);
+		void doAction(int actionState);
 
 #if 0
 		// declare/define an action function (with an action function attached)
@@ -106,19 +107,20 @@ namespace Input
 	class Player
 	{
 	private:
-		static int playerCount;
-		int playerNum;
 		list<Action *> actions;
 	public:
 		void addAction(Action *action);
 		bool isActionDefined(Action::ActionScope scope, int activeState, int actionType); // should have 1
 		bool hasActionsDefined(Action::ActionScope scope, int activeState); // may have >1
+		Action *getAction(Action::ActionScope scope, int activeState, int actionType);
 	};
 
 
 	// getStateFunc returns state of program, and only uses actions with the same state
 	void setGSFunc(int (*getStateFunc)()); 
 	void setGSLabels(const string *labels); 
+
+	void addPlayer();
 
 	/**
 	 * Button/key Inputs
@@ -159,7 +161,6 @@ namespace Input
 	// convenience function; define every action for a given scope/state at once
 	void defineActions(Action::ActionScope scope, int activeState, void *classInstance, Action::ActionFunc action);
 	void removeActions(void *classInstance);
-	void doAction(int actionType);
 	void setActionLabels(int activeState, const string *labels);
 
 	/**
@@ -169,7 +170,9 @@ namespace Input
 	// the Triforce constructor binds the default keys for the entire game
 	// TODO: Eventually, a class that loads config files will handle overriding these bindings.
 	void bindKey(Action action, unsigned char key);
+	void bindKey(int player, Action::ActionScope scope, int activeState, int actionType, unsigned char key);
 	void bindSpecialKey(Action action, int key);
+	void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int actionType, int key);
 	void bindButton(Action action, int button);
 
 } //Input

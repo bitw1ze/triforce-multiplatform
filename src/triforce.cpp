@@ -21,7 +21,8 @@ GamePlay * Triforce::gamePlay = NULL;
 /**
  * Input actions routines
  */
-void Triforce::declareActions(void *tfInstance) {
+void Triforce::declareActions(void *tfInstance)
+{
 	Triforce *t = (Triforce *)tfInstance;
 
 	// Since the Buttons class be instanced multiple times (for different states),
@@ -37,6 +38,22 @@ void Triforce::declareActions(void *tfInstance) {
 	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_RIGHT, menuActionLabels[ACT_RIGHT]);
 	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, menuActionLabels[ACT_ACTIVATE]);
 	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_QUIT, menuActionLabels[ACT_QUIT]);
+}
+
+// Hard coded default bindings
+void Triforce::bindDefaultActionKeys()
+{
+	int player = 0;
+	Input::bindSpecialKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_UP, GLUT_KEY_UP);
+	Input::bindSpecialKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_DOWN, GLUT_KEY_DOWN);
+	Input::bindSpecialKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_LEFT, GLUT_KEY_LEFT);
+	Input::bindSpecialKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_RIGHT, GLUT_KEY_RIGHT);
+
+	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, SPACE);
+	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, ENTER);
+	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, 'a');
+
+	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_QUIT, ESC);
 }
 
 /**
@@ -91,8 +108,10 @@ Triforce::Triforce()
 	// configure Input
 	Input::setGSFunc((int(*)()) getState);
 	Input::setGSLabels(gameStateLabels);
+	Input::addPlayer();
 	declareActions(this);
 	Input::defineActions(Input::Action::SCOPE_FIRST_PLAYER, MENU, this, doAction);
+	bindDefaultActionKeys();
 }
 
 Triforce::~Triforce()

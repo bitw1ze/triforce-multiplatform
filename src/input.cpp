@@ -5,12 +5,14 @@
 
 namespace Input
 {
-	int Player::playerCount = 0;
-
 namespace
 {
 	list<Action *> availableActions; // all declared but undefined actions are here
 	vector<Player *> players;
+	map<unsigned char, Action *> keyBindings;
+	map<int, Action *> specialKeyBindings;
+	map<int, Action *> mouseButtonBindings;
+
 	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
 	const string *stateLabels; // array of labels; indices are states returned by getState()
 	int numStates;
@@ -20,8 +22,9 @@ namespace
 	 */ 
 	typedef int ActiveState;
 	typedef void (*MouseMotionFunc)(void *classInstance, int x, int y);
-	struct MouseCallback
+	class MouseCallback
 	{
+	public:
 		void *classInstance;
 		MouseMotionFunc mouseMotionFunc;
 	};
@@ -62,6 +65,13 @@ bool Action::isRelatedAction(ActionScope scope, int activeState)
 	       this->activeState == activeState;
 }
 
+void Action::doAction(int actionState)
+{
+	cout << "getState:" << getState << endl;
+	if (getState && getState() == activeState)
+		action(actionsClassInstance, actionState, actionType);
+}
+
 void Player::addAction(Action *action)
 {
 	actions.push_back(action);
@@ -83,6 +93,14 @@ bool Player::hasActionsDefined(Action::ActionScope scope, int activeState)
 	return false;
 }
 
+Action * Player::getAction(Action::ActionScope scope, int activeState, int actionType)
+{
+	for (list<Action *>::iterator a = availableActions.begin(); a != availableActions.end(); ++a)
+		if ((*a)->isSameAction(scope, activeState, actionType))
+			return *a;
+	return (Action *)NULL;
+}
+
 void setGSFunc(int (*getStateFunc)())
 {
 	getState = getStateFunc;
@@ -93,25 +111,38 @@ void setGSLabels(const string * labels)
 	stateLabels = labels;
 }
 
+void addPlayer()
+{
+	players.push_back(new Player());
+}
+
 /**
  * Button/key Inputs
  */
 
 void keyPress(unsigned char key, int x, int y)
 {
+	Action *a = keyBindings.find(key)->second;
+	//TODO: push key to the container that indicates it is being held (then remove it on Release)
+	a->doAction(Action::STATE_PRESS);
 }
 
 void keyRelease(unsigned char key, int x, int y)
 {
+	Action *a = keyBindings.find(key)->second;
+	a->doAction(Action::STATE_RELEASE);
 }
 
 void keySpecialPress(int key, int x, int y)
 {
-	
+	Action *a = specialKeyBindings.find(key)->second;
+	a->doAction(Action::STATE_PRESS);
 }
 
 void keySpecialRelease(int key, int x, int y)
 {
+	Action *a = specialKeyBindings.find(key)->second;
+	a->doAction(Action::STATE_RELEASE);
 }
 
 void mousePress(int button, int mouseState, int x, int y)
@@ -126,6 +157,9 @@ void mousePress(int button, int mouseState, int x, int y)
 // Activated when mouse moves while a mouse button IS held down.
 void mouseMotion(int x, int y)
 {
+	if (!getState)
+		return;
+
 	MouseMotionIter it;
 	it = mouseMotionFuncs.find(getState());
 	if (it != mouseMotionFuncs.end())
@@ -135,6 +169,9 @@ void mouseMotion(int x, int y)
 // Activated when mouse moves while a mouse button ISN'T held down.
 void mousePassiveMotion(int x, int y)
 {
+	if (!getState)
+		return;
+
 	MouseMotionIter it;
 	it = mousePassiveMotionFuncs.find(getState());
 	if (it != mousePassiveMotionFuncs.end())
@@ -275,18 +312,24 @@ void bindKey(Action action, unsigned char key)
 {
 }
 
+void bindKey(int player, Action::ActionScope scope, int activeState, int actionType, unsigned char key)
+{
+	Action *a = players[player]->getAction(scope, activeState, actionType);
+	keyBindings.insert(pair<unsigned char, Action *>(key, a));
+}
+
 void bindSpecialKey(Action action, int key)
 {
 }
 
-void bindButton(Action action, int button)
+void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int actionType, int key)
 {
+	Action *a = players[player]->getAction(scope, activeState, actionType);
+	keyBindings.insert(pair<int, Action *>(key, a));
 }
 
-void doAction(int actionType)
+void bindButton(Action action, int button)
 {
-	int activeState = getState();
-	// FIXME: incomplete
 }
 
 } // Input

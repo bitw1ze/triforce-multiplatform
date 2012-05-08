@@ -46,6 +46,7 @@ private:
 	 * Input actions routines
 	 */
 	static void declareActions(void *tfInstance);
+	void bindDefaultActionKeys();
 
 	/**
 	 * Display routines
