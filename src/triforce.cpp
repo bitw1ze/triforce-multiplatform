@@ -210,55 +210,20 @@ void Triforce::specialKeys(int key, int x, int y) {
 	if (state == PLAY) {
 		gamePlay->specialKeys(key, x, y);
 	}
-	else if (state == MENU) {
-		switch (key) {
-		case GLUT_KEY_LEFT:
-			menuButtons->hoverPrev();
-			break;
-		case GLUT_KEY_RIGHT:
-			menuButtons->hoverNext();
-			break;
-		case GLUT_KEY_UP:
-			menuButtons->hoverPrev();
-			break;
-		case GLUT_KEY_DOWN:
-			menuButtons->hoverNext();
-			break;
-		}
-	}
 }
 
 void Triforce::normalKeys(unsigned char key, int x, int y) {
-	// global bindings
-	if (key == ESC)
-		exit(0);
-
 	// context-sensetive bindings
 	if (state == PLAY) {
+		if (key == ESC)
+			exit(0);
 		gamePlay->normalKeys(key, x, y);
 	}
-	else if (state == MENU) {
-		switch (tolower(key)) {
-		case 'a':
-			menuButtons->activateCurrent();
-		}
-	}
-//	keysDown.push_back(key);
 
 }
 
 void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
-	if (state == MENU)
-	{
-		switch (button) {
-		case GLUT_LEFT_BUTTON:
-			if (mouseState == GLUT_DOWN)
-				menuButtons->clickDown(x, y);
-			else // implicit (state == GLUT_UP)
-				menuButtons->clickUp(x, y);
-		}
-	}
-	else if (state == PLAY)
+	if (state == PLAY)
 	{
 		switch (button) {
 		case GLUT_LEFT_BUTTON:

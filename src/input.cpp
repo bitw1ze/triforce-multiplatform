@@ -67,7 +67,6 @@ bool Action::isRelatedAction(ActionScope scope, int activeState)
 
 void Action::doAction(int actionState)
 {
-	cout << "getState:" << getState << endl;
 	if (getState && getState() == activeState)
 		action(actionsClassInstance, actionState, actionType);
 }
@@ -95,7 +94,7 @@ bool Player::hasActionsDefined(Action::ActionScope scope, int activeState)
 
 Action * Player::getAction(Action::ActionScope scope, int activeState, int actionType)
 {
-	for (list<Action *>::iterator a = availableActions.begin(); a != availableActions.end(); ++a)
+	for (list<Action *>::iterator a = actions.begin(); a != actions.end(); ++a)
 		if ((*a)->isSameAction(scope, activeState, actionType))
 			return *a;
 	return (Action *)NULL;
@@ -122,27 +121,37 @@ void addPlayer()
 
 void keyPress(unsigned char key, int x, int y)
 {
-	Action *a = keyBindings.find(key)->second;
+	map<unsigned char, Action *>::iterator b = keyBindings.find(key);
+	if (b == keyBindings.end())
+		return;
 	//TODO: push key to the container that indicates it is being held (then remove it on Release)
-	a->doAction(Action::STATE_PRESS);
+	b->second->doAction(Action::STATE_PRESS);
 }
 
 void keyRelease(unsigned char key, int x, int y)
 {
-	Action *a = keyBindings.find(key)->second;
-	a->doAction(Action::STATE_RELEASE);
+	map<unsigned char, Action *>::iterator b = keyBindings.find(key);
+	if (b == keyBindings.end())
+		return;
+	b->second->doAction(Action::STATE_RELEASE);
 }
 
 void keySpecialPress(int key, int x, int y)
 {
-	Action *a = specialKeyBindings.find(key)->second;
-	a->doAction(Action::STATE_PRESS);
+	map<int, Action *>::iterator b = specialKeyBindings.find(key);
+	if (b == specialKeyBindings.end())
+		return;
+	//TODO: push key to the container that indicates it is being held (then remove it on Release)
+	b->second->doAction(Action::STATE_PRESS);
 }
 
 void keySpecialRelease(int key, int x, int y)
 {
-	Action *a = specialKeyBindings.find(key)->second;
-	a->doAction(Action::STATE_RELEASE);
+	map<int, Action *>::iterator b = specialKeyBindings.find(key);
+	if (b == specialKeyBindings.end())
+		return;
+	//TODO: push key to the container that indicates it is being held (then remove it on Release)
+	b->second->doAction(Action::STATE_RELEASE);
 }
 
 void mousePress(int button, int mouseState, int x, int y)
@@ -280,6 +289,7 @@ void defineActions(Action::ActionScope scope, int activeState, void *classInstan
 			switch (scope)
 			{
 			case Action::SCOPE_FIRST_PLAYER:
+				p = players.begin();
 				(*p)->addAction(newAction);
 				break;
 			case Action::SCOPE_CURRENT_PLAYER:
@@ -324,8 +334,10 @@ void bindSpecialKey(Action action, int key)
 
 void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int actionType, int key)
 {
-	Action *a = players[player]->getAction(scope, activeState, actionType);
-	keyBindings.insert(pair<int, Action *>(key, a));
+	Player * p = players[player];
+	Action *a;
+	a = p->getAction(scope, activeState, actionType);
+	specialKeyBindings.insert(pair<int, Action *>(key, a));
 }
 
 void bindButton(Action action, int button)

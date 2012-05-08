@@ -34,20 +34,20 @@ void display()
 
 void specialKeys(int key, int x, int y) {
 	triforce->specialKeys(key, x, y);
-//	Input::keySpecialPress(key, x, y);
+	Input::keySpecialPress(key, x, y);
 }
 
 void specialKeysUp(int key, int x, int y) {
-//	Input::keySpecialRelease(key, x, y);
+	Input::keySpecialRelease(key, x, y);
 }
 
 void normalKeys(unsigned char key, int x, int y) {
 	triforce->normalKeys(key, x, y);
-//	Input::keyPress(key, x, y);
+	Input::keyPress(key, x, y);
 }
 
 void keyUp(unsigned char key, int x, int y) {
-//	Input::keyRelease(key, x, y);
+	Input::keyRelease(key, x, y);
 }
 
 void mouseButtons(int button, int state, int x, int y) {

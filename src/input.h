@@ -88,7 +88,7 @@ namespace Input
 	public:
 		// declare an action with no definition (no action function attached)
 		Action(ActionScope scope, int activeState, int actionType, string shortDesc) :
-		  activeState(activeState), actionType(actionType), shortDesc(shortDesc){}
+		  scope(scope), activeState(activeState), actionType(actionType), shortDesc(shortDesc){}
 		bool isSameAction(ActionScope scope, int activeState, int actionType);
 		bool isRelatedAction(ActionScope scope, int activeState);
 		void doAction(int actionState);
