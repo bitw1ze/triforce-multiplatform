@@ -16,6 +16,7 @@
     <ClCompile Include="gameplay.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="grid.cpp" />
+    <ClCompile Include="gridevent.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="triforce.cpp" />
