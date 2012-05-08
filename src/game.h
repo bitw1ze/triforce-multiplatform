@@ -8,10 +8,10 @@
 #pragma once
 
 #include <string>
-#include <vector>
+#include <list>
 #include <ctime>
 #include <deque>
-#include <list>
+#include <vector>
 #include "2DGraphics.h"
 #include "globals.h"
 
@@ -22,6 +22,7 @@ class GamePlay;
 class Grid;
 class Block;
 class Cursor;
+class GridEvent;
 extern CTimer *mainTimer;
 
 /* GamePlay is the main interface for controlling everything else within the 
@@ -33,11 +34,31 @@ struct Point {
 	int x, y;
 };
 
-struct Cell {
+class Cell {
+public:
+	Cell() { row = 0; col = 0; }
+	Cell(const Cell &src) { row = src.row; col = src.col; }
+	Cell(int r, int c, bool e = true) { row = r, col = c; }
+	bool operator ==(const Cell &cell) { return row == cell.row && col == cell.col; }
 	int row, col;
 };
 
+class Fall : public Cell {
+public:
+	int lastFall;
+	bool enabled;
+	Fall() : Cell() { init(); }
+	Fall(int r, int c) : Cell(r, c) { init(); }
+	Fall(const Fall &src) : Cell(src) { clone(src); }
+	Fall & operator =(const Fall &src) { __super::operator =(src); clone(src); }
+	bool operator ==(const Fall &fl) { return __super::operator ==(fl); }
+	void init() { lastFall = -1; enabled = false; }
+	void clone(const Fall &src) { lastFall = src.lastFall; enabled = src.enabled; }
+};
+
 class GamePlay {
+public:
+	enum gameState {play, pause, quit};
 protected:
 
 	/* bitmap files */
@@ -55,8 +76,9 @@ protected:
 
 	BMPClass background;
 
+	gameState state;
+
 public:
-	enum gameState {play, pause, quit, combo, fall};
 	CBaseSprite *blockSprites[nblocktypes],
 	            *cursorSprite,
 				*gridBorderSprite;
@@ -75,7 +97,7 @@ public:
 	void keyUp(unsigned char key, int x, int y);
 
 	void changeState(gameState gs);
-	gameState getState();
+	gameState getState() const;
 };
 
 /* Grid class holds abstracts all the operations on grid of blocks for a 
@@ -94,25 +116,21 @@ protected:
 		last_cursor_anim, timer_cursor_anim, current_cursor_frame;
 	Point gridPos;
 	GamePlay *gamePlay;
-	deque<Block **> blocks;
 	CBaseSprite** blockSprites;
 	gameState state;
-	void composeFrame();
 
 public:
-	Grid(GamePlay *ge);
+	Grid(GamePlay *gp);
 	virtual ~Grid();
-	void pushRow();
-	void addRow();
+
 	void loadImages();
 	void display();
-	void setCoords();
-	void swapBlocks();
-	Block * getBlock(int row, int col);
+	void composeFrame();
 
-	bool containsPoint(int x, int y);
-	void onCombo();
-	void onPlay();
+	void pushRow();
+	void addRow();
+	void swapBlocks();
+
 	void changeState(gameState gs);
 	gameState getState() const { return state; }
 
@@ -120,56 +138,117 @@ public:
 	int getYOffset() { return grid_yoff; }
 	int getX() { return gridPos.x; }
 	int getY() { return gridPos.y; }
-	int getBlockWidth() { return block_w; }
-	int getBlockHeight() { return block_h; }
+	int getBlockLength() { return block_h; }
 	int countEnabledRows() const;
 
+	int downMatch(int r, int c, bool ignoreActive = false);
+	int upMatch(int r, int c, bool ignoreActive = false);
+	int leftMatch(int r, int c, bool ignoreActive = false);
+	int rightMatch(int r, int c, bool ignoreActive = false);
+
+	int detectFalls(int r, int c);
+	void setFallState(GridEvent &);
+	void incComboInterval(int interval);
+
+	bool containsPoint(int x, int y);
+
 	Cursor *cursor;
+	deque< vector<Block> > blocks;
+	list<GridEvent> events;
+	list<Fall> falls;
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 
    setting the x and y values and setting states */
 
 class Block : public CObject {
-public: enum gameState { enabled, disabled, combo, fall, inactive };
+public: enum gameState { inactive, enabled, disabled, combo, fall };
 protected:
-	gameState state, nextState;
-	void onCombo();
+	gameState state;
 	CTimer *timer;
-	int last_combo;
-	int last_fall, interval_fall, total_falls, count_falls, fall_factor;
-	int total_combo_interval;
-	Grid *grid;
+	int fallOffset;
 
-	//static int interval_combo;
 public:
-	Block(Grid *g);
-	Block *left, *right, *up, *down;
-	bool swap(Block &right);
-	void changeState(gameState gs);
+	Block();
+	Block(const Block &block);
+	Block & operator =(const Block &block);
+	void clone(const Block &src);
+	~Block() {}
+
+	friend bool swap(Block &left, Block &right);
+	friend bool match(const Block &left, const Block &right, bool ignoreActive = false);
+
 	void display();
 	void composeFrame();
-	void setFallCount(int falls) { total_falls = falls * fall_factor; count_falls = 0; }
+	void changeState(gameState gs);
 	gameState getState() const { return state; }
-
-	bool match(const Block *right, bool ignoreActive = false) const;
-	int downMatch(bool ignoreActive = false);
-	int upMatch(bool ignoreActive = false);
-	int leftMatch(bool ignoreActive = false);
-	int rightMatch(bool ignoreActive = false);
-	bool detectAndSetComboState();
-	void detectAndSetFallState();
-	int downDistance( Block *) const;
-	int upDistance(Block *) const;
-	int leftDistance(Block *) const;
-	int rightDistance(Block *) const;
-	void transferDown();
-	Block * offsetRow(int n);
-	Block * offsetCol(int n);
 	
-	static int interval_combo;
-	//static int getComboInterval() { return interval_combo; }
-	//static void setComboInterval(int n) { interval_combo = n; }
+	Grid *grid;
+
+	void fallDown();
+	void resetFall();
+	int getFallOffset() const;
+
+	static const int fallFactor;
+};
+
+class GridEvent {
+public: 
+	static enum EventState { NONE, COMBO };
+	static enum ComboType { HORI, VERT, MULTI };
+protected:
+	Cell *_left, *_right, *_up, *_down, *_mid;
+	Grid *grid;
+	int interval;
+	int startTime;
+	list<Cell> combo;
+	EventState state;
+	ComboType comboType;
+
+	int lastFall;
+	static int comboInterval;
+	static int fallInterval;
+	
+public:
+	GridEvent(Grid *grid);
+	GridEvent(const GridEvent &ge);
+	GridEvent & operator =(const GridEvent &ge);
+	bool operator ==(const GridEvent &ev);
+	void clone(const GridEvent &ge);
+	Cell *left() const { return _left; }
+	Cell *left(int r, int c);
+	Cell *right() const { return _right; }
+	Cell *right(int r, int c);
+	Cell *down() const { return _down; }
+	Cell *down(int r, int c);
+	Cell *up() const { return _up; }
+	Cell *up(int r, int c);
+	Cell *mid() const { return _mid; }
+	Cell *mid(int r, int c);
+
+	EventState getState() { return state; }
+	void changeState(EventState st) { state = st; }
+
+	static void composeFrame(Grid *grid);
+
+	static bool checkComboFinished(Grid *grid, GridEvent &ev);
+	static bool detectFallAfterCombo(Grid *g, GridEvent &e);
+	static bool detectFall(Grid *grid, Fall &cell);
+
+	static void initFallState(Grid *grid, Fall &fall);
+	static void cleanupFall(Grid *grid, Fall &fall);
+	static void doFall(Grid *grid, Fall &cell);
+	static bool detectCombo(Grid *grid, Cell &cell);
+
+
+	void startTimer();
+	void initComboState();
+	
+	void setBlockStates(Block::gameState gs);
+	int count() const;
+
+	void printDebug();
+	void printStates();
 };
 
 /* The Cursor class controls the operations on the player's cursor, like moving

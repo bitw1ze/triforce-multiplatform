@@ -7,7 +7,6 @@
 		- documented all the methods
 */
 
-#include <algorithm>
 #include "game.h"
 #include "input.h"
 
@@ -49,18 +48,12 @@ Grid::Grid(GamePlay *gp) {
 
 	for (int row = 0; row < startingRows; ++row) 
 		for (int col = 0; col < ncols; ++col) 
-			blocks[row][col]->offsetY( -1 * block_h * row );
+			blocks[row][col].offsetY( -1 * block_h * row );
 }
 
 void Grid::changeState(gameState gs) {
 	switch (gs) {
 	case combo:
-		if (state != combo) {
-			timer_combo = Block::interval_combo;
-			last_combo = mainTimer->time();
-		}
-		else
-			timer_combo += Block::interval_combo;
 		break;
 	case play:
 		last_push = mainTimer->time();
@@ -72,31 +65,19 @@ void Grid::changeState(gameState gs) {
 /*	display
 	Call the draw function on all blocks, then draw the cursor over it. */
 void Grid::display() {
-	composeFrame();
-
-	Block *row = blocks[0][0];
-	while (row != NULL) {
-		Block *col = row;
-		while (col != NULL) {
-			col->display();
-			col = col->right;
-		}
-		row = row->up;
-	}
 	cursor->draw(current_cursor_frame);
+	for (uint32 i=0; i<blocks.size(); ++i)
+		for (uint32 j=0; j<ncols; ++j)
+			blocks[i][j].display();
+	cursor->draw(0);
 }
 
 void Grid::composeFrame() {
-	Block *row = getBlock(0, 0);
-	Block *col = NULL;
-	while (row != NULL) {
-		col = row;
-		while (col != NULL) {
-			col->composeFrame();
-			col = col->right;
-		}
-		row = row->up;
-	}
+	GridEvent::composeFrame(this);
+
+	for (uint32 i=0; i<blocks.size(); ++i) 
+		for (uint32 j=0; j<ncols; ++j)
+			blocks[i][j].composeFrame();
 
 	if (mainTimer->elapsed(last_cursor_anim, timer_cursor_anim)) {
 		if (++current_cursor_frame >= 10)
@@ -111,13 +92,10 @@ void Grid::composeFrame() {
 			last_push = mainTimer->time();
 		}
 		break;
-	case combo:
-		if (mainTimer->elapsed(last_combo, timer_combo)) {
-			changeState(play);
-		}
-		break;
+
 	}
 }
+
 bool Grid::containsPoint(int x, int y) {
 	bool containsX = x > gridPos.x && x < gridPos.x + (int)ncols*block_h;
 	bool containsY = !(y > gridPos.y - grid_yoff || y < gridPos.y - (int)(nrows)*block_h);
@@ -128,15 +106,15 @@ int Grid::countEnabledRows() const {
 	uint32 count;
 
 	for (count=0; count<blocks.size(); ++count) {
-		bool disabled = true;
+		bool isDisabled = true;
 		for (int i=0; i<ncols; ++i) {
-			if (blocks[count][i]->getState() == Block::enabled || blocks[count][i]->getState() == Block::inactive) {
-				disabled = false;
+			if (blocks[count][i].getState() == Block::enabled || blocks[count][i].getState() == Block::inactive) {
+				isDisabled = false;
 				break;
 			}
 		}
 	
-		if (disabled == true)
+		if (isDisabled == true)
 			break;
 	}
 
@@ -149,16 +127,9 @@ void Grid::pushRow() {
 	grid_yoff += grid_yspeed;
 
 	cursor->offsetY(-grid_yspeed);
-	Block *row = blocks[0][0];
-	Block *col = NULL;
-	while (row != NULL) {
-		col = row;
-		while (col != NULL) {
-			col->offsetY(-grid_yspeed);
-			col = col->right;
-		}
-		row = row->up;
-	}
+	for (uint32 i=0; i<blocks.size(); ++i) 
+		for (uint32 j=0; j<ncols; ++j) 
+			blocks[i][j].offsetY(-grid_yspeed);
 	
 	if (grid_yoff >= block_h) {
 		grid_yoff = 0;
@@ -173,49 +144,34 @@ void Grid::pushRow() {
 	that is the player's job.	*/
 void Grid::addRow() {
 	if (blocks.size() > nrows) {
-		delete [] blocks[nrows];
 		blocks.pop_back();
 	}
 
 	if (blocks.size() > 0)
-		for (int col=0; col<ncols; ++col)
-			blocks[0][col]->changeState(Block::enabled);
+		for (vector<Block>::iterator it = blocks[0].begin(); it != blocks[0].cend(); ++it)
+			(*it).changeState(Block::enabled);
 	
-	blocks.push_front(new Block *[ncols]);
+	vector<Block> newRow(ncols);
+	blocks.push_front(newRow);
 
 	for (int col=0; col<ncols; ++col) {
-		blocks[0][col] = new Block(this);
-		blocks[0][col]->left = (col > 0) ? blocks[0][col - 1] : NULL;
-		blocks[0][col]->up = (blocks.size() > 1) ? blocks[1][col] : NULL;
-		blocks[0][col]->right = NULL;
-		blocks[0][col]->down = NULL;
-
-		/* Randomize the blocks without generating combos */
-		do    ( blocks[0][col]->init(blockSprites[ rand() % nblocktypes ], gridPos.x + col * block_w, gridPos.y) );
-		while ( blocks[0][col]->leftMatch(true) >= 2 || blocks[0][col]->upMatch(true) >= 2 );
+		// Randomize the blocks without generating combos
+		do {
+			blocks[0][col].init(blockSprites[rand() % nblocktypes], gridPos.x + col * block_w, gridPos.y);
+		} while ( leftMatch(0, col, true) >= 2 || upMatch(0, col, true) >= 2 );
+		newRow[col].grid = this;
 	}
 
-	for (int i = 0; i < ncols - 1; ++i)
-		blocks[0][i]->right = blocks[0][i + 1];
-
-	if (blocks.size() > 3) 
-		for (int i=0; i<ncols; ++i)  
-			blocks[1][i]->detectAndSetComboState();
-
-	if (blocks.size() > 1)
-		for (int i=0; i<ncols; ++i) 
-			blocks[1][i]->down = blocks[0][i];
+	GridEvent combo(this);
+	if (blocks.size() > 3) {
+		for (int i=0; i<ncols; ++i) { 
+			GridEvent::detectCombo(this, Cell(1, i));
+		}
+	}
 }
 
-/*	setCoords
-	This function sets the coordinates of the entire block matrix. It was used early in 
-	development and is obsolete as of now, but it is still here in case it is needed. */
-void Grid::setCoords() {
-	int i = 0;
-	for (deque<Block **>::iterator it = blocks.begin(); it < blocks.end(); ++it, ++i)
-		for (int j=0; j<ncols; ++j) 
-			if ((*it)[j]->getState() == Block::enabled) 
-				(*it)[j]->setY(gridPos.y - i * block_h);
+void Grid::incComboInterval(int interval) {
+	timer_combo += interval;
 }
 
 /*	swapBlocks()
@@ -229,40 +185,118 @@ void Grid::swapBlocks() {
 	c2 = c1 + 1;
 	r = cursor->getRow();
 
-	if (r >= countEnabledRows())
+	if (r >= (int)blocks.size())
 		return;
 
-	Block *temp = getBlock(r, c1);
-	if (temp != NULL && temp->swap(*temp->right)) {
-		if (!temp->detectAndSetComboState())
-			temp->detectAndSetFallState();
-		if (!temp->right->detectAndSetComboState())
-			temp->right->detectAndSetFallState();
+	if (swap(blocks[r][c1], blocks[r][c2])) {
+		if (!GridEvent::detectCombo(this, Cell(r, c1)))
+			GridEvent::detectFall(this, Fall(r, c1));
+
+		if (!GridEvent::detectCombo(this, Cell(r, c2)))
+			GridEvent::detectFall(this, Fall(r, c2));
 	}
 }
 
-Block * Grid::getBlock(int r, int c) {
-	Block *row = blocks[0][0];
-	Block *col = NULL;
-	for (int i=0; i <= r && row != NULL; ++i, row = row->up) {
-		col = row;
-		for (int j=0; j < c && col != NULL; ++j, col = col->right) {
-			//printf("(%d, %d) ", i, j);
+/*	leftMatch, rightMatch, downMatch, and upMatch
+	These functions are all used to detect combos. They return the number of blocks
+	that match the block passed to the direction in the function's name.
+	e.g. a 3 combo will return 2		*/
+
+int Grid::leftMatch(int r, int c, bool ignoreActive) {
+	int matches = 0;
+
+	if (c > 0 && c < ncols && r >= 0 && r < (int)blocks.size()) {
+		for (int i=c-1; i >= 0; --i) {
+			if (match(blocks[r][c], blocks[r][i], ignoreActive)) 
+				++matches;
+			else
+				break;
 		}
-		//printf("\n");
 	}
 
-	return col;
+	return matches;
 }
 
-/* destructor
-	Delete all the blocks and the cursor */
+int Grid::rightMatch(int r, int c, bool ignoreActive) {
+	int matches = 0;
+
+	if (c < ncols - 1 && c >= 0 && r < (int)blocks.size() && r >= 0) {
+		for (int i=c+1; i < ncols; ++i) {
+			if (match(blocks[r][c], blocks[r][i], ignoreActive)) 
+				++matches;
+			else
+				break;
+		}
+	}
+
+	return matches;
+}
+
+int Grid::upMatch(int r, int c, bool ignoreActive) {
+	int matches = 0;
+
+	if (r < (int)blocks.size() - 1 && r >= 0 && c >= 0 && c < ncols) {
+		for (int i=r+1; i < (int)blocks.size(); ++i) {
+			if (match(blocks[r][c], blocks[i][c], ignoreActive)) 
+				++matches;
+			else
+				break;
+		}
+	}
+
+	return matches;
+}
+
+int Grid::downMatch(int r, int c, bool ignoreActive) {
+	int matches = 0;
+
+	if (r > 0) {
+		for (int i=r-1; i > 0; --i) {
+			if (match(blocks[r][c], blocks[i][c], ignoreActive)) 
+				++matches;
+			else
+				break;
+		}
+	}
+
+	return matches;
+}
+
+/* destructor */
 Grid::~Grid() {
 	delete cursor;
-	/*
-	for (uint32 i=0; i<blocks.size(); ++i)
-		for (uint32 j=0; j<ncols; ++j)
-			if (blocks[i][j] != NULL)
-				delete blocks[i][j];
-				*/
+}
+
+/*	swap
+	Swap two adjacent blocks that the cursor has selected. */
+bool swap(Block &left, Block &right) {
+	if ( left.getState() == Block::combo || left.getState() == Block::fall ||
+		right.getState() == Block::combo || right.getState() == Block::fall)
+		return false;
+
+	Block temp = left;
+	left = right;
+	right = temp;
+
+	return true;
+}
+
+/*	match
+	Detect a single match of one block to another block based on the sprite.
+	ignoreActive should be enabled when only testing if block states and sprites
+	match, such as when generating blocks */
+bool match(const Block &left, const Block &right, bool ignoreActive) { 
+
+	Block::gameState ls = left.getState();
+	Block::gameState rs = right.getState();
+
+	if (left.getSprite() != right.getSprite())
+		return false;
+
+	if (ignoreActive) 
+		return (ls == Block::enabled || ls == Block::inactive) && (rs == Block::enabled || rs == Block::inactive);
+	else
+		return (ls == Block::enabled && rs == Block::enabled);
+
+	return false;
 }

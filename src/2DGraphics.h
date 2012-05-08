@@ -111,6 +111,9 @@ class CObject //class for a moving object
   public:
     CObject(); //constructor
     void draw(int frame); //draw
+	void draw(int frame, int _x, int _y) {
+		pSprite->draw(frame, (float)_x, (float)_y);
+	}
     void create(int x1,int y1,int xspeed1,int yspeed1, CBaseSprite *sprite, CTimer *timer); //create instance
     void accelerate(int xdelta,int ydelta); //change speed
     void move(); //make a move depending on time and speed
