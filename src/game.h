@@ -206,7 +206,6 @@ protected:
 	int lastFall;
 	static int comboInterval;
 	static int fallInterval;
-	static CTimer timer;
 	
 public:
 	GridEvent(Grid *grid);
@@ -232,13 +231,13 @@ public:
 
 	static bool checkComboFinished(Grid *grid, GridEvent &ev);
 	static bool detectFallAfterCombo(Grid *g, GridEvent &e);
+	static bool detectFall(Grid *grid, Fall &cell);
 
-	static bool detectFallAfterSwap(Grid *grid,  Fall &cell);
 	static void initFallState(Grid *grid, Fall &fall);
 	static void cleanupFall(Grid *grid, Fall &fall);
 	static void doFall(Grid *grid, Fall &cell);
+	static bool detectCombo(Grid *grid, Cell &cell);
 
-	bool detectCombo(Cell &cell);
 
 	void startTimer();
 	void initComboState();

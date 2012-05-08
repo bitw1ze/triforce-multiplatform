@@ -155,10 +155,7 @@ void Grid::addRow() {
 	GridEvent combo(this);
 	if (blocks.size() > 3) {
 		for (int i=0; i<ncols; ++i) { 
-			if (combo.detectCombo(Cell(1, i))) {
-				combo.initComboState();
-				events.push_back(combo);
-			}
+			GridEvent::detectCombo(this, Cell(1, i));
 		}
 	}
 }
@@ -181,28 +178,12 @@ void Grid::swapBlocks() {
 	if (r >= (int)blocks.size())
 		return;
 
-	GridEvent event1(this), event2(this);
-
 	if (swap(blocks[r][c1], blocks[r][c2])) {
-		if (event1.detectCombo(Cell(r, c1))) {
-			events.push_back(event1);
-		}
-		else if (event1.detectFallAfterSwap(this, Fall(r, c1))) {
-			events.push_back(event1);
-		}
-		else if (event1.detectFallAfterSwap(this, Fall(r + 1, c1))) {
-			events.push_back(event1);
-		}
-		
-		if (event2.detectCombo(Cell(r, c2))) {
-			events.push_back(event2);		
-		}
-		else if (event2.detectFallAfterSwap(this, Fall(r, c2))) {
-			events.push_back(event2);
-		}
-		else if (event2.detectFallAfterSwap(this, Fall(r + 1, c2))) {
-			events.push_back(event2);
-		}
+		if (!GridEvent::detectCombo(this, Cell(r, c1)))
+			GridEvent::detectFall(this, Fall(r, c1));
+
+		if (!GridEvent::detectCombo(this, Cell(r, c2)))
+			GridEvent::detectFall(this, Fall(r, c2));
 	}
 }
 

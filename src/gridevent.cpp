@@ -1,8 +1,7 @@
 #include "game.h"
 
 int GridEvent::comboInterval = 500;
-int GridEvent::fallInterval = 20;
-CTimer GridEvent::timer;
+int GridEvent::fallInterval = 10;
 
 GridEvent::GridEvent(Grid *g) {
 	grid = g;
@@ -32,7 +31,6 @@ void GridEvent::clone(const GridEvent &src) {
 
 	interval = src.interval;
 	startTime = src.startTime;
-	timer.start();
 	lastFall = src.lastFall;
 
 	state = src.state;
@@ -111,7 +109,7 @@ int GridEvent::count() const {
 }
 
 bool GridEvent::checkComboFinished(Grid *grid, GridEvent &ev) {
-	if (ev.state == COMBO && timer.elapsed(ev.startTime, ev.interval)) {
+	if (ev.state == COMBO && mainTimer->elapsed(ev.startTime, ev.interval)) {
 		ev.setBlockStates(Block::disabled);
 		detectFallAfterCombo(grid, ev);
 		return true;
@@ -125,8 +123,7 @@ void GridEvent::initComboState() {
 		return;
 
 	interval = count() * GridEvent::comboInterval;
-	timer.start();
-	startTime = timer.time();
+	startTime = mainTimer->time();
 
 	int r, c;
 
@@ -185,7 +182,7 @@ void GridEvent::composeFrame(Grid *grid) {
 			eventRemovals.push_back(*ev);
 		}
 	}
-	
+
 	if (eventRemovals.size() > 0) {
 		for (list<GridEvent>::iterator ev = eventRemovals.begin(); ev != eventRemovals.cend(); ++ev) 
 			grid->events.remove(*ev);
@@ -222,7 +219,21 @@ void GridEvent::composeFrame(Grid *grid) {
 }
 
 void GridEvent::cleanupFall(Grid *grid, Fall &fall) {
-	
+	int r = fall.row;
+	int c = fall.col;
+
+	int row;
+	// check if finished with fall 
+	row = r;
+		// re-enable all the blocks that were falling
+	while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::fall) {
+		grid->blocks[row][c].changeState(Block::enabled);
+		detectCombo(grid, fall);
+		++row;
+	}
+
+	fall.enabled = false;
+
 }
 
 void GridEvent::doFall(Grid *grid, Fall &cell) {
@@ -231,22 +242,13 @@ void GridEvent::doFall(Grid *grid, Fall &cell) {
 	int c = cell.col;
 	int row;
 
-	if (cell.enabled == true && timer.elapsed(cell.lastFall, fallInterval)) 
-		cell.lastFall = timer.time();
+	if (cell.enabled == true && mainTimer->elapsed(cell.lastFall, fallInterval)) 
+		cell.lastFall = mainTimer->time();
 	else
 		return;
 	
-	// check if finished with fall 
 	if (r <= 1 || grid->blocks[r-1][c].getState() == Block::enabled) {
-		row = r;
-		// re-enable all the blocks that were falling
-		while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::fall) {
-			grid->blocks[row][c].changeState(Block::enabled);
-			++row;
-		}
-
-		cell.enabled = false;
-
+		cleanupFall(grid, cell);
 		return;
 	}
 
@@ -281,36 +283,40 @@ void GridEvent::doFall(Grid *grid, Fall &cell) {
 	This function computes the cells by first finding a horizontal match. If a match
 	is found, it will then iteratively search for a vertical from each block in the
 	horizontal match.  */
-bool GridEvent::detectCombo(Cell &cell) {
+bool GridEvent::detectCombo(Grid *grid, Cell &cell) {
 	int r = cell.row;
 	int c = cell.col;
+
+	GridEvent combo(grid);
 
 	int match1 = grid->leftMatch(r, c);
 	int match2 = grid->rightMatch(r, c);
 
 	if (match1 + match2 >= 2) {
-		mid(r, c);
-		left(r, c - match1);
-		right(r, c + match2);
+		combo.mid(r, c);
+		combo.left(r, c - match1);
+		combo.right(r, c + match2);
 
-		for (int col = left()->col; col <= right()->col; ++col) {
+		for (int col = combo.left()->col; col <= combo.right()->col; ++col) {
 			match1 = grid->downMatch(r, col);
 			match2 = grid->upMatch(r, col);
 
 			if (match1 + match2 >= 2) {
-				down(r - match1, col);
-				up(r + match2, col);
+				combo.down(r - match1, col);
+				combo.up(r + match2, col);
 
-				state = COMBO;
-				comboType = MULTI;
-				initComboState();
+				combo.state = COMBO;
+				combo.comboType = MULTI;
+				combo.initComboState();
+				grid->events.push_back(combo);
 				return true;
 			}
 		}
 
-		state = COMBO;
-		comboType = HORI;
-		initComboState();
+		combo.state = COMBO;
+		combo.comboType = HORI;
+		combo.initComboState();
+		grid->events.push_back(combo);
 		return true;
 	}
 	else {
@@ -318,32 +324,34 @@ bool GridEvent::detectCombo(Cell &cell) {
 		match2 = grid->upMatch(r, c);
 
 		if ( match1 + match2 >= 2) {
-			mid(r, c);
-			down(r - match1, c);
-			up(r + match2, c);
+			combo.mid(r, c);
+			combo.down(r - match1, c);
+			combo.up(r + match2, c);
 
-			for (int row=down()->row; row <= up()->row; ++row) {
+			for (int row=combo.down()->row; row <= combo.up()->row; ++row) {
 				match1 = grid->leftMatch(row, c);
 				match2 = grid->rightMatch(row, c);
 
 				if (match1 + match2 >= 2) {
-					left(row, c - match1);
-					right(row, c + match2);
+					combo.left(row, c - match1);
+					combo.right(row, c + match2);
 
-					state = COMBO;
-					comboType = MULTI;
-					initComboState();
+					combo.state = COMBO;
+					combo.comboType = MULTI;
+					combo.initComboState();
+					grid->events.push_back(combo);
 					return true;
 				} 
 			}
 
-			state = COMBO;
-			comboType = VERT;
-			initComboState();
+			combo.state = COMBO;
+			combo.comboType = VERT;
+			combo.initComboState();
+			grid->events.push_back(combo);
 			return true;
 		}
 
-		state = NONE;
+		combo.state = NONE;
 		return false;
 	}
 }
@@ -367,8 +375,7 @@ bool GridEvent::detectFallAfterCombo(Grid *grid, GridEvent &ev) {
 			return false;
 
 		for (c = ev.left()->col; c <= ev.right()->col; ++c) {
-			if (grid->blocks[r][c].getState() == Block::enabled)
-				falls.push_back(Fall(r, c));
+			detectFall(grid, Fall(r, c));
 		}
 
 		break;
@@ -379,8 +386,7 @@ bool GridEvent::detectFallAfterCombo(Grid *grid, GridEvent &ev) {
 		if (r >= (int)grid->blocks.size())
 			return false;
 		else {
-			if (grid->blocks[r][c].getState() == Block::enabled)
-				falls.push_back(Fall(r, c));
+			detectFall(grid, Fall(r, c));
 		}
 		
 		break;
@@ -390,15 +396,12 @@ bool GridEvent::detectFallAfterCombo(Grid *grid, GridEvent &ev) {
 		if (r >= (int)grid->blocks.size())
 			return false;
 		for (c = ev.left()->col; c <= ev.right()->col; ++c) {
-			if (grid->blocks[r][c].getState() == Block::enabled && r != ev.mid()->row)
-				falls.push_back(Fall(r, c));
+			if (r != ev.mid()->row)
+				detectFall(grid, Fall(r, c));
 		}
 		r = ev.up()->row + 1;
 		c = ev.up()->col;
-		if (r < (int)grid->blocks.size()) {
-			if (grid->blocks[r][c].getState() == Block::enabled)
-				falls.push_back(Fall(r, c));
-		}
+		detectFall(grid, Fall(r, c));
 
 		break;
 
@@ -407,34 +410,41 @@ bool GridEvent::detectFallAfterCombo(Grid *grid, GridEvent &ev) {
 		return false;
 	}
 	
-	bool isFall = falls.size() > 0;
-	if (isFall) {
-		for (list<Fall>::iterator it = falls.begin(); it != falls.cend(); ++it) {
-			initFallState(grid, *it);
-		}
-	}
-
 	ev.changeState(NONE);
-	grid->falls.insert(grid->falls.end(), falls.begin(), falls.end());
 
-	return isFall;
+	return true;
 }
 
-bool GridEvent::detectFallAfterSwap(Grid *grid, Fall &cell) {
+bool GridEvent::detectFall(Grid *grid, Fall &cell) {
 	int r = cell.row;
 	int c = cell.col;
 
 	if (r >= (int)grid->blocks.size())
 		return false;
 
-	if (grid->blocks[r-1][c].getState() == Block::disabled || grid->blocks[r-1][c].getState() == Block::fall) 
-		grid->falls.push_back(cell);
+	Block::gameState downState;
+	Block::gameState midState;
+	Block::gameState upState; 
 
-	if (cell.enabled) {
+	downState = r > 1 ? grid->blocks[r-1][c].getState() : (Block::gameState)-1;
+	midState = grid->blocks[r][c].getState();
+	upState = r < (int)grid->blocks.size() - 1 ? grid->blocks[r+1][c].getState() : (Block::gameState)-1;
+
+	if (( downState == Block::disabled || downState == Block::fall ) && midState == Block::enabled) {
 		initFallState(grid, cell);
+		grid->falls.push_back(cell);
+		
 		return true;
 	}
-	else return false;
+	else if ( midState == Block::disabled && upState == Block::enabled ) {
+		Fall fall(r+1, c);
+		initFallState(grid, fall);
+		grid->falls.push_back(fall);
+
+		return true;
+	}
+
+	return false;
 }
 
 void GridEvent::initFallState(Grid *grid, Fall &cell) {
@@ -447,7 +457,7 @@ void GridEvent::initFallState(Grid *grid, Fall &cell) {
 		++r;
 	}
 
-	cell.lastFall = timer.time();
+	cell.lastFall = mainTimer->time();
 }
 
 
