@@ -1,14 +1,16 @@
 #include "input.h"
 #include <map>
 #include <list>
+#include <vector>
 
 namespace Input
 {
+	int Player::playerCount = 0;
 
 namespace
 {
-	list<Action *> availableActions;
-	list<Player> players;
+	list<Action *> availableActions; // all declared but undefined actions are here
+	vector<Player *> players;
 	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
 	const string *stateLabels; // array of labels; indices are states returned by getState()
 	int numStates;
@@ -47,9 +49,38 @@ void Action::define(void * actionClassInstance, ActionFunc action)
 	this->action = action;
 }
 
-void Player::addAction(void *classInstance, void (*action)(void *, int),
-                           int actionType, string shortDesc)
+bool Action::isSameAction(ActionScope scope, int activeState, int actionType)
 {
+	return this->scope == scope &&
+	       this->activeState == activeState &&
+		   this->actionType == actionType;
+}
+
+bool Action::isRelatedAction(ActionScope scope, int activeState)
+{
+	return this->scope == scope &&
+	       this->activeState == activeState;
+}
+
+void Player::addAction(Action *action)
+{
+	actions.push_back(action);
+}
+
+bool Player::isActionDefined(Action::ActionScope scope, int activeState, int actionType)
+{
+	for (list<Action *>::iterator a = availableActions.begin(); a != availableActions.end(); ++a)
+		if ((*a)->isSameAction(scope, activeState, actionType))
+			return true;
+	return false;
+}
+
+bool Player::hasActionsDefined(Action::ActionScope scope, int activeState)
+{
+	for (list<Action *>::iterator a = availableActions.begin(); a != availableActions.end(); ++a)
+		if ((*a)->isRelatedAction(scope, activeState))
+			return true;
+	return false;
 }
 
 void setGSFunc(int (*getStateFunc)())
@@ -150,18 +181,90 @@ void removeMotions(void *classInstance)
  * Actions
  */
 
-void declareAction(int activeState, int actionType, string shortDesc)
+void declareAction(Action::ActionScope scope, int activeState, int actionType, string shortDesc)
 {
-	Action *a = new Action(activeState, actionType, shortDesc);
+	Action *a = new Action(scope, activeState, actionType, shortDesc);
 	availableActions.push_back(a);
 }
 
 void defineAction(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action)
 {
+	// Find the action decl that matches this definition; this is the action to
+	//  duplicate/add to players.
+	list<Action *>::iterator a = availableActions.begin();
+	for (; a != availableActions.end(); ++a)
+		if ((*a)->isSameAction(scope, activeState, actionType))
+			break;
+	//FIXME: should bomb if action is not declared
+
+	Action * newAction = new Action(**a);
+	newAction->define(classInstance, action);
+
+	vector<Player *>::iterator p = players.begin();
+	switch (scope)
+	{
+	case Action::SCOPE_FIRST_PLAYER:
+		// only check first player to see if this action is defined
+		(*p)->addAction(newAction);
+		break;
+	case Action::SCOPE_CURRENT_PLAYER:
+		// go through each player; if every player has this action defined, create
+		// a new player and add the action to him
+		for (; p != players.end(); ++p)
+			if (!((*p)->isActionDefined(scope, activeState, actionType)))
+			{
+				(*p)->addAction(newAction);
+				break;
+			}
+			// push back a new player, since the action is defined for everyone else
+			players.push_back(new Player());
+			players.back()->addAction(newAction);
+		break;
+	case Action::SCOPE_ALL_PLAYERS:
+		// add definition to all player actions containers
+		for (; p != players.end(); ++p)
+			(*p)->addAction(newAction);
+		break;
+	}
 }
 
 void defineActions(Action::ActionScope scope, int activeState, void *classInstance, Action::ActionFunc action)
 {
+	Action * newAction;
+	vector<Player *>::iterator p;
+
+	// for every action decl that matches this definition, duplicate/add to players.
+	for (list<Action *>::iterator a = availableActions.begin(); a != availableActions.end(); ++a)
+	{
+		if ((*a)->isRelatedAction(scope, activeState))
+		{
+			newAction = new Action(**a);
+			newAction->define(classInstance, action);
+			switch (scope)
+			{
+			case Action::SCOPE_FIRST_PLAYER:
+				(*p)->addAction(newAction);
+				break;
+			case Action::SCOPE_CURRENT_PLAYER:
+				// go through each player; if every player has this action defined, create
+				// a new player and add the action to him
+				for (p = players.begin(); p != players.end(); ++p)
+					if(!(*p)->hasActionsDefined(scope, activeState))
+					{
+						(*p)->addAction(newAction);
+						break;
+					}
+				// push back a new player, since the action is defined for everyone else
+				players.push_back(new Player());
+				players.back()->addAction(newAction);
+				break;
+			case Action::SCOPE_ALL_PLAYERS:
+				for (p = players.begin(); p != players.end(); ++p)
+					(*p)->addAction(newAction);
+				break;
+			}
+		}
+	}
 }
 
 /**

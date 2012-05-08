@@ -72,11 +72,11 @@ namespace Input
 	{
 	public:
 		enum ActionState {STATE_PRESS, STATE_HOLD, STATE_RELEASE};
-		enum ActionScope {SCOPE_GLOBAL, SCOPE_PLAYER};
+		enum ActionScope {SCOPE_FIRST_PLAYER, SCOPE_CURRENT_PLAYER, SCOPE_ALL_PLAYERS};
 		typedef void (*ActionFunc)(void *actionsClassInstance,
 								   int actionState, int actionType);
 	private:
-
+		ActionScope scope;
 		int activeState; // action is only active this matches getState()
 		int actionType; // type of action, which is passed as an arg to the action func
 		string shortDesc; // 1-2 word description of what action does
@@ -87,8 +87,10 @@ namespace Input
 		ActionFunc action;
 	public:
 		// declare an action with no definition (no action function attached)
-		Action(int activeState, int actionType, string shortDesc) :
+		Action(ActionScope scope, int activeState, int actionType, string shortDesc) :
 		  activeState(activeState), actionType(actionType), shortDesc(shortDesc){}
+		bool isSameAction(ActionScope scope, int activeState, int actionType);
+		bool isRelatedAction(ActionScope scope, int activeState);
 
 #if 0
 		// declare/define an action function (with an action function attached)
@@ -104,11 +106,15 @@ namespace Input
 	class Player
 	{
 	private:
-		list<Action> actions;
+		static int playerCount;
+		int playerNum;
+		list<Action *> actions;
 	public:
-		void addAction(void *classInstance, void (*action)(void *, int),
-	                        int actionType, string shortDesc);
+		void addAction(Action *action);
+		bool isActionDefined(Action::ActionScope scope, int activeState, int actionType); // should have 1
+		bool hasActionsDefined(Action::ActionScope scope, int activeState); // may have >1
 	};
+
 
 	// getStateFunc returns state of program, and only uses actions with the same state
 	void setGSFunc(int (*getStateFunc)()); 
@@ -147,7 +153,7 @@ namespace Input
 	 */
 
 	// determine actions program supports before instantiation of objects that use actions
-	void declareAction(int activeState, int actionType, string shortDesc); 
+	void declareAction(Action::ActionScope scope, int activeState, int actionType, string shortDesc); 
 	// define an action function for a particular action
 	void defineAction(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action);
 	// convenience function; define every action for a given scope/state at once

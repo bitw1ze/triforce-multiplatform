@@ -31,12 +31,12 @@ void Triforce::declareActions(void *tfInstance) {
 								 	 t->menuButtons->mousePassiveMotion);
 	Input::addMouseMotionFunc(t->menuButtons, MENU, // same as passive
 	                          t->menuButtons->mousePassiveMotion);
-	Input::declareAction(MENU, ACT_UP, menuActionLabels[ACT_UP]);
-	Input::declareAction(MENU, ACT_DOWN, menuActionLabels[ACT_DOWN]);
-	Input::declareAction(MENU, ACT_LEFT, menuActionLabels[ACT_LEFT]);
-	Input::declareAction(MENU, ACT_RIGHT, menuActionLabels[ACT_RIGHT]);
-	Input::declareAction(MENU, ACT_ACTIVATE, menuActionLabels[ACT_ACTIVATE]);
-	Input::declareAction(MENU, ACT_QUIT, menuActionLabels[ACT_QUIT]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_UP, menuActionLabels[ACT_UP]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_DOWN, menuActionLabels[ACT_DOWN]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_LEFT, menuActionLabels[ACT_LEFT]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_RIGHT, menuActionLabels[ACT_RIGHT]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, menuActionLabels[ACT_ACTIVATE]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_QUIT, menuActionLabels[ACT_QUIT]);
 }
 
 /**
@@ -92,7 +92,7 @@ Triforce::Triforce()
 	Input::setGSFunc((int(*)()) getState);
 	Input::setGSLabels(gameStateLabels);
 	declareActions(this);
-	Input::defineActions(Input::Action::SCOPE_GLOBAL, MENU, this, doAction);
+	Input::defineActions(Input::Action::SCOPE_FIRST_PLAYER, MENU, this, doAction);
 }
 
 Triforce::~Triforce()
