@@ -229,8 +229,7 @@ void removeMotions(void *classInstance)
 
 void declareAction(Action::ActionScope scope, int activeState, int actionType, string shortDesc)
 {
-	Action *a = new Action(scope, activeState, actionType, shortDesc);
-	availableActions.push_back(a);
+	availableActions.push_back(new Action(scope, activeState, actionType, shortDesc));
 }
 
 void defineAction(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action)

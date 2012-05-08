@@ -62,6 +62,7 @@ void Buttons::hoverPrev() {
 		currentBtn = buttons.end();
 	--currentBtn;
 	unhoverAll();
+	unpressAll();
 	(*currentBtn)->hover();
 }
 
@@ -74,6 +75,7 @@ void Buttons::hoverNext() {
 	if (currentBtn == buttons.end())
 		currentBtn = buttons.begin();
 	unhoverAll();
+	unpressAll();
 	(*currentBtn)->hover();
 }
 
@@ -97,11 +99,11 @@ void Buttons::unpressAll() {
 }
 
 void Buttons::activateCurrent() {
-	if ((*currentBtn)->hovering)
+	if ((*currentBtn)->hovering && (*currentBtn)->pressing)
 		(*currentBtn)->activate();
 	else
 		for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
-			if ((*button)->hovering)
+			if ((*button)->hovering && (*button)->pressing)
 				(*button)->activate();
 	unpressCurrent();
 }
