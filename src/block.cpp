@@ -29,7 +29,7 @@
 
 #include "game.h"
 
-const int Block::fallFactor = 12;
+const int Block::fallFactor = 8;
 
 Block::Block() : CObject() {
 	timer = new CTimer(); 
