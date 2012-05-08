@@ -270,9 +270,19 @@ Grid::~Grid() {
 /*	swap
 	Swap two adjacent blocks that the cursor has selected. */
 bool swap(Block &left, Block &right) {
-	if ( left.getState() == Block::combo || left.getState() == Block::fall ||
-		right.getState() == Block::combo || right.getState() == Block::fall)
+	Block::gameState ls = left.getState();
+	Block::gameState rs = right.getState();
+
+	cout << ls << " : " << rs << endl;
+
+	if ( ls == Block::combo || rs == Block::combo ||
+		ls == Block::fall || rs == Block::fall ||
+		ls == Block::nextFall || rs == Block::nextFall)
 		return false;
+
+	if (left.getFallOffset() != 0 || right.getFallOffset() != 0) {
+		return false;
+	}
 
 	Block temp = left;
 	left = right;

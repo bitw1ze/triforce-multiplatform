@@ -148,7 +148,6 @@ void GamePlay::normalKeys(unsigned char key, int x, int y) {
 			changeState(play);
 		}
 		else if (getState() == play) {
-			cout << "pressed p\n";
 			changeState(pause);
 		}
 		break;

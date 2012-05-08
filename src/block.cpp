@@ -57,12 +57,10 @@ void Block::clone(const Block &src) {
 }
 
 void Block::fallDown() {
-	int h = getHeight();
-	int offset = h / fallFactor;
-	fallOffset = fallOffset + offset;
+	int offset = getHeight() / fallFactor;;
+	fallOffset += offset;
 	offsetY(offset);
-	cout << fallOffset << endl;
-	if (fallOffset >= h) {
+	if (fallOffset >= getHeight()) {
 		resetFall();
 	}
 }
@@ -125,6 +123,7 @@ void Block::display() {
 	case inactive:
 		draw(0);
 		break;
+	case nextFall:
 	case disabled:
 		break;
 	}

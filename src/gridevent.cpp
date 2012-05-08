@@ -247,12 +247,14 @@ void GridEvent::doFall(Grid *grid, Fall &cell) {
 	else
 		return;
 	
-	if (r <= 1 || grid->blocks[r-1][c].getState() == Block::enabled) {
+	if (r <= 1 || grid->blocks[r-1][c].getState() != Block::disabled) {
 		cleanupFall(grid, cell);
 		return;
 	}
 
 	row = r;
+	
+
 	while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::fall) {
 		grid->blocks[row][c].fallDown();
 		++row;
@@ -270,6 +272,9 @@ void GridEvent::doFall(Grid *grid, Fall &cell) {
 
 		// decrement the current row that we begin from.
 		r = --cell.row;
+		if (grid->blocks[r][c].getState() == Block::disabled) {
+			grid->blocks[r][c].changeState(Block::nextFall);
+		}
 	}
 }
 
