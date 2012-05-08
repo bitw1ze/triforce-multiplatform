@@ -51,16 +51,6 @@ Grid::Grid(GamePlay *gp) {
 void Grid::changeState(gameState gs) {
 	switch (gs) {
 	case combo:
-		
-		/*
-		if (state != combo) {
-			timer_combo = Block::interval_combo;
-			last_combo = mainTimer->time();
-		}
-		else
-			timer_combo += Block::interval_combo;
-			*/
-
 		break;
 	case play:
 		last_push = mainTimer->time();
@@ -79,6 +69,8 @@ void Grid::display() {
 }
 
 void Grid::composeFrame() {
+	GridEvent::composeFrame(this, events);
+
 	for (uint32 i=0; i<blocks.size(); ++i) 
 		for (uint32 j=0; j<ncols; ++j)
 			blocks[i][j].composeFrame();
@@ -90,17 +82,7 @@ void Grid::composeFrame() {
 			last_push = mainTimer->time();
 		}
 		break;
-	case combo:
-		if (GridEvent::finish(events)) {
-			changeState(play);
-			events.clear();
-		}
-		/*
-		else
-			for (list<GridEvent>::iterator it = events.begin(); it != events.cend(); ++it)
-				(*it).printStates();
-				*/
-		break;
+
 	}
 }
 
@@ -196,27 +178,29 @@ void Grid::swapBlocks() {
 	c2 = c1 + 1;
 	r = cursor->getRow();
 
-	if (r >= countEnabledRows())
+	if (r >= blocks.size())
 		return;
 
 	GridEvent event1(this), event2(this);
 
 	if (swap(blocks[r][c1], blocks[r][c2])) {
 		if (event1.detectCombo(Cell(r, c1))) {
-			event1.initComboState();
 			events.push_back(event1);
 		}
-		else if (event1.detectSwapFall(Cell(r, c1))) {
-			//event1.initFallState();
+		else if (event1.detectFallAfterSwap(Cell(r, c1))) {
+			events.push_back(event1);
+		}
+		else if (event1.detectFallAfterSwap(Cell(r + 1, c1))) {
 			events.push_back(event1);
 		}
 		
 		if (event2.detectCombo(Cell(r, c2))) {
-			event2.initComboState();
 			events.push_back(event2);		
 		}
-		else if (event2.detectSwapFall(Cell(r, c2))) {
-			//events.initFallState();
+		else if (event2.detectFallAfterSwap(Cell(r, c2))) {
+			events.push_back(event2);
+		}
+		else if (event2.detectFallAfterSwap(Cell(r + 1, c2))) {
 			events.push_back(event2);
 		}
 	}
@@ -230,7 +214,7 @@ void Grid::swapBlocks() {
 int Grid::leftMatch(int r, int c, bool ignoreActive) {
 	int matches = 0;
 
-	if (c > 0) {
+	if (c > 0 && c < ncols && r >= 0 && r < (int)blocks.size()) {
 		for (int i=c-1; i >= 0; --i) {
 			if (match(blocks[r][c], blocks[r][i], ignoreActive)) 
 				++matches;
@@ -245,7 +229,7 @@ int Grid::leftMatch(int r, int c, bool ignoreActive) {
 int Grid::rightMatch(int r, int c, bool ignoreActive) {
 	int matches = 0;
 
-	if (c < ncols - 1) {
+	if (c < ncols - 1 && c >= 0 && r < (int)blocks.size() && r >= 0) {
 		for (int i=c+1; i < ncols; ++i) {
 			if (match(blocks[r][c], blocks[r][i], ignoreActive)) 
 				++matches;
@@ -260,8 +244,8 @@ int Grid::rightMatch(int r, int c, bool ignoreActive) {
 int Grid::upMatch(int r, int c, bool ignoreActive) {
 	int matches = 0;
 
-	if (r < countEnabledRows() - 1) {
-		for (int i=r+1; i < countEnabledRows(); ++i) {
+	if (r < blocks.size() - 1 && r >= 0 && c >= 0 && c < ncols) {
+		for (int i=r+1; i < blocks.size(); ++i) {
 			if (match(blocks[r][c], blocks[i][c], ignoreActive)) 
 				++matches;
 			else
@@ -322,4 +306,6 @@ bool match(const Block &left, const Block &right, bool ignoreActive) {
 		return (ls == Block::enabled || ls == Block::inactive) && (rs == Block::enabled || rs == Block::inactive);
 	else
 		return (ls == Block::enabled && rs == Block::enabled);
+
+	return false;
 }

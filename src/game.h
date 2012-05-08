@@ -36,9 +36,11 @@ struct Point {
 
 class Cell {
 public:
-	Cell() { row = 0; col = 0; }
-	Cell(int r, int c) { row = r, col = c; }
+	Cell() { row = 0; col = 0; enabled = true; }
+	Cell(const Cell &src) { row = src.row; col = src.col; enabled = src.enabled; }
+	Cell(int r, int c, bool e = true) { row = r, col = c; enabled = e; }
 	int row, col;
+	bool enabled;
 };
 
 class GamePlay {
@@ -148,30 +150,37 @@ public: enum gameState { inactive, enabled, disabled, combo, fall };
 protected:
 	gameState state;
 	CTimer *timer;
-	//int last_fall, interval_fall, total_falls, count_falls, fall_factor;
+	int fallOffset;
 
 public:
 	Block();
 	Block(const Block &block);
 	Block & operator =(const Block &block);
+	void clone(const Block &src);
 	~Block() {}
+
 	friend bool swap(Block &left, Block &right);
+	friend bool match(const Block &left, const Block &right, bool ignoreActive = false);
+
 	void display();
 	void composeFrame();
-	//void setFallCount(int falls) { total_falls = falls * fall_factor; count_falls = 0; }
 	void changeState(gameState gs);
 	gameState getState() const { return state; }
-
-	friend bool match(const Block &left, const Block &right, bool ignoreActive = false);
 	
 	Grid *grid;
+
+	void fallDown();
+	void resetFall();
+	int getFallOffset() const;
+
+	static const int fallFactor;
 };
 
 class GridEvent {
 public: 
-	enum EventState { COMBO, FALL, NONE };
-	enum ComboType { HORI, VERT, MULTI };
-	enum FallType { AFTERSWAP, AFTERCOMBO };
+	static enum EventState { NONE, COMBO, FALL, DONE_FALLING };
+	static enum ComboType { HORI, VERT, MULTI };
+	static enum FallType { AFTERSWAP, AFTERCOMBO };
 protected:
 	Cell *_left, *_right, *_up, *_down, *_mid;
 	Grid *grid;
@@ -184,7 +193,9 @@ protected:
 	ComboType comboType;
 	FallType fallType;
 
+	int lastFall;
 	static int comboInterval;
+	static int fallInterval;
 	
 public:
 	GridEvent(Grid *grid);
@@ -205,16 +216,24 @@ public:
 	EventState getState() { return state; }
 	void changeState(EventState st) { state = st; }
 
-	static bool areFinished(list<GridEvent> &combos);
-	static bool finish(list<GridEvent> &combos);
+	bool hasFalling();
+
+	static bool areFalling(list<GridEvent> &events);
+	static bool areCombos(list<GridEvent> &events);
+	static void composeFrame(Grid *grid, list<GridEvent> &events);
+	static void checkFallResult(Grid *grid, list<GridEvent> &events);
 
 	bool detectCombo(Cell &cell);
-	bool detectComboFall();
-	bool detectSwapFall(Cell &cell);
+	bool detectFallAfterCombo();
+	bool detectFallAfterSwap(const Cell &cell);
 
 	void startTimer();
-	bool initComboState();
-	bool isFinished();
+
+	void initComboState();
+	void initFallState();
+	
+	bool checkComboFinished();
+	void doFall(Cell &cell);
 	void setBlockStates(Block::gameState gs);
 	int count() const;
 

@@ -29,31 +29,52 @@
 
 #include "game.h"
 
+const int Block::fallFactor = 12;
+
 Block::Block() : CObject() {
 	timer = new CTimer(); 
 	timer->start();
 
-	/*
-	last_fall = -1;
-	interval_fall = 20;
-	total_falls = 0;
-	fall_factor = 6;
-	count_falls = 0;
-	*/
-
+	fallOffset = 0;
 	state = inactive; 
 }
 
 Block::Block(const Block &block) {
-	changeState(block.getState());
-	setSprite(block.getSprite());
+	clone(block);
 }
 
 Block & Block::operator =(const Block &block) {
-	changeState(block.getState());
-	setSprite(block.getSprite());
+	clone(block);
 
 	return *this;
+}
+
+void Block::clone(const Block &src) {
+	changeState(src.getState());
+	setSprite(src.getSprite());
+	timer = src.timer;
+	fallOffset = src.fallOffset;
+}
+
+void Block::fallDown() {
+	int h = getHeight();
+	int offset = h / fallFactor;
+	fallOffset = fallOffset + offset;
+	offsetY(offset);
+	cout << fallOffset << endl;
+	if (fallOffset >= h) {
+		resetFall();
+	}
+}
+
+void Block::resetFall() {
+	fallOffset = 0;
+	offsetY(-getHeight());
+	cout << "resetted fall" << endl;
+}
+
+int Block::getFallOffset() const {
+	return fallOffset;
 }
 
 /*	changeState
@@ -64,10 +85,6 @@ void Block::changeState(gameState gs) {
 	case combo:
 		break;
 	case fall:
-		/*
-		last_fall = timer->time();
-		count_falls = 0;
-		*/
 		break;
 	case disabled:
 		break;
@@ -82,30 +99,6 @@ void Block::composeFrame() {
 		break;
 
 	case fall:
-		/*
-		if (timer->elapsed(last_fall, interval_fall)) {
-			last_fall = timer->time();
-			offsetY(getHeight() / fall_factor);
-			++count_falls;
-		}
-		if (count_falls >= total_falls) {
-			int n = (total_falls / fall_factor);
-			offsetY(n * -getHeight());
-			state = enabled;
-			*/
-			/*
-			FIXME
-			Block *temp = this;
-			for (int i=0; i<n; ++i)
-				temp = temp->down;
-			temp->setSprite(getSprite());
-			temp->changeState(enabled);
-			state = disabled;
-
-			temp->detectAndSetComboState();
-		}
-			*/
-
 		break;
 
 	case inactive:
