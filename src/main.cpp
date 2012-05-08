@@ -42,7 +42,7 @@ void specialKeysUp(int key, int x, int y) {
 }
 
 void normalKeys(unsigned char key, int x, int y) {
-	triforce->normalKeys(key, x, y);
+	//triforce->normalKeys(key, x, y);
 	Input::keyPress(key, x, y);
 }
 

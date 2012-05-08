@@ -21,11 +21,11 @@ extern CTimer *mainTimer;
 class Triforce {
 public :
 	enum GameState {MENU, PLAY, PAUSE, QUIT, _NUMBER_OF_STATES};
-	const static string gameStateLabels[_NUMBER_OF_STATES];
-
 	enum Actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT, ACT_ACTIVATE, ACT_QUIT, _NUMBER_OF_ACTIONS};
-	const static string menuActionLabels[_NUMBER_OF_ACTIONS];
 private:
+	const static string gameStateLabels[_NUMBER_OF_STATES];
+	const static string actionLabels[_NUMBER_OF_ACTIONS];
+
 	/**
 	  * Files
 	  */
@@ -42,10 +42,6 @@ private:
 	int current_frame,
 		last_time;
 
-	/**
-	 * Input actions routines
-	 */
-	static void declareActions(void *tfInstance);
 	void bindDefaultActionKeys();
 
 	/**
@@ -57,6 +53,8 @@ private:
 	void loadImages();
 
 public:
+	static void declareActions(void *tfInstance);
+	static void doAction(void *tfInstance, int actionState, int actionType);
 
 	Triforce();
 	~Triforce();
@@ -69,12 +67,6 @@ public:
 	// FIXME: now that setState is static, does this wrapper really need to exist?
 	static void setStateWrapper(void *tfInstance, int gameState); // for Button callbacks
 	static GameState getState() {return state;}
-
-	/**
-	 * Input Actions
-	 */
-	// for callback by Input
-	static void doAction(void *tfInstance, int actionState, int actionType);
 
 	// deprecated
 	void specialKeys(int key, int x, int y);

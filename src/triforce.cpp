@@ -3,7 +3,7 @@
 const string Triforce::gameStateLabels[Triforce::_NUMBER_OF_STATES] = {
 	"Menu", "Play", "Pause", "Quit"
 };
-const string Triforce::menuActionLabels[Triforce::_NUMBER_OF_ACTIONS] = {
+const string Triforce::actionLabels[Triforce::_NUMBER_OF_ACTIONS] = {
 	"Up", "Down", "Left", "Right", "Activate", "Quit"
 };
 
@@ -25,19 +25,14 @@ void Triforce::declareActions(void *tfInstance)
 {
 	Triforce *t = (Triforce *)tfInstance;
 
-	// Since the Buttons class be instanced multiple times (for different states),
-    //   and it's better for reuse if it doesn't depend upon Input, lets declare
-    //   it's actions wherever it is instanced.
-	Input::addMousePassiveMotionFunc(t->menuButtons, MENU,
-								 	 t->menuButtons->mousePassiveMotion);
-	Input::addMouseMotionFunc(t->menuButtons, MENU, // same as passive
-	                          t->menuButtons->mousePassiveMotion);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_UP, menuActionLabels[ACT_UP]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_DOWN, menuActionLabels[ACT_DOWN]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_LEFT, menuActionLabels[ACT_LEFT]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_RIGHT, menuActionLabels[ACT_RIGHT]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, menuActionLabels[ACT_ACTIVATE]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_QUIT, menuActionLabels[ACT_QUIT]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_UP, actionLabels[ACT_UP]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_DOWN, actionLabels[ACT_DOWN]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_LEFT, actionLabels[ACT_LEFT]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_RIGHT, actionLabels[ACT_RIGHT]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, actionLabels[ACT_ACTIVATE]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_QUIT, actionLabels[ACT_QUIT]);
+
+	Grid::declareActions();
 }
 
 // Hard coded default bindings
@@ -49,11 +44,18 @@ void Triforce::bindDefaultActionKeys()
 	Input::bindSpecialKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_LEFT, GLUT_KEY_LEFT);
 	Input::bindSpecialKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_RIGHT, GLUT_KEY_RIGHT);
 
-	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, SPACE);
+	//Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, SPACE);
 	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, ENTER);
 	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, 'a');
+	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, 'e');
 
 	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_QUIT, ESC);
+
+	Input::bindKey(player, Input::Action::SCOPE_CURRENT_PLAYER, PLAY, Grid::ACT_PUSH, SPACE);
+	Input::bindKey(player, Input::Action::SCOPE_CURRENT_PLAYER, PLAY, Grid::ACT_PUSH, 's');
+	Input::bindKey(player, Input::Action::SCOPE_CURRENT_PLAYER, PLAY, Grid::ACT_PUSH, 'd');
+	Input::bindKey(player, Input::Action::SCOPE_CURRENT_PLAYER, PLAY, Grid::ACT_SWAP, 'a');
+	Input::bindKey(player, Input::Action::SCOPE_CURRENT_PLAYER, PLAY, Grid::ACT_SWAP, 'f');
 }
 
 /**
@@ -89,6 +91,42 @@ void Triforce::loadImages()
   background.loadGLTextures();
 }
 
+void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
+	Triforce *t = (Triforce *)tfInstance;
+
+	switch ((enum Input::Action::ActionState)actionState)
+	{
+	case Input::Action::STATE_RELEASE:
+		switch((enum Actions)actionType)
+		{
+		case ACT_LEFT:
+		case ACT_UP:
+			t->menuButtons->hoverPrev();
+			break;
+		case ACT_RIGHT:
+		case ACT_DOWN:
+			t->menuButtons->hoverNext();
+			break;
+		case ACT_ACTIVATE:
+			t->menuButtons->activateCurrent();
+			break;
+		case ACT_QUIT:
+			exit(0);
+			break;
+		}
+		break;
+	case Input::Action::STATE_PRESS:
+	case Input::Action::STATE_HOLD:
+		switch((enum Actions)actionType)
+		{
+		case ACT_ACTIVATE:
+			t->menuButtons->pressCurrent();
+			break;
+		}
+		break;
+	}
+}
+
 /**
  * Public
  */
@@ -98,16 +136,29 @@ Triforce::Triforce()
 	current_frame = 0; 
 	loadImages(); 
 
-	// create menu buttons
+	/*
+	 * Create menu buttons
+	 */
 	int vpWidth = background.getViewportWidth(),
  	    vpHeight = background.getViewportHeight();
 	menuButtons = new Buttons(vpWidth, vpHeight);
 	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
 	menuButtons->add(this, QUIT, setStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
 
-	// configure Input
+	/*
+	 * Configure input
+	 */
+
 	Input::setGSFunc((int(*)()) getState);
 	Input::setGSLabels(gameStateLabels);
+
+	// Since the Buttons class be instanced multiple times (for different states),
+    //   and it's better for reuse if it doesn't depend upon Input, lets declare
+    //   it's actions wherever it is instanced.
+	Input::addMousePassiveMotionFunc(menuButtons, MENU,
+								 	 menuButtons->mousePassiveMotion);
+	Input::addMouseMotionFunc(menuButtons, MENU, // same as passive
+	                          menuButtons->mousePassiveMotion);
 	Input::addPlayer();
 	declareActions(this);
 	Input::defineActions(Input::Action::SCOPE_FIRST_PLAYER, MENU, this, doAction);
@@ -164,46 +215,6 @@ void Triforce::setStateWrapper(void *tfInstance, int gameState)
 {
 	Triforce * t = (Triforce *)tfInstance;
 	t->setState((enum GameState)gameState);
-}
-
-/**
- * Input Actions
- */
-
-void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
-	Triforce *t = (Triforce *)tfInstance;
-
-	switch ((enum Input::Action::ActionState)actionState)
-	{
-	case Input::Action::STATE_RELEASE:
-		switch((enum Actions)actionType)
-		{
-		case ACT_LEFT:
-		case ACT_UP:
-			t->menuButtons->hoverPrev();
-			break;
-		case ACT_RIGHT:
-		case ACT_DOWN:
-			t->menuButtons->hoverNext();
-			break;
-		case ACT_ACTIVATE:
-			t->menuButtons->activateCurrent();
-			break;
-		case ACT_QUIT:
-			exit(0);
-			break;
-		}
-		break;
-	case Input::Action::STATE_PRESS:
-	case Input::Action::STATE_HOLD:
-		switch((enum Actions)actionType)
-		{
-		case ACT_ACTIVATE:
-			t->menuButtons->pressCurrent();
-			break;
-		}
-		break;
-	}
 }
 
 void Triforce::specialKeys(int key, int x, int y) {

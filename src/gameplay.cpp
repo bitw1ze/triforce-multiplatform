@@ -6,6 +6,7 @@
 */
 
 #include "game.h"
+#include "input.h"
 
 // Constants
 const string GamePlay::bgFile = "bg-play.bmp";

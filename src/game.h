@@ -38,8 +38,8 @@ struct Cell {
 };
 
 class GamePlay {
-protected:
 
+protected:
 	/* bitmap files */
 	static const string 
 		blockFiles[],
@@ -56,6 +56,7 @@ protected:
 	BMPClass background;
 
 public:
+
 	enum gameState {play, pause, quit, combo, fall};
 	CBaseSprite *blockSprites[nblocktypes],
 	            *cursorSprite,
@@ -85,7 +86,9 @@ class Grid {
 
 public:
 	enum gameState { play, combo };
+	enum Actions {ACT_SWAP, ACT_PUSH, _NUMBER_OF_ACTIONS};
 protected:
+	const static string actionLabels[_NUMBER_OF_ACTIONS];
 	int block_w, block_h,
 		grid_yspeed, grid_yoff,
 		last_push, last_combo,
@@ -100,6 +103,9 @@ protected:
 	void composeFrame();
 
 public:
+	static void declareActions();
+	static void doAction(void *gridInstance, int actionState, int actionType);
+
 	Grid(GamePlay *ge);
 	virtual ~Grid();
 	void pushRow();

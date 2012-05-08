@@ -11,6 +11,40 @@
 #include "game.h"
 #include "input.h"
 
+const string Grid::actionLabels[Grid::_NUMBER_OF_ACTIONS] = {
+	"Swap",
+	"Push"};
+
+void Grid::declareActions()
+{
+	Input::declareAction(Input::Action::SCOPE_CURRENT_PLAYER, Triforce::PLAY, ACT_SWAP, actionLabels[ACT_SWAP]);
+	Input::declareAction(Input::Action::SCOPE_CURRENT_PLAYER, Triforce::PLAY, ACT_PUSH, actionLabels[ACT_PUSH]);
+}
+
+void Grid::doAction(void *gridInstance, int actionState, int actionType)
+{
+	Grid *g = (Grid *)gridInstance;
+	switch((enum Input::Action::ActionState)actionState)
+	{
+	case Input::Action::STATE_PRESS:
+		switch((enum Actions)actionType)
+		{
+		case ACT_SWAP:
+			g->swapBlocks();
+			break;
+		case ACT_PUSH:
+			if (g->getState() == Grid::play)
+				g->pushRow();
+			break;
+		}
+	/*
+	case Input::Action::STATE_HOLD:
+	case Input::Action::STATE_RELEASE:
+	*/
+	}
+}
+
+
 /*	TODOs: 
 		- Make the grid manage its own timer and control when rows are pushed.
 		- Overload the draw function in blocks to control how they are drawn when
@@ -50,6 +84,8 @@ Grid::Grid(GamePlay *gp) {
 	for (int row = 0; row < startingRows; ++row) 
 		for (int col = 0; col < ncols; ++col) 
 			blocks[row][col]->offsetY( -1 * block_h * row );
+
+	Input::defineActions(Input::Action::SCOPE_CURRENT_PLAYER, Triforce::PLAY, this, doAction);
 }
 
 void Grid::changeState(gameState gs) {
