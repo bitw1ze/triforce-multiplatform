@@ -10,6 +10,59 @@
 #include "game.h"
 #include "input.h"
 
+void Grid::declareActions()
+{
+	using namespace Input;
+	using namespace PlayState;
+
+	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
+	// FIXME: I have a hunch that SCOPE_CURRENT_PLAYER stuff is broken, so
+    //	      comment it out and use SCOPE_FIRST_PLAYER for now
+	//Action::ActionScope scope = Action::SCOPE_CURRENT_PLAYER;
+	Triforce::GameState state = Triforce::PLAY;
+
+	declareAction(scope, state, SWAP, actionLabels[SWAP]);
+	declareAction(scope, state, PUSH, actionLabels[PUSH]);
+}
+void Grid::defineActions()
+{
+	using namespace Input;
+	using namespace PlayState;
+
+	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
+	Triforce::GameState state = Triforce::PLAY;
+
+	defineAction(scope, state, SWAP, this, doAction);
+	defineAction(scope, state, PUSH, this, doAction);
+}
+
+void Grid::doAction(void *gridInstance, int actionState, int actionType)
+{
+	using namespace PlayState;
+
+	Grid *g = (Grid *)gridInstance;
+	switch((enum Input::Action::ActionState)actionState)
+	{
+	case Input::Action::STATE_PRESS:
+		switch((enum Actions)actionType)
+		{
+		case SWAP:
+			g->swapBlocks();
+			break;
+		case PUSH:
+			if (g->getState() == Grid::play)
+				g->pushRow();
+			break;
+		}
+	/*
+	case Input::Action::STATE_HOLD:
+	case Input::Action::STATE_RELEASE:
+	*/
+	}
+	glutPostRedisplay();
+}
+
+
 /*	TODOs: 
 		- Make the grid manage its own timer and control when rows are pushed.
 		- Overload the draw function in blocks to control how they are drawn when
@@ -49,6 +102,8 @@ Grid::Grid(GamePlay *gp) {
 	for (int row = 0; row < startingRows; ++row) 
 		for (int col = 0; col < ncols; ++col) 
 			blocks[row][col].offsetY( -1 * block_h * row );
+
+	defineActions();
 }
 
 void Grid::changeState(gameState gs) {

@@ -14,21 +14,27 @@ using namespace Globals;
 
 extern CTimer *mainTimer;
 
+namespace MenuState {
+	enum Actions {
+		UP, DOWN, LEFT, RIGHT,
+		ACTIVATE, QUIT,
+		_NUMBER_OF_ACTIONS
+	};
+	static const string actionLabels[_NUMBER_OF_ACTIONS] = {
+		"Up", "Down", "Left", "Right",
+		"Activate", "Quit"
+	};
+};
+
  // FIXME: nearly everything is static... either:
  //   A) change to namespace  (i.e. no triforce class)
  //   B) use member functions instead (i.e. multiple class instances makes sense)
-
 class Triforce {
 public :
 	enum GameState {MENU, PLAY, PAUSE, QUIT, _NUMBER_OF_STATES};
+private:
 	const static string gameStateLabels[_NUMBER_OF_STATES];
 
-	enum Actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT, ACT_ACTIVATE, ACT_QUIT, _NUMBER_OF_ACTIONS};
-	const static string menuActionLabels[_NUMBER_OF_ACTIONS];
-private:
-	/**
-	  * Files
-	  */
 	static const string bgFile,
 		                playBtns[],
 		                quitBtns[];
@@ -42,10 +48,6 @@ private:
 	int current_frame,
 		last_time;
 
-	/**
-	 * Input actions routines
-	 */
-	static void declareActions(void *tfInstance);
 	void bindDefaultActionKeys();
 
 	/**
@@ -57,6 +59,9 @@ private:
 	void loadImages();
 
 public:
+	static void declareActions();
+	void defineActions();
+	static void doAction(void *tfInstance, int actionState, int actionType);
 
 	Triforce();
 	~Triforce();
@@ -70,14 +75,6 @@ public:
 	static void setStateWrapper(void *tfInstance, int gameState); // for Button callbacks
 	static GameState getState() {return state;}
 
-	/**
-	 * Input Actions
-	 */
-	// for callback by Input
-	static void doAction(void *tfInstance, int actionState, int actionType);
-
 	// deprecated
-	void specialKeys(int key, int x, int y);
-	void normalKeys(unsigned char key, int x, int y);
 	void mouseButtons(int button, int mouseState, int x, int y);
 };

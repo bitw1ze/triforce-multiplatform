@@ -86,11 +86,15 @@ namespace Input
 		// callback of registered action function
 		ActionFunc action;
 	public:
+		Action() : action(NULL), actionsClassInstance(NULL){};
 		// declare an action with no definition (no action function attached)
 		Action(ActionScope scope, int activeState, int actionType, string shortDesc) :
-		  scope(scope), activeState(activeState), actionType(actionType), shortDesc(shortDesc){}
+		  action(NULL), actionsClassInstance(NULL),
+		  scope(scope), activeState(activeState), actionType(actionType),
+		  shortDesc(shortDesc){}
 		bool isSameAction(ActionScope scope, int activeState, int actionType);
 		bool isRelatedAction(ActionScope scope, int activeState);
+		bool hasActiveStateOf(int activeState) {return this->activeState == activeState;}
 		void doAction(int actionState);
 
 #if 0
@@ -158,8 +162,7 @@ namespace Input
 	void declareAction(Action::ActionScope scope, int activeState, int actionType, string shortDesc); 
 	// define an action function for a particular action
 	void defineAction(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action);
-	// convenience function; define every action for a given scope/state at once
-	void defineActions(Action::ActionScope scope, int activeState, void *classInstance, Action::ActionFunc action);
+	Action * findActionDecl(Action::ActionScope scope, int activeState, int actionType);
 	void removeActions(void *classInstance);
 	void setActionLabels(int activeState, const string *labels);
 

@@ -9,9 +9,9 @@ namespace
 {
 	list<Action *> availableActions; // all declared but undefined actions are here
 	vector<Player *> players;
-	map<unsigned char, Action *> keyBindings;
-	map<int, Action *> specialKeyBindings;
-	map<int, Action *> mouseButtonBindings;
+	map<unsigned char, list<Action *>> keyBindings;
+	map<int, list<Action *>> specialKeyBindings;
+	map<int, list<Action *>> mouseButtonBindings;
 
 	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
 	const string *stateLabels; // array of labels; indices are states returned by getState()
@@ -119,39 +119,70 @@ void addPlayer()
  * Button/key Inputs
  */
 
+//FIXME: whole lot'a redundnancy 'round these here parts
+
 void keyPress(unsigned char key, int x, int y)
 {
-	map<unsigned char, Action *>::iterator b = keyBindings.find(key);
+	map<unsigned char, list<Action *>>::iterator b = keyBindings.find(key);
 	if (b == keyBindings.end())
 		return;
+
 	//TODO: push key to the container that indicates it is being held (then remove it on Release)
-	b->second->doAction(Action::STATE_PRESS);
+	list<Action *>::iterator action;
+	for (action = b->second.begin(); action != b->second.end(); ++action) 
+		if ((*action)->hasActiveStateOf(getState()))
+		{
+			(*action)->doAction(Action::STATE_PRESS);
+			return;
+		}
 }
 
 void keyRelease(unsigned char key, int x, int y)
 {
-	map<unsigned char, Action *>::iterator b = keyBindings.find(key);
+	map<unsigned char, list<Action *>>::iterator b = keyBindings.find(key);
 	if (b == keyBindings.end())
 		return;
-	b->second->doAction(Action::STATE_RELEASE);
+
+	//TODO: push key to the container that indicates it is being held (then remove it on Release)
+	list<Action *>::iterator action;
+	for (action = b->second.begin(); action != b->second.end(); ++action) 
+		if ((*action)->hasActiveStateOf(getState()))
+		{
+			(*action)->doAction(Action::STATE_RELEASE);
+			return;
+		}
 }
 
 void keySpecialPress(int key, int x, int y)
 {
-	map<int, Action *>::iterator b = specialKeyBindings.find(key);
+	map<int, list<Action *>>::iterator b = specialKeyBindings.find(key);
 	if (b == specialKeyBindings.end())
 		return;
+
 	//TODO: push key to the container that indicates it is being held (then remove it on Release)
-	b->second->doAction(Action::STATE_PRESS);
+	list<Action *>::iterator action;
+	for (action = b->second.begin(); action != b->second.end(); ++action) 
+		if ((*action)->hasActiveStateOf(getState()))
+		{
+			(*action)->doAction(Action::STATE_PRESS);
+			return;
+		}
 }
 
 void keySpecialRelease(int key, int x, int y)
 {
-	map<int, Action *>::iterator b = specialKeyBindings.find(key);
+	map<int, list<Action *>>::iterator b = specialKeyBindings.find(key);
 	if (b == specialKeyBindings.end())
 		return;
+
 	//TODO: push key to the container that indicates it is being held (then remove it on Release)
-	b->second->doAction(Action::STATE_RELEASE);
+	list<Action *>::iterator action;
+	for (action = b->second.begin(); action != b->second.end(); ++action) 
+		if ((*action)->hasActiveStateOf(getState()))
+		{
+			(*action)->doAction(Action::STATE_RELEASE);
+			return;
+		}
 }
 
 void mousePress(int button, int mouseState, int x, int y)
@@ -234,24 +265,23 @@ void declareAction(Action::ActionScope scope, int activeState, int actionType, s
 
 void defineAction(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action)
 {
-	// Find the action decl that matches this definition; this is the action to
-	//  duplicate/add to players.
-	list<Action *>::iterator a = availableActions.begin();
-	for (; a != availableActions.end(); ++a)
-		if ((*a)->isSameAction(scope, activeState, actionType))
-			break;
-	//FIXME: should bomb if action is not declared
-
-	Action * newAction = new Action(**a);
-	newAction->define(classInstance, action);
-
 	vector<Player *>::iterator p = players.begin();
 	switch (scope)
 	{
 	case Action::SCOPE_FIRST_PLAYER:
 		// only check first player to see if this action is defined
-		(*p)->addAction(newAction);
+		Action * a = (*p)->getAction(scope, activeState, actionType);
+		if (a)
+			a->define(classInstance, action);
+		else // player doesn't have this action yet, so create it
+		{
+			a = new Action(*findActionDecl(scope, activeState, actionType));
+			a->define(classInstance, action);
+			(*p)->addAction(a);
+		}
 		break;
+		// FIXME: this stuff needs to be reviewed
+		/*
 	case Action::SCOPE_CURRENT_PLAYER:
 		// go through each player; if every player has this action defined, create
 		// a new player and add the action to him
@@ -270,48 +300,21 @@ void defineAction(Action::ActionScope scope, int activeState, int actionType, vo
 		for (; p != players.end(); ++p)
 			(*p)->addAction(newAction);
 		break;
+		*/
 	}
 }
 
-void defineActions(Action::ActionScope scope, int activeState, void *classInstance, Action::ActionFunc action)
+Action * findActionDecl(Action::ActionScope scope, int activeState, int actionType)
 {
-	Action * newAction;
-	vector<Player *>::iterator p;
-
-	// for every action decl that matches this definition, duplicate/add to players.
-	for (list<Action *>::iterator a = availableActions.begin(); a != availableActions.end(); ++a)
-	{
-		if ((*a)->isRelatedAction(scope, activeState))
-		{
-			newAction = new Action(**a);
-			newAction->define(classInstance, action);
-			switch (scope)
-			{
-			case Action::SCOPE_FIRST_PLAYER:
-				p = players.begin();
-				(*p)->addAction(newAction);
-				break;
-			case Action::SCOPE_CURRENT_PLAYER:
-				// go through each player; if every player has this action defined, create
-				// a new player and add the action to him
-				for (p = players.begin(); p != players.end(); ++p)
-					if(!(*p)->hasActionsDefined(scope, activeState))
-					{
-						(*p)->addAction(newAction);
-						break;
-					}
-				// push back a new player, since the action is defined for everyone else
-				players.push_back(new Player());
-				players.back()->addAction(newAction);
-				break;
-			case Action::SCOPE_ALL_PLAYERS:
-				for (p = players.begin(); p != players.end(); ++p)
-					(*p)->addAction(newAction);
-				break;
-			}
-		}
-	}
+	// Find the action decl that matches this definition; this is the action to
+	//  duplicate/add to players.
+	list<Action *>::iterator a = availableActions.begin();
+	for (; a != availableActions.end(); ++a)
+		if ((*a)->isSameAction(scope, activeState, actionType))
+			return *a;
+	return (Action *)NULL;
 }
+
 
 /**
  * Binding
@@ -321,10 +324,24 @@ void bindKey(Action action, unsigned char key)
 {
 }
 
+//FIXME: too much duplicate code in bindKey()/bindSpecialKey()
 void bindKey(int player, Action::ActionScope scope, int activeState, int actionType, unsigned char key)
 {
-	Action *a = players[player]->getAction(scope, activeState, actionType);
-	keyBindings.insert(pair<unsigned char, Action *>(key, a));
+	// find Action to bind to
+	Action *action = players[player]->getAction(scope, activeState, actionType);
+	if (!action)
+		action = new Action(*findActionDecl(scope, activeState, actionType));
+	players[player]->addAction(action);
+
+	map<unsigned char, list<Action *>>::iterator binding = keyBindings.find(key);
+	if (binding == keyBindings.end()) // add binding for a new key
+	{
+		list<Action *> al; // create dummy list to push to k
+		al.push_back(action);
+		keyBindings.insert(pair<unsigned char, list<Action *>>(key, al));
+	}
+	else // or a binding for another state for an existing key
+		binding->second.push_back(action);
 }
 
 void bindSpecialKey(Action action, int key)
@@ -333,10 +350,21 @@ void bindSpecialKey(Action action, int key)
 
 void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int actionType, int key)
 {
-	Player * p = players[player];
-	Action *a;
-	a = p->getAction(scope, activeState, actionType);
-	specialKeyBindings.insert(pair<int, Action *>(key, a));
+	// find Action to bind to
+	Action *action = players[player]->getAction(scope, activeState, actionType);
+	if (!action)
+		action = new Action(*findActionDecl(scope, activeState, actionType));
+	players[player]->addAction(action);
+
+	map<int, list<Action *>>::iterator binding = specialKeyBindings.find(key);
+	if (binding == specialKeyBindings.end()) // add binding for a new key
+	{
+		list<Action *> al; // create dummy list to push to k
+		al.push_back(action);
+		specialKeyBindings.insert(pair<int, list<Action *>>(key, al));
+	}
+	else // or a binding for another state for an existing key
+		binding->second.push_back(action);
 }
 
 void bindButton(Action action, int button)

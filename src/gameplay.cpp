@@ -6,6 +6,7 @@
 */
 
 #include "game.h"
+#include "input.h"
 
 // Constants
 const string GamePlay::bgFile = "bg-play.bmp";
@@ -34,6 +35,54 @@ const string GamePlay::cursorFiles[] = {
 };
 
 /* GamePlay methods */
+void GamePlay::declareActions()
+{
+	using namespace Input;
+	using namespace PlayState;
+
+	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
+	Triforce::GameState state = Triforce::PLAY;
+
+	declareAction(scope, state, PAUSE, actionLabels[PAUSE]);
+}
+void GamePlay::defineActions()
+{
+	using namespace Input;
+	using namespace PlayState;
+
+	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
+	Triforce::GameState state = Triforce::PLAY;
+
+	defineAction(scope, state, PAUSE, this, doAction);
+}
+
+void GamePlay::doAction(void *gridInstance, int actionState, int actionType)
+{
+	using namespace PlayState;
+
+	GamePlay *g = (GamePlay *)gridInstance;
+	switch((enum Input::Action::ActionState)actionState)
+	{
+	case Input::Action::STATE_PRESS:
+		switch((enum Actions)actionType)
+		{
+		case PAUSE:
+			if (g->getState() == pause) {
+				g->changeState(GamePlay::play);
+			}
+			else if (g->getState() == GamePlay::play) {
+				cout << "pressed pause\n";
+				g->changeState(GamePlay::pause);
+			}
+			break;
+		}
+	/*
+	case Input::Action::STATE_HOLD:
+	case Input::Action::STATE_RELEASE:
+	*/
+	}
+	glutPostRedisplay();
+}
 
 GamePlay::GamePlay() { 
 	state = play;
@@ -107,54 +156,6 @@ void GamePlay::loadImages()
   for (int i = 0; i < numCursorFiles; ++i)
 	  cursorSprite->loadFrame(i, themeDirectory + cursorFiles[i], r, g, b);
   cursorSprite->loadGLTextures();
-}
-
-void GamePlay::specialKeys(int key, int x, int y) {
-	if (state == pause)
-		return;
-
-	switch(key) {
-	case GLUT_KEY_LEFT:
-		grid->cursor->moveLeft(); //FIXME: this really begs for refactoring
-		break;
-
-	case GLUT_KEY_RIGHT:
-		grid->cursor->moveRight();
-		break;
-
-	case GLUT_KEY_UP:
-		grid->cursor->moveUp();
-		break;
-
-	case GLUT_KEY_DOWN:
-		grid->cursor->moveDown();
-		break;
-	}
-
-	glutPostRedisplay();
-}
-
-void GamePlay::normalKeys(unsigned char key, int x, int y) {
-	switch (tolower(key)) { 
-	case 'a':
-		grid->swapBlocks();
-		break;
-	case 's':
-		if (grid->getState() == Grid::play)
-			grid->pushRow();
-		break;
-	case 'p':
-		if (getState() == pause) {
-			changeState(play);
-		}
-		else if (getState() == play) {
-			cout << "pressed p\n";
-			changeState(pause);
-		}
-		break;
-	}
-
-	glutPostRedisplay();
 }
 
 void GamePlay::changeState(gameState gs) {

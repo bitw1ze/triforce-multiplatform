@@ -27,13 +27,11 @@ void reshape2(int w, int h) {
 	reshape(w, h);
 }
 
-void display()
-{
+void display() {
 	triforce->display();
 }
 
 void specialKeys(int key, int x, int y) {
-	triforce->specialKeys(key, x, y);
 	Input::keySpecialPress(key, x, y);
 }
 
@@ -42,7 +40,6 @@ void specialKeysUp(int key, int x, int y) {
 }
 
 void normalKeys(unsigned char key, int x, int y) {
-	triforce->normalKeys(key, x, y);
 	Input::keyPress(key, x, y);
 }
 

@@ -1,6 +1,67 @@
 #include "game.h"
 #include "input.h"
 
+void Cursor::declareActions()
+{
+	using namespace Input;
+	using namespace PlayState;
+
+	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
+	// FIXME: I have a hunch that SCOPE_CURRENT_PLAYER stuff is broken, so
+    //	      comment it out and use SCOPE_FIRST_PLAYER for now
+	//Action::ActionScope scope = Input::Action::SCOPE_CURRENT_PLAYER;
+	Triforce::GameState state = Triforce::PLAY;
+
+	declareAction(scope, state, UP, actionLabels[UP]);
+	declareAction(scope, state, DOWN, actionLabels[DOWN]);
+	declareAction(scope, state, LEFT, actionLabels[LEFT]);
+	declareAction(scope, state, RIGHT, actionLabels[RIGHT]);
+}
+
+void Cursor::defineActions()
+{
+	using namespace Input;
+	using namespace PlayState;
+
+	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
+	Triforce::GameState state = Triforce::PLAY;
+
+	addMouseMotionFunc(this, state, mousePassiveMotion);
+	addMousePassiveMotionFunc(this, state, mousePassiveMotion);
+	defineAction(scope, state, UP, this, doAction);
+	defineAction(scope, state, DOWN, this, doAction);
+	defineAction(scope, state, LEFT, this, doAction);
+	defineAction(scope, state, RIGHT, this, doAction);
+}
+
+void Cursor::doAction(void *cursorInstance, int actionState, int actionType)
+{
+	using namespace PlayState;
+
+	Cursor *c = (Cursor *)cursorInstance;
+	switch((enum Input::Action::ActionState)actionState)
+	{
+	case Input::Action::STATE_PRESS:
+	case Input::Action::STATE_HOLD:
+		switch((enum Actions)actionType)
+		{
+		case UP:
+			c->moveUp();
+			break;
+		case DOWN:
+			c->moveDown();
+			break;
+		case LEFT:
+			c->moveLeft();
+			break;
+		case RIGHT:
+			c->moveRight();
+			break;
+		}
+	// case Input::Action::STATE_RELEASE:
+	}
+}
+
 Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	grid = gr;
 
@@ -10,8 +71,7 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	init(sprite);
 	setPos(0, 0);
 
-	Input::addMouseMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
-	Input::addMousePassiveMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
+	defineActions();
 }
 
 Cursor::~Cursor() {

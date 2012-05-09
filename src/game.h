@@ -29,6 +29,17 @@ extern CTimer *mainTimer;
    game. Classes other than GamePlay declared in this header will be
    implemented in their own .cpp files to make things more modular. This
    seems to be the best solution. */
+namespace PlayState {
+	enum Actions {
+		UP, DOWN, LEFT, RIGHT,
+		SWAP, PUSH, PAUSE,
+		_NUMBER_OF_ACTIONS
+	};
+    static const string actionLabels[_NUMBER_OF_ACTIONS] = {
+		"Up", "Down", "Left", "Right"
+		"Swap", "Push", "Pause",
+	};
+}
 
 struct Point {
 	int x, y;
@@ -60,7 +71,6 @@ class GamePlay {
 public:
 	enum gameState {play, pause, quit};
 protected:
-
 	/* bitmap files */
 	static const string 
 		blockFiles[],
@@ -79,6 +89,10 @@ protected:
 	gameState state;
 
 public:
+	static void declareActions();
+	void defineActions();
+	static void doAction(void *gridInstance, int actionState, int actionType);
+
 	CBaseSprite *blockSprites[nblocktypes],
 	            *cursorSprite,
 				*gridBorderSprite;
@@ -92,9 +106,6 @@ public:
 	void loadImages();
 	int getWidth() { return background.getViewportWidth();} 
 	int getHeight() { return background.getViewportHeight();} 
-	void specialKeys(int key, int x, int y);
-	void normalKeys(unsigned char key, int x, int y);
-	void keyUp(unsigned char key, int x, int y);
 
 	void changeState(gameState gs);
 	gameState getState() const;
@@ -120,6 +131,10 @@ protected:
 	gameState state;
 
 public:
+	static void declareActions();
+	void defineActions();
+	static void doAction(void *gridInstance, int actionState, int actionType);
+
 	Grid(GamePlay *gp);
 	virtual ~Grid();
 
@@ -263,7 +278,10 @@ protected:
 	static const string spriteFile;
 
 public:
-	static void mousePassiveMotion(void *gridInstance, int x, int y);
+	static void declareActions();
+	void defineActions();
+	static void doAction(void *cursorInstance, int actionState, int actionType);
+	static void mousePassiveMotion(void *cursorInstance, int x, int y);
 
 	Cursor(Grid *, CBaseSprite *);
 	~Cursor();
