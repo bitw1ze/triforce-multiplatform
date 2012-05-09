@@ -190,6 +190,7 @@ public:
 	void fallDown();
 	void resetFall();
 	int getFallOffset() const;
+	void setFallOffset(int f);
 
 	static const int fallFactor;
 };

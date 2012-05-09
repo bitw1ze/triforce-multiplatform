@@ -188,7 +188,10 @@ void Grid::swapBlocks() {
 	if (r >= (int)blocks.size())
 		return;
 
-	if (swap(blocks[r][c1], blocks[r][c2])) {
+	bool belowFall = false;
+	if (r < blocks.size() - 1)
+		belowFall = blocks[r+1][c1].getState() == Block::fall || blocks[r+1][c2].getState() == Block::fall;
+	if (!belowFall && swap(blocks[r][c1], blocks[r][c2])) {
 		if (!GridEvent::detectCombo(this, Cell(r, c1)))
 			GridEvent::detectFall(this, Fall(r, c1));
 
@@ -270,13 +273,23 @@ Grid::~Grid() {
 /*	swap
 	Swap two adjacent blocks that the cursor has selected. */
 bool swap(Block &left, Block &right) {
-	if ( left.getState() == Block::combo || left.getState() == Block::fall ||
-		right.getState() == Block::combo || right.getState() == Block::fall)
+	Block::gameState ls = left.getState();
+	Block::gameState rs = right.getState();
+
+	if ( ls == Block::combo || rs == Block::combo ||
+		ls == Block::fall || rs == Block::fall)
 		return false;
 
+	if (left.getFallOffset() != 0 || right.getFallOffset() != 0) {
+		return false;
+	}
+	
+	printf("states: (%d, %d)\n", left.getState(), right.getState());
+	
 	Block temp = left;
 	left = right;
 	right = temp;
+	printf("states: (%d, %d)\n\n", left.getState(), right.getState());
 
 	return true;
 }
@@ -306,7 +319,6 @@ void Grid::printDebug() {
 		for (int j = 0; j < ncols; ++j) {
 			printf("%d ", blocks[i][j].getState());
 		}
-		printf("\n");
 	}
 	printf("\n");
 }
