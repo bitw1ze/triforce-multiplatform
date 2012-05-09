@@ -11,34 +11,34 @@
 #include "game.h"
 #include "input.h"
 
-const string Grid::actionLabels[Grid::_NUMBER_OF_ACTIONS] = {
-	"Swap",
-	"Push"};
-
 void Grid::declareActions()
 {
+	using namespace PlayState;
+
 	Input::Action::ActionScope scope = Input::Action::SCOPE_FIRST_PLAYER;
 	// FIXME: I have a hunch that SCOPE_CURRENT_PLAYER stuff is broken, so
     //	      comment it out and use SCOPE_FIRST_PLAYER for now
 	//Input::Action::ActionScope scope = Input::Action::SCOPE_CURRENT_PLAYER;
 	Triforce::GameState state = Triforce::PLAY;
 
-	Input::declareAction(scope, state, ACT_SWAP, actionLabels[ACT_SWAP]);
-	Input::declareAction(scope, state, ACT_PUSH, actionLabels[ACT_PUSH]);
+	Input::declareAction(scope, state, SWAP, actionLabels[SWAP]);
+	Input::declareAction(scope, state, PUSH, actionLabels[PUSH]);
 }
 
 void Grid::doAction(void *gridInstance, int actionState, int actionType)
 {
+	using namespace PlayState;
+
 	Grid *g = (Grid *)gridInstance;
 	switch((enum Input::Action::ActionState)actionState)
 	{
 	case Input::Action::STATE_PRESS:
 		switch((enum Actions)actionType)
 		{
-		case ACT_SWAP:
+		case SWAP:
 			g->swapBlocks();
 			break;
-		case ACT_PUSH:
+		case PUSH:
 			if (g->getState() == Grid::play)
 				g->pushRow();
 			break;

@@ -3,9 +3,6 @@
 const string Triforce::gameStateLabels[Triforce::_NUMBER_OF_STATES] = {
 	"Menu", "Play", "Pause", "Quit"
 };
-const string Triforce::actionLabels[Triforce::_NUMBER_OF_ACTIONS] = {
-	"Up", "Down", "Left", "Right", "Activate", "Quit"
-};
 
 const string Triforce::bgFile = "bg-menu.bmp";
 const string Triforce::playBtns[] = {
@@ -23,12 +20,14 @@ GamePlay * Triforce::gamePlay = NULL;
  */
 void Triforce::declareActions()
 {
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_UP, actionLabels[ACT_UP]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_DOWN, actionLabels[ACT_DOWN]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_LEFT, actionLabels[ACT_LEFT]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_RIGHT, actionLabels[ACT_RIGHT]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, actionLabels[ACT_ACTIVATE]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_QUIT, actionLabels[ACT_QUIT]);
+	using namespace MenuState;
+
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, MenuState::UP, actionLabels[MenuState::UP]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, MenuState::DOWN, actionLabels[MenuState::DOWN]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, MenuState::LEFT, actionLabels[MenuState::LEFT]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, MenuState::RIGHT, actionLabels[MenuState::RIGHT]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, MenuState::ACTIVATE, actionLabels[MenuState::ACTIVATE]);
+	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, MenuState::QUIT, actionLabels[MenuState::QUIT]);
 
 	Grid::declareActions();
 	Cursor::declareActions();
@@ -45,17 +44,17 @@ void Triforce::bindDefaultActionKeys()
 	 */
 	scope = Input::Action::SCOPE_FIRST_PLAYER;
 
-	Input::bindKey(player, scope, MENU, ACT_ACTIVATE, SPACE);
-	Input::bindKey(player, scope, MENU, ACT_ACTIVATE, ENTER);
-	Input::bindKey(player, scope, MENU, ACT_ACTIVATE, 'a');
-	Input::bindKey(player, scope, MENU, ACT_ACTIVATE, 'e');
+	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, SPACE);
+	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, ENTER);
+	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, 'a');
+	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, 'e');
 
-	Input::bindKey(player, scope, MENU, ACT_QUIT, ESC);
+	Input::bindKey(player, scope, MENU, MenuState::QUIT, ESC);
 
-	Input::bindSpecialKey(player, scope, MENU, ACT_UP, GLUT_KEY_UP);
-	Input::bindSpecialKey(player, scope, MENU, ACT_DOWN, GLUT_KEY_DOWN);
-	Input::bindSpecialKey(player, scope, MENU, ACT_LEFT, GLUT_KEY_LEFT);
-	Input::bindSpecialKey(player, scope, MENU, ACT_RIGHT, GLUT_KEY_RIGHT);
+	Input::bindSpecialKey(player, scope, MENU, MenuState::UP, GLUT_KEY_UP);
+	Input::bindSpecialKey(player, scope, MENU, MenuState::DOWN, GLUT_KEY_DOWN);
+	Input::bindSpecialKey(player, scope, MENU, MenuState::LEFT, GLUT_KEY_LEFT);
+	Input::bindSpecialKey(player, scope, MENU, MenuState::RIGHT, GLUT_KEY_RIGHT);
 
 	/*
 	 * PLAY state
@@ -66,25 +65,25 @@ void Triforce::bindDefaultActionKeys()
 	//scope = Input::Action::SCOPE_CURRENT_PLAYER;
 
 	// arrow keys
-	Input::bindSpecialKey(player, scope, PLAY, Cursor::ACT_UP, GLUT_KEY_UP);
-	Input::bindSpecialKey(player, scope, PLAY, Cursor::ACT_DOWN, GLUT_KEY_DOWN);
-	Input::bindSpecialKey(player, scope, PLAY, Cursor::ACT_LEFT, GLUT_KEY_LEFT);
-	Input::bindSpecialKey(player, scope, PLAY, Cursor::ACT_RIGHT, GLUT_KEY_RIGHT);
+	Input::bindSpecialKey(player, scope, PLAY, PlayState::UP, GLUT_KEY_UP);
+	Input::bindSpecialKey(player, scope, PLAY, PlayState::DOWN, GLUT_KEY_DOWN);
+	Input::bindSpecialKey(player, scope, PLAY, PlayState::LEFT, GLUT_KEY_LEFT);
+	Input::bindSpecialKey(player, scope, PLAY, PlayState::RIGHT, GLUT_KEY_RIGHT);
 
 	// w-a-s-d style + play one-handed
-	Input::bindKey(player, scope, PLAY, Grid::ACT_PUSH, 'q');
-	Input::bindKey(player, scope, PLAY, Grid::ACT_SWAP, 'e');
+	Input::bindKey(player, scope, PLAY, PlayState::PUSH, 'q');
+	Input::bindKey(player, scope, PLAY, PlayState::SWAP, 'e');
 
-	Input::bindKey(player, scope, PLAY, Cursor::ACT_UP, 'w');
-	Input::bindKey(player, scope, PLAY, Cursor::ACT_DOWN, 's');
-	Input::bindKey(player, scope, PLAY, Cursor::ACT_LEFT, 'a');
-	Input::bindKey(player, scope, PLAY, Cursor::ACT_RIGHT, 'd');
+	Input::bindKey(player, scope, PLAY, PlayState::UP, 'w');
+	Input::bindKey(player, scope, PLAY, PlayState::DOWN, 's');
+	Input::bindKey(player, scope, PLAY, PlayState::LEFT, 'a');
+	Input::bindKey(player, scope, PLAY, PlayState::RIGHT, 'd');
 
 	// other
-	Input::bindKey(player, scope, PLAY, Grid::ACT_PUSH, ENTER);
-	Input::bindKey(player, scope, PLAY, Grid::ACT_SWAP, SPACE);
-	Input::bindKey(player, scope, PLAY, Grid::ACT_PUSH, 'z');
-	Input::bindKey(player, scope, PLAY, Grid::ACT_SWAP, 'x');
+	Input::bindKey(player, scope, PLAY, PlayState::PUSH, ENTER);
+	Input::bindKey(player, scope, PLAY, PlayState::SWAP, SPACE);
+	Input::bindKey(player, scope, PLAY, PlayState::PUSH, 'z');
+	Input::bindKey(player, scope, PLAY, PlayState::SWAP, 'x');
 }
 
 /**
@@ -128,18 +127,18 @@ void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
 	case Input::Action::STATE_RELEASE:
 		switch((enum Actions)actionType)
 		{
-		case ACT_LEFT:
-		case ACT_UP:
+		case MenuState::LEFT:
+		case MenuState::UP:
 			t->menuButtons->hoverPrev();
 			break;
-		case ACT_RIGHT:
-		case ACT_DOWN:
+		case MenuState::RIGHT:
+		case MenuState::DOWN:
 			t->menuButtons->hoverNext();
 			break;
-		case ACT_ACTIVATE:
+		case MenuState::ACTIVATE:
 			t->menuButtons->activateCurrent();
 			break;
-		case ACT_QUIT:
+		case MenuState::QUIT:
 			exit(0);
 			break;
 		}
@@ -148,7 +147,7 @@ void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
 	case Input::Action::STATE_HOLD:
 		switch((enum Actions)actionType)
 		{
-		case ACT_ACTIVATE:
+		case MenuState::ACTIVATE:
 			t->menuButtons->pressCurrent();
 			break;
 		}

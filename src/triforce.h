@@ -14,21 +14,27 @@ using namespace Globals;
 
 extern CTimer *mainTimer;
 
+namespace MenuState {
+	enum Actions {
+		UP, DOWN, LEFT, RIGHT,
+		ACTIVATE, QUIT,
+		_NUMBER_OF_ACTIONS
+	};
+	static const string actionLabels[_NUMBER_OF_ACTIONS] = {
+		"Up", "Down", "Left", "Right",
+		"Activate", "Quit"
+	};
+};
+
  // FIXME: nearly everything is static... either:
  //   A) change to namespace  (i.e. no triforce class)
  //   B) use member functions instead (i.e. multiple class instances makes sense)
-
 class Triforce {
 public :
 	enum GameState {MENU, PLAY, PAUSE, QUIT, _NUMBER_OF_STATES};
-	enum Actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT, ACT_ACTIVATE, ACT_QUIT, _NUMBER_OF_ACTIONS};
 private:
 	const static string gameStateLabels[_NUMBER_OF_STATES];
-	const static string actionLabels[_NUMBER_OF_ACTIONS];
 
-	/**
-	  * Files
-	  */
 	static const string bgFile,
 		                playBtns[],
 		                quitBtns[];

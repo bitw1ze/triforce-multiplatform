@@ -1,28 +1,26 @@
 #include "game.h"
 #include "input.h"
 
-const string Cursor::actionLabels[Cursor::_NUMBER_OF_ACTIONS] = {
-	"Up",
-	"Down",
-    "Left",
-    "Right"};
-
 void Cursor::declareActions()
 {
+	using namespace PlayState;
+
 	Input::Action::ActionScope scope = Input::Action::SCOPE_FIRST_PLAYER;
 	// FIXME: I have a hunch that SCOPE_CURRENT_PLAYER stuff is broken, so
     //	      comment it out and use SCOPE_FIRST_PLAYER for now
-	//Input::Action::ActionScope scope = Input::Action::SCOPE_CURRENT_PLAYER;
+	//Action::ActionScope scope = Input::Action::SCOPE_CURRENT_PLAYER;
 	Triforce::GameState state = Triforce::PLAY;
 
-	Input::declareAction(scope, state, ACT_UP, actionLabels[ACT_UP]);
-	Input::declareAction(scope, state, ACT_DOWN, actionLabels[ACT_DOWN]);
-	Input::declareAction(scope, state, ACT_LEFT, actionLabels[ACT_LEFT]);
-	Input::declareAction(scope, state, ACT_RIGHT, actionLabels[ACT_RIGHT]);
+	Input::declareAction(scope, state, UP, actionLabels[UP]);
+	Input::declareAction(scope, state, DOWN, actionLabels[DOWN]);
+	Input::declareAction(scope, state, LEFT, actionLabels[LEFT]);
+	Input::declareAction(scope, state, RIGHT, actionLabels[RIGHT]);
 }
 
 void Cursor::doAction(void *cursorInstance, int actionState, int actionType)
 {
+	using namespace PlayState;
+
 	Cursor *c = (Cursor *)cursorInstance;
 	switch((enum Input::Action::ActionState)actionState)
 	{
@@ -30,16 +28,16 @@ void Cursor::doAction(void *cursorInstance, int actionState, int actionType)
 	case Input::Action::STATE_HOLD:
 		switch((enum Actions)actionType)
 		{
-		case ACT_UP:
+		case UP:
 			c->moveUp();
 			break;
-		case ACT_DOWN:
+		case DOWN:
 			c->moveDown();
 			break;
-		case ACT_LEFT:
+		case LEFT:
 			c->moveLeft();
 			break;
-		case ACT_RIGHT:
+		case RIGHT:
 			c->moveRight();
 			break;
 		}

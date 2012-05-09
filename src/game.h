@@ -37,8 +37,19 @@ struct Cell {
 	int row, col;
 };
 
-class GamePlay {
+namespace PlayState {
+	enum Actions {
+		UP, DOWN, LEFT, RIGHT,
+		SWAP, PUSH,
+		_NUMBER_OF_ACTIONS
+	};
+    static const string actionLabels[_NUMBER_OF_ACTIONS] = {
+		"Up", "Down", "Left", "Right"
+		"Swap", "Push",
+	};
+}
 
+class GamePlay {
 protected:
 	/* bitmap files */
 	static const string 
@@ -86,9 +97,7 @@ class Grid {
 
 public:
 	enum gameState { play, combo };
-	enum Actions {ACT_SWAP, ACT_PUSH, _NUMBER_OF_ACTIONS};
 protected:
-	const static string actionLabels[_NUMBER_OF_ACTIONS];
 	int block_w, block_h,
 		grid_yspeed, grid_yoff,
 		last_push, last_combo,
@@ -182,10 +191,7 @@ public:
    it around. */
 
 class Cursor : public CObject {
-public:
-	enum Actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT, _NUMBER_OF_ACTIONS};
 protected:
-	const static string actionLabels[_NUMBER_OF_ACTIONS];
 	int row, col,
 		cursor_delta;
 	Grid *grid;
