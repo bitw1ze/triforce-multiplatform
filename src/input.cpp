@@ -275,7 +275,7 @@ void defineAction(Action::ActionScope scope, int activeState, int actionType, vo
 			a->define(classInstance, action);
 		else // player doesn't have this action yet, so create it
 		{
-			a = new Action(findActionDecl(scope, activeState, actionType));
+			a = new Action(*findActionDecl(scope, activeState, actionType));
 			a->define(classInstance, action);
 			(*p)->addAction(a);
 		}
@@ -304,14 +304,15 @@ void defineAction(Action::ActionScope scope, int activeState, int actionType, vo
 	}
 }
 
-Action & findActionDecl(Action::ActionScope scope, int activeState, int actionType)
+Action * findActionDecl(Action::ActionScope scope, int activeState, int actionType)
 {
 	// Find the action decl that matches this definition; this is the action to
 	//  duplicate/add to players.
 	list<Action *>::iterator a = availableActions.begin();
 	for (; a != availableActions.end(); ++a)
 		if ((*a)->isSameAction(scope, activeState, actionType))
-			return **a;
+			return *a;
+	return (Action *)NULL;
 }
 
 
@@ -329,7 +330,7 @@ void bindKey(int player, Action::ActionScope scope, int activeState, int actionT
 	// find Action to bind to
 	Action *action = players[player]->getAction(scope, activeState, actionType);
 	if (!action)
-		action = new Action(findActionDecl(scope, activeState, actionType));
+		action = new Action(*findActionDecl(scope, activeState, actionType));
 	players[player]->addAction(action);
 
 	map<unsigned char, list<Action *>>::iterator binding = keyBindings.find(key);
@@ -352,7 +353,7 @@ void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int 
 	// find Action to bind to
 	Action *action = players[player]->getAction(scope, activeState, actionType);
 	if (!action)
-		action = new Action(findActionDecl(scope, activeState, actionType));
+		action = new Action(*findActionDecl(scope, activeState, actionType));
 	players[player]->addAction(action);
 
 	map<int, list<Action *>>::iterator binding = specialKeyBindings.find(key);
