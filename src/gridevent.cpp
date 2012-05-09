@@ -214,18 +214,14 @@ void GridEvent::cleanupFall(Grid *grid, Fall &fall) {
 	int c = fall.col;
 
 	int row;
-	// check if finished with fall 
-	row = r;
-		// re-enable all the blocks that were falling
-	while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::fall) {
+
+	// re-enable all the blocks that were falling
+	for (row = r; row < r + fall.numFalls; ++row) {
 		grid->blocks[row][c].changeState(Block::enabled);
-		++row;
 	}
 
-	row = r;
-	while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::enabled) {
+	for (row = r; row < r + fall.numFalls; ++row) {
 		detectCombo(grid, Fall(r, c));
-		++row;
 	}
 
 	fall.enabled = false;
@@ -238,32 +234,25 @@ void GridEvent::doFall(Grid *grid, Fall &cell) {
 	int c = cell.col;
 	int row;
 
-	if (grid->blocks[r-1][c].getState() == Block::fall)
-		return;
-
 	if (cell.enabled == true && mainTimer->elapsed(cell.lastFall, fallInterval)) 
 		cell.lastFall = mainTimer->time();
 	else
 		return;
 
 	// loop through all the rows and make them fall one iteration at a time.
-	row = r;
-	while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::fall) {
+	for (row = r; row < r + cell.numFalls; ++row) {
 		grid->blocks[row][c].fallDown();
-		++row;
 	}
 
-	bool swapDown = (grid->blocks[r][c].getFallOffset() == 0);
+	bool swapDown = (grid->blocks[r][c].getFallOffset() <= 0);
 
 	if (swapDown) {
 		// decrement the current row that we begin from.
 		
-		printf("r=%d\n", r);
-		//grid->printDebug();
-		row = r;
-		while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::fall) {
+	//	printf("r=%d\n", r);
+	//	grid->printDebug();
+		for (row = r; row < r + cell.numFalls; ++row) {
 			grid->blocks[row-1][c] = grid->blocks[row][c];
-			++row;
 		}
 		grid->blocks[row-1][c].changeState(Block::disabled);
 
@@ -273,9 +262,9 @@ void GridEvent::doFall(Grid *grid, Fall &cell) {
 		bool fallFinished = grid->blocks[r-1][c].getState() != Block::disabled
 			&& grid->blocks[r-1][c].getState() != Block::fall;
 		if (fallFinished) {
-			grid->printDebug();
+	//		grid->printDebug();
 			cleanupFall(grid, cell);
-			grid->printDebug();
+	//		grid->printDebug();
 			return;
 		}
 	}
@@ -466,6 +455,7 @@ void GridEvent::initFallState(Grid *grid, Fall &cell) {
 		++r;
 	}
 
+	cell.numFalls = r - cell.row;
 	cell.lastFall = mainTimer->time();
 }
 

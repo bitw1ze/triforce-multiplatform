@@ -57,14 +57,15 @@ public:
 class Fall : public Cell {
 public:
 	int lastFall;
+	int numFalls;
 	bool enabled;
 	Fall() : Cell() { init(); }
 	Fall(int r, int c) : Cell(r, c) { init(); }
 	Fall(const Fall &src) : Cell(src) { clone(src); }
 	Fall & operator =(const Fall &src) { __super::operator =(src); clone(src); }
 	bool operator ==(const Fall &fl) { return __super::operator ==(fl); }
-	void init() { lastFall = -1; enabled = false; }
-	void clone(const Fall &src) { lastFall = src.lastFall; enabled = src.enabled; }
+	void init() { numFalls = 0; lastFall = -1; enabled = false; }
+	void clone(const Fall &src) { numFalls = src.numFalls; lastFall = src.lastFall; enabled = src.enabled; }
 };
 
 class GamePlay {
