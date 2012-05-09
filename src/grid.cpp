@@ -310,3 +310,12 @@ bool match(const Block &left, const Block &right, bool ignoreActive) {
 
 	return false;
 }
+
+void Grid::printDebug() {
+	for (deque< vector<Block> >::iterator i = --blocks.end(); i != blocks.cbegin(); --i) {
+		for (vector<Block>::iterator j = (*i).begin(); j != (*i).cend(); ++j) 
+			printf("%d ", (*j).getState());
+		printf("\n");
+	}
+	printf("\n");
+}

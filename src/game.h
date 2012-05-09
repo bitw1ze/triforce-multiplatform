@@ -152,6 +152,8 @@ public:
 
 	bool containsPoint(int x, int y);
 
+	void printDebug();
+
 	Cursor *cursor;
 	deque< vector<Block> > blocks;
 	list<GridEvent> events;
