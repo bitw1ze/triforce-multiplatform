@@ -265,24 +265,23 @@ void declareAction(Action::ActionScope scope, int activeState, int actionType, s
 
 void defineAction(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action)
 {
-	// Find the action decl that matches this definition; this is the action to
-	//  duplicate/add to players.
-	list<Action *>::iterator a = availableActions.begin();
-	for (; a != availableActions.end(); ++a)
-		if ((*a)->isSameAction(scope, activeState, actionType))
-			break;
-	//FIXME: should bomb if action is not declared
-
-	Action * newAction = new Action(**a);
-	newAction->define(classInstance, action);
-
 	vector<Player *>::iterator p = players.begin();
 	switch (scope)
 	{
 	case Action::SCOPE_FIRST_PLAYER:
 		// only check first player to see if this action is defined
-		(*p)->addAction(newAction);
+		Action * a = (*p)->getAction(scope, activeState, actionType);
+		if (a)
+			a->define(classInstance, action);
+		else // player doesn't have this action yet, so create it
+		{
+			a = new Action(findActionDecl(scope, activeState, actionType));
+			a->define(classInstance, action);
+			(*p)->addAction(a);
+		}
 		break;
+		// FIXME: this stuff needs to be reviewed
+		/*
 	case Action::SCOPE_CURRENT_PLAYER:
 		// go through each player; if every player has this action defined, create
 		// a new player and add the action to him
@@ -301,8 +300,20 @@ void defineAction(Action::ActionScope scope, int activeState, int actionType, vo
 		for (; p != players.end(); ++p)
 			(*p)->addAction(newAction);
 		break;
+		*/
 	}
 }
+
+Action & findActionDecl(Action::ActionScope scope, int activeState, int actionType)
+{
+	// Find the action decl that matches this definition; this is the action to
+	//  duplicate/add to players.
+	list<Action *>::iterator a = availableActions.begin();
+	for (; a != availableActions.end(); ++a)
+		if ((*a)->isSameAction(scope, activeState, actionType))
+			return **a;
+}
+
 
 /**
  * Binding
@@ -312,10 +323,14 @@ void bindKey(Action action, unsigned char key)
 {
 }
 
+//FIXME: too much duplicate code in bindKey()/bindSpecialKey()
 void bindKey(int player, Action::ActionScope scope, int activeState, int actionType, unsigned char key)
 {
 	// find Action to bind to
 	Action *action = players[player]->getAction(scope, activeState, actionType);
+	if (!action)
+		action = new Action(findActionDecl(scope, activeState, actionType));
+	players[player]->addAction(action);
 
 	map<unsigned char, list<Action *>>::iterator binding = keyBindings.find(key);
 	if (binding == keyBindings.end()) // add binding for a new key
@@ -334,11 +349,16 @@ void bindSpecialKey(Action action, int key)
 
 void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int actionType, int key)
 {
+	// find Action to bind to
 	Action *action = players[player]->getAction(scope, activeState, actionType);
+	if (!action)
+		action = new Action(findActionDecl(scope, activeState, actionType));
+	players[player]->addAction(action);
+
 	map<int, list<Action *>>::iterator binding = specialKeyBindings.find(key);
 	if (binding == specialKeyBindings.end()) // add binding for a new key
 	{
-		list<Action *> al;
+		list<Action *> al; // create dummy list to push to k
 		al.push_back(action);
 		specialKeyBindings.insert(pair<int, list<Action *>>(key, al));
 	}
