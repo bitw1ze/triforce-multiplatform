@@ -76,7 +76,5 @@ public:
 	static GameState getState() {return state;}
 
 	// deprecated
-	void specialKeys(int key, int x, int y);
-	void normalKeys(unsigned char key, int x, int y);
 	void mouseButtons(int button, int mouseState, int x, int y);
 };

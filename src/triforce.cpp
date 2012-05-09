@@ -59,6 +59,7 @@ void Triforce::bindDefaultActionKeys()
 	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, ENTER);
 	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, 'a');
 	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, 'e');
+	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, 'z');
 
 	Input::bindKey(player, scope, MENU, MenuState::QUIT, ESC);
 
@@ -256,22 +257,6 @@ void Triforce::setStateWrapper(void *tfInstance, int gameState)
 	t->setState((enum GameState)gameState);
 }
 
-void Triforce::specialKeys(int key, int x, int y) {
-	if (state == PLAY) {
-		gamePlay->specialKeys(key, x, y);
-	}
-}
-
-void Triforce::normalKeys(unsigned char key, int x, int y) {
-	// context-sensetive bindings
-	if (state == PLAY) {
-		if (key == ESC)
-			exit(0);
-		gamePlay->normalKeys(key, x, y);
-	}
-
-}
-
 void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
 	if (state == PLAY)
 	{
@@ -279,6 +264,16 @@ void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
 		case GLUT_LEFT_BUTTON:
 			if (mouseState == GLUT_DOWN)
 				gamePlay->grid->swapBlocks();
+		}
+	}
+	else if (state == MENU)
+	{
+		switch (button) {
+		case GLUT_LEFT_BUTTON:
+			if (mouseState == GLUT_DOWN)
+				menuButtons->clickDown(x, y);
+			else
+				menuButtons->clickUp(x, y);
 		}
 	}
 }
