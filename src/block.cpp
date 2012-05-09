@@ -29,7 +29,7 @@
 
 #include "game.h"
 
-const int Block::fallFactor = 12;
+const int Block::fallFactor = 8;
 
 Block::Block() : CObject() {
 	timer = new CTimer(); 
@@ -57,12 +57,10 @@ void Block::clone(const Block &src) {
 }
 
 void Block::fallDown() {
-	int h = getHeight();
-	int offset = h / fallFactor;
-	fallOffset = fallOffset + offset;
+	int offset = getHeight() / fallFactor;;
+	fallOffset += offset;
 	offsetY(offset);
-	cout << fallOffset << endl;
-	if (fallOffset >= h) {
+	if (fallOffset >= getHeight()) {
 		resetFall();
 	}
 }
@@ -74,6 +72,10 @@ void Block::resetFall() {
 
 int Block::getFallOffset() const {
 	return fallOffset;
+}
+
+void Block::setFallOffset(int f) {
+	fallOffset = f;
 }
 
 /*	changeState
