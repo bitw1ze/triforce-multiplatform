@@ -94,6 +94,7 @@ namespace Input
 		  shortDesc(shortDesc){}
 		bool isSameAction(ActionScope scope, int activeState, int actionType);
 		bool isRelatedAction(ActionScope scope, int activeState);
+		bool hasActiveStateOf(int activeState) {return this->activeState == activeState;}
 		void doAction(int actionState);
 
 #if 0
