@@ -60,6 +60,7 @@ private:
 
 public:
 	static void declareActions();
+	void defineActions();
 	static void doAction(void *tfInstance, int actionState, int actionType);
 
 	Triforce();

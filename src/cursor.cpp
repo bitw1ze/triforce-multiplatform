@@ -3,18 +3,32 @@
 
 void Cursor::declareActions()
 {
+	using namespace Input;
 	using namespace PlayState;
 
-	Input::Action::ActionScope scope = Input::Action::SCOPE_FIRST_PLAYER;
+	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
 	// FIXME: I have a hunch that SCOPE_CURRENT_PLAYER stuff is broken, so
     //	      comment it out and use SCOPE_FIRST_PLAYER for now
 	//Action::ActionScope scope = Input::Action::SCOPE_CURRENT_PLAYER;
 	Triforce::GameState state = Triforce::PLAY;
 
-	Input::declareAction(scope, state, UP, actionLabels[UP]);
-	Input::declareAction(scope, state, DOWN, actionLabels[DOWN]);
-	Input::declareAction(scope, state, LEFT, actionLabels[LEFT]);
-	Input::declareAction(scope, state, RIGHT, actionLabels[RIGHT]);
+	declareAction(scope, state, UP, actionLabels[UP]);
+	declareAction(scope, state, DOWN, actionLabels[DOWN]);
+	declareAction(scope, state, LEFT, actionLabels[LEFT]);
+	declareAction(scope, state, RIGHT, actionLabels[RIGHT]);
+}
+
+void Cursor::defineActions()
+{
+	using namespace Input;
+	using namespace PlayState;
+
+	addMouseMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
+	addMousePassiveMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
+	defineAction(Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, UP, this, doAction);
+	defineAction(Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, DOWN, this, doAction);
+	defineAction(Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, LEFT, this, doAction);
+	defineAction(Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, RIGHT, this, doAction);
 }
 
 void Cursor::doAction(void *cursorInstance, int actionState, int actionType)
@@ -54,10 +68,7 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	init(sprite);
 	setPos(0, 0);
 
-	Input::addMouseMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
-	Input::addMousePassiveMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
-	//Input::defineActions(Input::Action::SCOPE_CURRENT_PLAYER, Triforce::PLAY, this, doAction);
-	Input::defineActions(Input::Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, this, doAction);
+	defineActions();
 }
 
 Cursor::~Cursor() {

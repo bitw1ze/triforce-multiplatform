@@ -113,6 +113,7 @@ protected:
 
 public:
 	static void declareActions();
+	void defineActions();
 	static void doAction(void *gridInstance, int actionState, int actionType);
 
 	Grid(GamePlay *ge);
@@ -200,6 +201,7 @@ protected:
 
 public:
 	static void declareActions();
+	void defineActions();
 	static void doAction(void *cursorInstance, int actionState, int actionType);
 	static void mousePassiveMotion(void *cursorInstance, int x, int y);
 

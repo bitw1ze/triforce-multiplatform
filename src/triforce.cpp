@@ -21,16 +21,27 @@ GamePlay * Triforce::gamePlay = NULL;
 void Triforce::declareActions()
 {
 	using namespace MenuState;
-
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, MenuState::UP, actionLabels[MenuState::UP]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, MenuState::DOWN, actionLabels[MenuState::DOWN]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, MenuState::LEFT, actionLabels[MenuState::LEFT]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, MenuState::RIGHT, actionLabels[MenuState::RIGHT]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, MenuState::ACTIVATE, actionLabels[MenuState::ACTIVATE]);
-	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, MenuState::QUIT, actionLabels[MenuState::QUIT]);
+	using namespace Input;
+	declareAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::UP, actionLabels[MenuState::UP]);
+	declareAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::DOWN, actionLabels[MenuState::DOWN]);
+	declareAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::LEFT, actionLabels[MenuState::LEFT]);
+	declareAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::RIGHT, actionLabels[MenuState::RIGHT]);
+	declareAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::ACTIVATE, actionLabels[MenuState::ACTIVATE]);
+	declareAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::QUIT, actionLabels[MenuState::QUIT]);
 
 	Grid::declareActions();
 	Cursor::declareActions();
+}
+
+void Triforce::defineActions()
+{
+	using namespace Input;
+	defineAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::UP, this, doAction);
+	defineAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::DOWN, this, doAction);
+	defineAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::LEFT, this, doAction);
+	defineAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::RIGHT, this, doAction);
+	defineAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::ACTIVATE, this, doAction);
+	defineAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::QUIT, this, doAction);
 }
 
 // Hard coded default bindings
@@ -189,7 +200,7 @@ Triforce::Triforce()
 	                          menuButtons->mousePassiveMotion);
 	Input::addPlayer();
 	declareActions();
-	Input::defineActions(Input::Action::SCOPE_FIRST_PLAYER, MENU, this, doAction);
+	defineActions();
 	bindDefaultActionKeys();
 }
 

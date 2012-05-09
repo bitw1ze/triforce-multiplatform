@@ -161,8 +161,6 @@ namespace Input
 	void declareAction(Action::ActionScope scope, int activeState, int actionType, string shortDesc); 
 	// define an action function for a particular action
 	void defineAction(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action);
-	// convenience function; define every action for a given scope/state at once
-	void defineActions(Action::ActionScope scope, int activeState, void *classInstance, Action::ActionFunc action);
 	void removeActions(void *classInstance);
 	void setActionLabels(int activeState, const string *labels);
 

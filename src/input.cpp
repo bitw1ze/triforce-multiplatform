@@ -273,46 +273,6 @@ void defineAction(Action::ActionScope scope, int activeState, int actionType, vo
 	}
 }
 
-void defineActions(Action::ActionScope scope, int activeState, void *classInstance, Action::ActionFunc action)
-{
-	Action * newAction;
-	vector<Player *>::iterator p;
-
-	// for every action decl that matches this definition, duplicate/add to players.
-	for (list<Action *>::iterator a = availableActions.begin(); a != availableActions.end(); ++a)
-	{
-		if ((*a)->isRelatedAction(scope, activeState))
-		{
-			newAction = new Action(**a);
-			newAction->define(classInstance, action);
-			switch (scope)
-			{
-			case Action::SCOPE_FIRST_PLAYER:
-				p = players.begin();
-				(*p)->addAction(newAction);
-				break;
-			case Action::SCOPE_CURRENT_PLAYER:
-				// go through each player; if every player has this action defined, create
-				// a new player and add the action to him
-				for (p = players.begin(); p != players.end(); ++p)
-					if(!(*p)->hasActionsDefined(scope, activeState))
-					{
-						(*p)->addAction(newAction);
-						break;
-					}
-				// push back a new player, since the action is defined for everyone else
-				players.push_back(new Player());
-				players.back()->addAction(newAction);
-				break;
-			case Action::SCOPE_ALL_PLAYERS:
-				for (p = players.begin(); p != players.end(); ++p)
-					(*p)->addAction(newAction);
-				break;
-			}
-		}
-	}
-}
-
 /**
  * Binding
  */

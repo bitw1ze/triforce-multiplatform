@@ -13,16 +13,25 @@
 
 void Grid::declareActions()
 {
+	using namespace Input;
 	using namespace PlayState;
 
-	Input::Action::ActionScope scope = Input::Action::SCOPE_FIRST_PLAYER;
+	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
 	// FIXME: I have a hunch that SCOPE_CURRENT_PLAYER stuff is broken, so
     //	      comment it out and use SCOPE_FIRST_PLAYER for now
-	//Input::Action::ActionScope scope = Input::Action::SCOPE_CURRENT_PLAYER;
+	//Action::ActionScope scope = Action::SCOPE_CURRENT_PLAYER;
 	Triforce::GameState state = Triforce::PLAY;
 
-	Input::declareAction(scope, state, SWAP, actionLabels[SWAP]);
-	Input::declareAction(scope, state, PUSH, actionLabels[PUSH]);
+	declareAction(scope, state, SWAP, actionLabels[SWAP]);
+	declareAction(scope, state, PUSH, actionLabels[PUSH]);
+}
+void Grid::defineActions()
+{
+	using namespace Input;
+	using namespace PlayState;
+
+	defineAction(Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, SWAP, this, doAction);
+	defineAction(Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, PUSH, this, doAction);
 }
 
 void Grid::doAction(void *gridInstance, int actionState, int actionType)
@@ -91,8 +100,7 @@ Grid::Grid(GamePlay *gp) {
 		for (int col = 0; col < ncols; ++col) 
 			blocks[row][col]->offsetY( -1 * block_h * row );
 
-	//Input::defineActions(Input::Action::SCOPE_CURRENT_PLAYER, Triforce::PLAY, this, doAction);
-	Input::defineActions(Input::Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, this, doAction);
+	defineActions();
 }
 
 void Grid::changeState(gameState gs) {
