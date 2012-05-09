@@ -23,12 +23,15 @@ void Cursor::defineActions()
 	using namespace Input;
 	using namespace PlayState;
 
-	addMouseMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
-	addMousePassiveMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
-	defineAction(Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, UP, this, doAction);
-	defineAction(Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, DOWN, this, doAction);
-	defineAction(Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, LEFT, this, doAction);
-	defineAction(Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, RIGHT, this, doAction);
+	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
+	Triforce::GameState state = Triforce::PLAY;
+
+	addMouseMotionFunc(this, state, mousePassiveMotion);
+	addMousePassiveMotionFunc(this, state, mousePassiveMotion);
+	defineAction(scope, state, UP, this, doAction);
+	defineAction(scope, state, DOWN, this, doAction);
+	defineAction(scope, state, LEFT, this, doAction);
+	defineAction(scope, state, RIGHT, this, doAction);
 }
 
 void Cursor::doAction(void *cursorInstance, int actionState, int actionType)

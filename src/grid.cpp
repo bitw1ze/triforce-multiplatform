@@ -30,8 +30,11 @@ void Grid::defineActions()
 	using namespace Input;
 	using namespace PlayState;
 
-	defineAction(Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, SWAP, this, doAction);
-	defineAction(Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, PUSH, this, doAction);
+	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
+	Triforce::GameState state = Triforce::PLAY;
+
+	defineAction(scope, state, SWAP, this, doAction);
+	defineAction(scope, state, PUSH, this, doAction);
 }
 
 void Grid::doAction(void *gridInstance, int actionState, int actionType)
