@@ -74,6 +74,10 @@ int Block::getFallOffset() const {
 	return fallOffset;
 }
 
+void Block::setFallOffset(int f) {
+	fallOffset = f;
+}
+
 /*	changeState
 	Changes the state of the block. Much to be done with this function */
 void Block::changeState(gameState gs) {
