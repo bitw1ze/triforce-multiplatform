@@ -235,7 +235,7 @@ void Grid::incComboInterval(int interval) {
 	have the full effect. After the swap, combo detection is done and if there is a combo
 	it is handled by the onCombo() subroutine.	*/
 void Grid::swapBlocks() {
-	int c1, c2, r;
+	unsigned int c1, c2, r;
 	c1 = cursor->getCol();
 	c2 = c1 + 1;
 	r = cursor->getRow();
