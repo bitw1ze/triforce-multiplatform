@@ -21,10 +21,8 @@ GamePlay * Triforce::gamePlay = NULL;
 /**
  * Input actions routines
  */
-void Triforce::declareActions(void *tfInstance)
+void Triforce::declareActions()
 {
-	Triforce *t = (Triforce *)tfInstance;
-
 	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_UP, actionLabels[ACT_UP]);
 	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_DOWN, actionLabels[ACT_DOWN]);
 	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_LEFT, actionLabels[ACT_LEFT]);
@@ -33,29 +31,60 @@ void Triforce::declareActions(void *tfInstance)
 	Input::declareAction(Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_QUIT, actionLabels[ACT_QUIT]);
 
 	Grid::declareActions();
+	Cursor::declareActions();
 }
 
 // Hard coded default bindings
 void Triforce::bindDefaultActionKeys()
 {
 	int player = 0;
-	Input::bindSpecialKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_UP, GLUT_KEY_UP);
-	Input::bindSpecialKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_DOWN, GLUT_KEY_DOWN);
-	Input::bindSpecialKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_LEFT, GLUT_KEY_LEFT);
-	Input::bindSpecialKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_RIGHT, GLUT_KEY_RIGHT);
+	Input::Action::ActionScope scope;
 
-	//Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, SPACE);
-	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, ENTER);
-	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, 'a');
-	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_ACTIVATE, 'e');
+	/*
+	 * MENU state
+	 */
+	scope = Input::Action::SCOPE_FIRST_PLAYER;
 
-	Input::bindKey(player, Input::Action::SCOPE_FIRST_PLAYER, MENU, ACT_QUIT, ESC);
+	Input::bindKey(player, scope, MENU, ACT_ACTIVATE, SPACE);
+	Input::bindKey(player, scope, MENU, ACT_ACTIVATE, ENTER);
+	Input::bindKey(player, scope, MENU, ACT_ACTIVATE, 'a');
+	Input::bindKey(player, scope, MENU, ACT_ACTIVATE, 'e');
 
-	Input::bindKey(player, Input::Action::SCOPE_CURRENT_PLAYER, PLAY, Grid::ACT_PUSH, SPACE);
-	Input::bindKey(player, Input::Action::SCOPE_CURRENT_PLAYER, PLAY, Grid::ACT_PUSH, 's');
-	Input::bindKey(player, Input::Action::SCOPE_CURRENT_PLAYER, PLAY, Grid::ACT_PUSH, 'd');
-	Input::bindKey(player, Input::Action::SCOPE_CURRENT_PLAYER, PLAY, Grid::ACT_SWAP, 'a');
-	Input::bindKey(player, Input::Action::SCOPE_CURRENT_PLAYER, PLAY, Grid::ACT_SWAP, 'f');
+	Input::bindKey(player, scope, MENU, ACT_QUIT, ESC);
+
+	Input::bindSpecialKey(player, scope, MENU, ACT_UP, GLUT_KEY_UP);
+	Input::bindSpecialKey(player, scope, MENU, ACT_DOWN, GLUT_KEY_DOWN);
+	Input::bindSpecialKey(player, scope, MENU, ACT_LEFT, GLUT_KEY_LEFT);
+	Input::bindSpecialKey(player, scope, MENU, ACT_RIGHT, GLUT_KEY_RIGHT);
+
+	/*
+	 * PLAY state
+	 */
+	scope = Input::Action::SCOPE_FIRST_PLAYER;
+	// FIXME: I have a hunch that SCOPE_CURRENT_PLAYER stuff is broken, so
+    //	      comment it out and use SCOPE_FIRST_PLAYER for now
+	//scope = Input::Action::SCOPE_CURRENT_PLAYER;
+
+	// arrow keys
+	Input::bindSpecialKey(player, scope, PLAY, Cursor::ACT_UP, GLUT_KEY_UP);
+	Input::bindSpecialKey(player, scope, PLAY, Cursor::ACT_DOWN, GLUT_KEY_DOWN);
+	Input::bindSpecialKey(player, scope, PLAY, Cursor::ACT_LEFT, GLUT_KEY_LEFT);
+	Input::bindSpecialKey(player, scope, PLAY, Cursor::ACT_RIGHT, GLUT_KEY_RIGHT);
+
+	// w-a-s-d style + play one-handed
+	Input::bindKey(player, scope, PLAY, Grid::ACT_PUSH, 'q');
+	Input::bindKey(player, scope, PLAY, Grid::ACT_SWAP, 'e');
+
+	Input::bindKey(player, scope, PLAY, Cursor::ACT_UP, 'w');
+	Input::bindKey(player, scope, PLAY, Cursor::ACT_DOWN, 's');
+	Input::bindKey(player, scope, PLAY, Cursor::ACT_LEFT, 'a');
+	Input::bindKey(player, scope, PLAY, Cursor::ACT_RIGHT, 'd');
+
+	// other
+	Input::bindKey(player, scope, PLAY, Grid::ACT_PUSH, ENTER);
+	Input::bindKey(player, scope, PLAY, Grid::ACT_SWAP, SPACE);
+	Input::bindKey(player, scope, PLAY, Grid::ACT_PUSH, 'z');
+	Input::bindKey(player, scope, PLAY, Grid::ACT_SWAP, 'x');
 }
 
 /**
@@ -160,7 +189,7 @@ Triforce::Triforce()
 	Input::addMouseMotionFunc(menuButtons, MENU, // same as passive
 	                          menuButtons->mousePassiveMotion);
 	Input::addPlayer();
-	declareActions(this);
+	declareActions();
 	Input::defineActions(Input::Action::SCOPE_FIRST_PLAYER, MENU, this, doAction);
 	bindDefaultActionKeys();
 }

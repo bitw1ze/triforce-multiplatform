@@ -53,7 +53,7 @@ private:
 	void loadImages();
 
 public:
-	static void declareActions(void *tfInstance);
+	static void declareActions();
 	static void doAction(void *tfInstance, int actionState, int actionType);
 
 	Triforce();

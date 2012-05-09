@@ -182,7 +182,10 @@ public:
    it around. */
 
 class Cursor : public CObject {
+public:
+	enum Actions {ACT_UP, ACT_DOWN, ACT_LEFT, ACT_RIGHT, _NUMBER_OF_ACTIONS};
 protected:
+	const static string actionLabels[_NUMBER_OF_ACTIONS];
 	int row, col,
 		cursor_delta;
 	Grid *grid;
@@ -190,7 +193,9 @@ protected:
 	static const string spriteFile;
 
 public:
-	static void mousePassiveMotion(void *gridInstance, int x, int y);
+	static void declareActions();
+	static void doAction(void *cursorInstance, int actionState, int actionType);
+	static void mousePassiveMotion(void *cursorInstance, int x, int y);
 
 	Cursor(Grid *, CBaseSprite *);
 	~Cursor();

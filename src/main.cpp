@@ -33,7 +33,7 @@ void display()
 }
 
 void specialKeys(int key, int x, int y) {
-	triforce->specialKeys(key, x, y);
+//	triforce->specialKeys(key, x, y);
 	Input::keySpecialPress(key, x, y);
 }
 

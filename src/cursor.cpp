@@ -1,6 +1,52 @@
 #include "game.h"
 #include "input.h"
 
+const string Cursor::actionLabels[Cursor::_NUMBER_OF_ACTIONS] = {
+	"Up",
+	"Down",
+    "Left",
+    "Right"};
+
+void Cursor::declareActions()
+{
+	Input::Action::ActionScope scope = Input::Action::SCOPE_FIRST_PLAYER;
+	// FIXME: I have a hunch that SCOPE_CURRENT_PLAYER stuff is broken, so
+    //	      comment it out and use SCOPE_FIRST_PLAYER for now
+	//Input::Action::ActionScope scope = Input::Action::SCOPE_CURRENT_PLAYER;
+	Triforce::GameState state = Triforce::PLAY;
+
+	Input::declareAction(scope, state, ACT_UP, actionLabels[ACT_UP]);
+	Input::declareAction(scope, state, ACT_DOWN, actionLabels[ACT_DOWN]);
+	Input::declareAction(scope, state, ACT_LEFT, actionLabels[ACT_LEFT]);
+	Input::declareAction(scope, state, ACT_RIGHT, actionLabels[ACT_RIGHT]);
+}
+
+void Cursor::doAction(void *cursorInstance, int actionState, int actionType)
+{
+	Cursor *c = (Cursor *)cursorInstance;
+	switch((enum Input::Action::ActionState)actionState)
+	{
+	case Input::Action::STATE_PRESS:
+	case Input::Action::STATE_HOLD:
+		switch((enum Actions)actionType)
+		{
+		case ACT_UP:
+			c->moveUp();
+			break;
+		case ACT_DOWN:
+			c->moveDown();
+			break;
+		case ACT_LEFT:
+			c->moveLeft();
+			break;
+		case ACT_RIGHT:
+			c->moveRight();
+			break;
+		}
+	// case Input::Action::STATE_RELEASE:
+	}
+}
+
 Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	grid = gr;
 
@@ -12,6 +58,8 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 
 	Input::addMouseMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
 	Input::addMousePassiveMotionFunc(this, Triforce::PLAY, mousePassiveMotion);
+	//Input::defineActions(Input::Action::SCOPE_CURRENT_PLAYER, Triforce::PLAY, this, doAction);
+	Input::defineActions(Input::Action::SCOPE_FIRST_PLAYER, Triforce::PLAY, this, doAction);
 }
 
 Cursor::~Cursor() {

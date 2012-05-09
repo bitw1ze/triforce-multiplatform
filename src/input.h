@@ -86,9 +86,12 @@ namespace Input
 		// callback of registered action function
 		ActionFunc action;
 	public:
+		Action() : action(NULL), actionsClassInstance(NULL){};
 		// declare an action with no definition (no action function attached)
 		Action(ActionScope scope, int activeState, int actionType, string shortDesc) :
-		  scope(scope), activeState(activeState), actionType(actionType), shortDesc(shortDesc){}
+		  action(NULL), actionsClassInstance(NULL),
+		  scope(scope), activeState(activeState), actionType(actionType),
+		  shortDesc(shortDesc){}
 		bool isSameAction(ActionScope scope, int activeState, int actionType);
 		bool isRelatedAction(ActionScope scope, int activeState);
 		void doAction(int actionState);
