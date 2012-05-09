@@ -481,12 +481,3 @@ void GridEvent::printDebug() {
 		break;
 	}
 }
-
-void GridEvent::printStates() {
-	for (list<Cell>::iterator it = combo.begin(); it != combo.cend(); ++it) {
-		if (grid->blocks[(*it).row][(*it).col].getState() == Block::combo)
-			cout << "state == combo\n";
-		else
-			cout << "state == not combo\n";
-	}
-}

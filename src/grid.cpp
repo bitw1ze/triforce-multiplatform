@@ -300,3 +300,13 @@ bool match(const Block &left, const Block &right, bool ignoreActive) {
 
 	return false;
 }
+
+void Grid::printDebug() {
+	for (int i = blocks.size() - 1; i >= 0; --i) {
+		for (int j = 0; j < ncols; ++j) {
+			printf("%d ", blocks[i][j].getState());
+		}
+		printf("\n");
+	}
+	printf("\n");
+}

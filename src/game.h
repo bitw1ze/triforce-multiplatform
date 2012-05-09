@@ -152,6 +152,8 @@ public:
 
 	bool containsPoint(int x, int y);
 
+	void printDebug();
+
 	Cursor *cursor;
 	deque< vector<Block> > blocks;
 	list<GridEvent> events;
@@ -248,7 +250,6 @@ public:
 	int count() const;
 
 	void printDebug();
-	void printStates();
 };
 
 /* The Cursor class controls the operations on the player's cursor, like moving
