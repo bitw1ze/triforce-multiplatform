@@ -374,6 +374,7 @@ void Grid::printDebug() {
 		for (int j = 0; j < ncols; ++j) {
 			printf("%d ", blocks[i][j].getState());
 		}
+		printf("\n");
 	}
 	printf("\n");
 }

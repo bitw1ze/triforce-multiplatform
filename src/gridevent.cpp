@@ -219,7 +219,12 @@ void GridEvent::cleanupFall(Grid *grid, Fall &fall) {
 		// re-enable all the blocks that were falling
 	while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::fall) {
 		grid->blocks[row][c].changeState(Block::enabled);
-		detectCombo(grid, fall);
+		++row;
+	}
+
+	row = r;
+	while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::enabled) {
+		detectCombo(grid, Fall(r, c));
 		++row;
 	}
 
@@ -263,13 +268,14 @@ void GridEvent::doFall(Grid *grid, Fall &cell) {
 		grid->blocks[row-1][c].changeState(Block::disabled);
 
 		--r;
-		//grid->printDebug();
 
 		// Clean up and exit if we are finished falling.
 		bool fallFinished = grid->blocks[r-1][c].getState() != Block::disabled
 			&& grid->blocks[r-1][c].getState() != Block::fall;
 		if (fallFinished) {
+			grid->printDebug();
 			cleanupFall(grid, cell);
+			grid->printDebug();
 			return;
 		}
 	}
