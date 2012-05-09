@@ -123,7 +123,6 @@ void Block::display() {
 	case inactive:
 		draw(0);
 		break;
-	case nextFall:
 	case disabled:
 		break;
 	}

@@ -164,7 +164,7 @@ public:
    setting the x and y values and setting states */
 
 class Block : public CObject {
-public: enum gameState { inactive, enabled, disabled, combo, fall, nextFall };
+public: enum gameState { inactive, enabled, disabled, combo, fall };
 protected:
 	gameState state;
 	CTimer *timer;

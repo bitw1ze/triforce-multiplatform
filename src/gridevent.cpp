@@ -207,15 +207,6 @@ void GridEvent::composeFrame(Grid *grid) {
 
 		fallRemovals.clear();
 	}
-
-
-	/* detect combos after fall
-	while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::enabled) {
-		detectCombo(Cell(row, c));
-		++row;
-	}
-	*/
-
 }
 
 void GridEvent::cleanupFall(Grid *grid, Fall &fall) {
@@ -242,13 +233,15 @@ void GridEvent::doFall(Grid *grid, Fall &cell) {
 	int c = cell.col;
 	int row;
 
+	if (grid->blocks[r-1][c].getState() == Block::fall)
+		return;
+
 	if (cell.enabled == true && mainTimer->elapsed(cell.lastFall, fallInterval)) 
 		cell.lastFall = mainTimer->time();
 	else
 		return;
 
-		
-	// loop through all the rows and make them fall
+	// loop through all the rows and make them fall one iteration at a time.
 	row = r;
 	while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::fall) {
 		grid->blocks[row][c].fallDown();
@@ -261,26 +254,24 @@ void GridEvent::doFall(Grid *grid, Fall &cell) {
 		// decrement the current row that we begin from.
 		
 		printf("r=%d\n", r);
-		grid->printDebug();
+		//grid->printDebug();
 		row = r;
 		while (row < (int)grid->blocks.size() && grid->blocks[row][c].getState() == Block::fall) {
-			grid->blocks[row-1][c].setSprite(grid->blocks[row][c].getSprite());
+			grid->blocks[row-1][c] = grid->blocks[row][c];
 			++row;
 		}
-
-		// disable the top top cell that has just been swapped to the one below.
 		grid->blocks[row-1][c].changeState(Block::disabled);
 
 		--r;
+		//grid->printDebug();
 
-		grid->blocks[r][c].changeState(Block::fall);
-		if (r <= 1 || grid->blocks[r-1][c].getState() != Block::disabled) {
+		// Clean up and exit if we are finished falling.
+		bool fallFinished = grid->blocks[r-1][c].getState() != Block::disabled
+			&& grid->blocks[r-1][c].getState() != Block::fall;
+		if (fallFinished) {
 			cleanupFall(grid, cell);
+			return;
 		}
-		else
-			grid->blocks[r-1][c].changeState(Block::nextFall);
-
-		grid->printDebug();
 	}
 }
 
@@ -463,8 +454,6 @@ void GridEvent::initFallState(Grid *grid, Fall &cell) {
 	int c = cell.col;
 
 	cell.enabled = true;
-	if (r > 1)
-		grid->blocks[r-1][c].changeState(Block::nextFall);
 
 	while (r < (int)grid->blocks.size() && grid->blocks[r][c].getState() == Block::enabled) {
 		grid->blocks[r][c].changeState(Block::fall);
