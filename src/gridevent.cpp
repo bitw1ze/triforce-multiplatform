@@ -196,7 +196,6 @@ void GridEvent::composeFrame(Grid *grid) {
 	for (list<Fall>::iterator fl = grid->falls.begin(); fl != grid->falls.cend(); ++fl) {
 		doFall(grid, *fl);
 		if (!(*fl).enabled) {
-			cleanupFall(grid, *fl);
 			fallRemovals.push_back(*fl);
 		}
 	}
@@ -220,8 +219,8 @@ void GridEvent::cleanupFall(Grid *grid, Fall &fall) {
 		grid->blocks[row][c].changeState(Block::enabled);
 	}
 
-	for (row = r; row < r + fall.numFalls; ++row) {
-		detectCombo(grid, Fall(r, c));
+	for (row = r-1; row < r + fall.numFalls; ++row) {
+		detectCombo(grid, Cell(row, c));
 	}
 
 	fall.enabled = false;
@@ -272,7 +271,7 @@ void GridEvent::doFall(Grid *grid, Fall &cell) {
 
 /*	detectCombo
 	This function uses the match<direction> functions to find all possible combos.
-	A combo can be stored as a set of Cells, where a Cell is a struct that holds the
+	A combo can be stored as a set of Cells, where a Cell is a Class that holds the
 	row and column of a block. A combo in one direction (e.g. 3 blocks in a row 
 	horizontal) is stored in 2 cells, and a combo in two directions (e.g. 5 blocks 
 	vertical and 3 blocks horizontal) is stored in 4 cells.
