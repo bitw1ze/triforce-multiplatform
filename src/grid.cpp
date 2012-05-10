@@ -248,7 +248,15 @@ void Grid::swapBlocks() {
 	if (r >= (int)blocks.size())
 		return;
 
-	bool belowFall = blocks[r+1][c1].getState() == Block::fall || blocks[r+1][c2].getState() == Block::fall;
+	
+	bool belowFall;
+	if (r < blocks.size() -1) {
+		belowFall = blocks[r+1][c1].getState() == Block::fall 
+			|| blocks[r+1][c2].getState() == Block::fall;
+	}
+	else
+		belowFall = false;
+
 	if (!belowFall && swap(blocks[r][c1], blocks[r][c2])) {
 		if (!GridEvent::detectCombo(this, Cell(r, c1)))
 			GridEvent::detectFall(this, Fall(r, c1));
