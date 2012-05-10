@@ -32,12 +32,12 @@ extern CTimer *mainTimer;
 namespace PlayState {
 	enum Actions {
 		UP, DOWN, LEFT, RIGHT,
-		SWAP, PUSH, PAUSE, DEBUG,
+		SWAP, PUSH, PAUSE,
 		_NUMBER_OF_ACTIONS
 	};
     static const string actionLabels[_NUMBER_OF_ACTIONS] = {
 		"Up", "Down", "Left", "Right"
-		"Swap", "Push", "Pause", "Debug"
+		"Swap", "Push", "Pause"
 	};
 }
 

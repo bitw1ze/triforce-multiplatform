@@ -97,7 +97,7 @@ void Triforce::bindDefaultActionKeys()
 	Input::bindKey(player, scope, PLAY, PlayState::PUSH, 'z');
 	Input::bindKey(player, scope, PLAY, PlayState::SWAP, 'x');
 
-	Input::bindKey(player, scope, PLAY, PlayState::DEBUG, 't');
+	Input::bindKey(player, scope, PLAY, PlayState::PAUSE, 't');
 }
 
 /**

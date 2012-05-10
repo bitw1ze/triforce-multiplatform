@@ -23,7 +23,7 @@ void Grid::declareActions()
 
 	declareAction(scope, state, SWAP, actionLabels[SWAP]);
 	declareAction(scope, state, PUSH, actionLabels[PUSH]);
-	declareAction(scope, state, DEBUG, actionLabels[DEBUG]);
+	declareAction(scope, state, PAUSE, actionLabels[PAUSE]);
 }
 void Grid::defineActions()
 {
@@ -35,7 +35,7 @@ void Grid::defineActions()
 
 	defineAction(scope, state, SWAP, this, doAction);
 	defineAction(scope, state, PUSH, this, doAction);
-	defineAction(scope, state, DEBUG, this, doAction);
+	defineAction(scope, state, PAUSE, this, doAction);
 }
 
 void Grid::doAction(void *gridInstance, int actionState, int actionType)
@@ -55,7 +55,8 @@ void Grid::doAction(void *gridInstance, int actionState, int actionType)
 			if (g->getState() == Grid::play)
 				g->pushRow();
 			break;
-		case DEBUG:
+		case PAUSE:
+			
 			g->printDebug();
 			break;
 		}
@@ -247,7 +248,8 @@ void Grid::swapBlocks() {
 	if (r >= (int)blocks.size())
 		return;
 
-	if (swap(blocks[r][c1], blocks[r][c2])) {
+	bool belowFall = blocks[r+1][c1].getState() == Block::fall || blocks[r+1][c2].getState() == Block::fall;
+	if (!belowFall && swap(blocks[r][c1], blocks[r][c2])) {
 		if (!GridEvent::detectCombo(this, Cell(r, c1)))
 			GridEvent::detectFall(this, Fall(r, c1));
 

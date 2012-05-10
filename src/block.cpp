@@ -82,35 +82,9 @@ void Block::setFallOffset(int f) {
 	Changes the state of the block. Much to be done with this function */
 void Block::changeState(gameState gs) {
 	state = gs;
-	switch (gs) {
-	case combo:
-		break;
-	case fall:
-		break;
-	case disabled:
-		break;
-	case enabled:
-		break;
-	}
 }
 
 void Block::composeFrame() {
-	switch (state) {
-	case enabled:
-		break;
-
-	case fall:
-		break;
-
-	case inactive:
-		break;
-
-	case disabled:
-		break;
-
-	default:
-		break;
-	}
 }
 
 void Block::display() {

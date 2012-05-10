@@ -123,6 +123,7 @@ void GamePlay::composeFrame()
 			if(++current_frame>=1)
 				current_frame=0;
 		}
+
 		break;
 	}
 	glutPostRedisplay();
