@@ -76,6 +76,7 @@ protected:
 	static const string 
 		blockFiles[],
 		blockComboFiles[],
+		blockInactiveFiles[],
 		cursorFiles[],
 		gridBorderFile,
 		bgFile;

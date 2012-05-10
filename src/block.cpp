@@ -99,7 +99,7 @@ void Block::display() {
 		draw(0);
 		break;
 	case inactive:
-		draw(0);
+		draw(2);
 		break;
 	case disabled:
 		break;

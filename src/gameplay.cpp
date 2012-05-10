@@ -27,6 +27,14 @@ const string GamePlay::blockComboFiles[] = {
 	"block-special-combo.bmp",
 	"block-teal-combo.bmp",
 	"block-yellow-combo.bmp"};
+const string GamePlay::blockInactiveFiles[] = {
+	"block-blue-inactive.bmp",
+	"block-green-inactive.bmp",
+	"block-purple-inactive.bmp",
+	"block-red-inactive.bmp",
+	"block-special-inactive.bmp",
+	"block-teal-inactive.bmp",
+	"block-yellow-inactive.bmp"};
 
 const int GamePlay::numCursorFiles = 10;
 const string GamePlay::cursorFiles[] = {
@@ -136,7 +144,7 @@ void GamePlay::loadImages()
   background.loadGLTextures();
 
   // r,g,b is background color to be filtered, frameCount and frame number
-  int r=254, g=0, b=254, frameCount=2, frame=0;
+  int r=254, g=0, b=254, frameCount=3, frame=0;
 
   // load grid border
   gridBorderSprite = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
@@ -150,6 +158,7 @@ void GamePlay::loadImages()
 	  blockSprites[i] = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
 	  blockSprites[i]->loadFrame(frame, themeDirectory + blockFiles[i], r, g, b);
 	  blockSprites[i]->loadFrame(frame+1, themeDirectory + blockComboFiles[i], r, g, b);
+	  blockSprites[i]->loadFrame(frame+2, themeDirectory + blockInactiveFiles[i], r, g, b);
 	  blockSprites[i]->loadGLTextures();
   }
 
