@@ -21,7 +21,7 @@
 	Initialize objects and vars such as position, dimensions, and speed.
 	Also create the initial rows of the game */
 Grid::Grid(GamePlay *gp) {
-	gridController = GridController(this);
+	gridController = new GridController(this);
 	gamePlay = gp;
 	blockSprites = gp->blockSprites;
 	block_w = blockSprites[0]->GetWidth();
@@ -133,7 +133,7 @@ void Grid::display() {
 }
 
 void Grid::composeFrame() {
-	gridController.composeFrame(this);
+	gridController->composeFrame();
 
 	for (uint32 i=0; i<blocks.size(); ++i) 
 		for (uint32 j=0; j<ncols; ++j)
@@ -223,7 +223,7 @@ void Grid::addRow() {
 
 	if (blocks.size() > 3) {
 		for (int i=0; i<ncols; ++i) { 
-			gridController.detectCombo(Cell(1, i));
+			gridController->detectCombo(Cell(1, i));
 		}
 	}
 }
@@ -256,11 +256,11 @@ void Grid::swapBlocks() {
 		belowFall = false;
 
 	if (!belowFall && swap(blocks[r][c1], blocks[r][c2])) {
-		if (!gridController.detectFall(Fall(r, c1)))
-			gridController.detectCombo(Cell(r, c1));
+		if (!gridController->detectFall(Fall(r, c1)))
+			gridController->detectCombo(Cell(r, c1));
 
-		if (!gridController.detectFall(Fall(r, c2)))
-			gridController.detectCombo(Cell(r, c2));
+		if (!gridController->detectFall(Fall(r, c2)))
+			gridController->detectCombo(Cell(r, c2));
 
 	}
 }

@@ -109,7 +109,7 @@ public:
 class Grid {
 
 public:
-	GridController gridController;
+	GridController *gridController;
 	enum gameState { play, combo };
 protected:
 	int block_w, block_h,

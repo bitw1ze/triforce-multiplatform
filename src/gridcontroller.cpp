@@ -24,6 +24,7 @@ void GridController::clone(const GridController &g) {
 void GridController::initComboState(Combo &combo) {
 	list<Cell> cells = combo.getList();
 
+	combo.init();
 	grid->changeState(Grid::combo);
 	comboEvents.push_back(combo);
 	setBlockStates(cells, Block::combo);
