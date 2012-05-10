@@ -131,10 +131,7 @@ void keyPress(unsigned char key, int x, int y)
 	list<Action *>::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
-		{
 			(*action)->doAction(Action::STATE_PRESS);
-			return;
-		}
 }
 
 void keyRelease(unsigned char key, int x, int y)
@@ -147,10 +144,7 @@ void keyRelease(unsigned char key, int x, int y)
 	list<Action *>::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
-		{
 			(*action)->doAction(Action::STATE_RELEASE);
-			return;
-		}
 }
 
 void keySpecialPress(int key, int x, int y)
@@ -163,10 +157,7 @@ void keySpecialPress(int key, int x, int y)
 	list<Action *>::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
-		{
 			(*action)->doAction(Action::STATE_PRESS);
-			return;
-		}
 }
 
 void keySpecialRelease(int key, int x, int y)
@@ -179,10 +170,7 @@ void keySpecialRelease(int key, int x, int y)
 	list<Action *>::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
-		{
 			(*action)->doAction(Action::STATE_RELEASE);
-			return;
-		}
 }
 
 void mousePress(int button, int mouseState, int x, int y)

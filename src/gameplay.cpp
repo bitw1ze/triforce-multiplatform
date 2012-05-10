@@ -64,11 +64,11 @@ void GamePlay::defineActions()
 	defineAction(scope, state, PAUSE, this, doAction);
 }
 
-void GamePlay::doAction(void *gridInstance, int actionState, int actionType)
+void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 {
 	using namespace PlayState;
 
-	GamePlay *g = (GamePlay *)gridInstance;
+	GamePlay *g = (GamePlay *)gamePlayInstance;
 	switch((enum Input::Action::ActionState)actionState)
 	{
 	case Input::Action::STATE_PRESS:
