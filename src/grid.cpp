@@ -23,6 +23,7 @@ void Grid::declareActions()
 
 	declareAction(scope, state, SWAP, actionLabels[SWAP]);
 	declareAction(scope, state, PUSH, actionLabels[PUSH]);
+	declareAction(scope, state, DEBUG, actionLabels[DEBUG]);
 }
 void Grid::defineActions()
 {
@@ -34,6 +35,7 @@ void Grid::defineActions()
 
 	defineAction(scope, state, SWAP, this, doAction);
 	defineAction(scope, state, PUSH, this, doAction);
+	defineAction(scope, state, DEBUG, this, doAction);
 }
 
 void Grid::doAction(void *gridInstance, int actionState, int actionType)
@@ -52,6 +54,9 @@ void Grid::doAction(void *gridInstance, int actionState, int actionType)
 		case PUSH:
 			if (g->getState() == Grid::play)
 				g->pushRow();
+			break;
+		case DEBUG:
+			g->printDebug();
 			break;
 		}
 	/*
@@ -198,9 +203,8 @@ void Grid::pushRow() {
 	matrix (front of deque). It will make sure not to generate combos since
 	that is the player's job.	*/
 void Grid::addRow() {
-	if (blocks.size() > nrows) {
+	if (blocks.size() > nrows) 
 		blocks.pop_back();
-	}
 
 	if (blocks.size() > 0)
 		for (vector<Block>::iterator it = blocks[0].begin(); it != blocks[0].cend(); ++it)
@@ -243,7 +247,7 @@ void Grid::swapBlocks() {
 	if (r >= (int)blocks.size())
 		return;
 
-	if (!swap(blocks[r][c1], blocks[r][c2])) {
+	if (swap(blocks[r][c1], blocks[r][c2])) {
 		if (!GridEvent::detectCombo(this, Cell(r, c1)))
 			GridEvent::detectFall(this, Fall(r, c1));
 
@@ -336,12 +340,11 @@ bool swap(Block &left, Block &right) {
 		return false;
 	}
 	
-	printf("states: (%d, %d)\n", left.getState(), right.getState());
-	
+	//printf("states: (%d, %d)\n", left.getState(), right.getState());
 	Block temp = left;
 	left = right;
 	right = temp;
-	printf("states: (%d, %d)\n\n", left.getState(), right.getState());
+	//printf("states: (%d, %d)\n\n", left.getState(), right.getState());
 
 	return true;
 }
