@@ -54,8 +54,6 @@ private:
 	 * Display routines
 	 */
 	void displayMenu();
-	void composeFrame();
-	void processFrame();
 	void loadImages();
 
 public:

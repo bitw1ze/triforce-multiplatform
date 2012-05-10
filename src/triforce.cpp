@@ -47,57 +47,56 @@ void Triforce::defineActions()
 // Hard coded default bindings
 void Triforce::bindDefaultActionKeys()
 {
+	using namespace Input;
 	int player = 0;
-	Input::Action::ActionScope scope;
+	Action::ActionScope scope;
 
 	/*
 	 * MENU state
 	 */
-	scope = Input::Action::SCOPE_FIRST_PLAYER;
+	scope = Action::SCOPE_FIRST_PLAYER;
 
-	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, SPACE);
-	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, ENTER);
-	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, 'a');
-	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, 'e');
-	Input::bindKey(player, scope, MENU, MenuState::ACTIVATE, 'z');
+	bindKey(player, scope, MENU, MenuState::ACTIVATE, BTN_SPACE);
+	bindKey(player, scope, MENU, MenuState::ACTIVATE, BTN_ENTER);
+	bindKey(player, scope, MENU, MenuState::ACTIVATE, 'a');
+	bindKey(player, scope, MENU, MenuState::ACTIVATE, 'e');
+	bindKey(player, scope, MENU, MenuState::ACTIVATE, 'z');
 
-	Input::bindKey(player, scope, MENU, MenuState::QUIT, ESC);
+	bindKey(player, scope, MENU, MenuState::QUIT, BTN_ESC);
 
-	Input::bindSpecialKey(player, scope, MENU, MenuState::UP, GLUT_KEY_UP);
-	Input::bindSpecialKey(player, scope, MENU, MenuState::DOWN, GLUT_KEY_DOWN);
-	Input::bindSpecialKey(player, scope, MENU, MenuState::LEFT, GLUT_KEY_LEFT);
-	Input::bindSpecialKey(player, scope, MENU, MenuState::RIGHT, GLUT_KEY_RIGHT);
+	bindSpecialKey(player, scope, MENU, MenuState::UP, GLUT_KEY_UP);
+	bindSpecialKey(player, scope, MENU, MenuState::DOWN, GLUT_KEY_DOWN);
+	bindSpecialKey(player, scope, MENU, MenuState::LEFT, GLUT_KEY_LEFT);
+	bindSpecialKey(player, scope, MENU, MenuState::RIGHT, GLUT_KEY_RIGHT);
 
 	/*
 	 * PLAY state
 	 */
-	scope = Input::Action::SCOPE_FIRST_PLAYER;
-	// FIXME: I have a hunch that SCOPE_CURRENT_PLAYER stuff is broken, so
-    //	      comment it out and use SCOPE_FIRST_PLAYER for now
-	//scope = Input::Action::SCOPE_CURRENT_PLAYER;
+	// FIXME: this stuff shouldn't be SCOPE_FIRST_PLAYER; this is temporary
+	scope = Action::SCOPE_FIRST_PLAYER;
 
 	// arrow keys
-	Input::bindSpecialKey(player, scope, PLAY, PlayState::UP, GLUT_KEY_UP);
-	Input::bindSpecialKey(player, scope, PLAY, PlayState::DOWN, GLUT_KEY_DOWN);
-	Input::bindSpecialKey(player, scope, PLAY, PlayState::LEFT, GLUT_KEY_LEFT);
-	Input::bindSpecialKey(player, scope, PLAY, PlayState::RIGHT, GLUT_KEY_RIGHT);
+	bindSpecialKey(player, scope, PLAY, PlayState::UP, GLUT_KEY_UP);
+	bindSpecialKey(player, scope, PLAY, PlayState::DOWN, GLUT_KEY_DOWN);
+	bindSpecialKey(player, scope, PLAY, PlayState::LEFT, GLUT_KEY_LEFT);
+	bindSpecialKey(player, scope, PLAY, PlayState::RIGHT, GLUT_KEY_RIGHT);
 
 	// w-a-s-d style + play one-handed
-	Input::bindKey(player, scope, PLAY, PlayState::PUSH, 'q');
-	Input::bindKey(player, scope, PLAY, PlayState::SWAP, 'e');
+	bindKey(player, scope, PLAY, PlayState::PUSH, 'q');
+	bindKey(player, scope, PLAY, PlayState::SWAP, 'e');
 
-	Input::bindKey(player, scope, PLAY, PlayState::UP, 'w');
-	Input::bindKey(player, scope, PLAY, PlayState::DOWN, 's');
-	Input::bindKey(player, scope, PLAY, PlayState::LEFT, 'a');
-	Input::bindKey(player, scope, PLAY, PlayState::RIGHT, 'd');
+	bindKey(player, scope, PLAY, PlayState::UP, 'w');
+	bindKey(player, scope, PLAY, PlayState::DOWN, 's');
+	bindKey(player, scope, PLAY, PlayState::LEFT, 'a');
+	bindKey(player, scope, PLAY, PlayState::RIGHT, 'd');
 
 	// other
-	Input::bindKey(player, scope, PLAY, PlayState::PUSH, ENTER);
-	Input::bindKey(player, scope, PLAY, PlayState::SWAP, SPACE);
-	Input::bindKey(player, scope, PLAY, PlayState::PUSH, 'z');
-	Input::bindKey(player, scope, PLAY, PlayState::SWAP, 'x');
+	bindKey(player, scope, PLAY, PlayState::PUSH, BTN_ENTER);
+	bindKey(player, scope, PLAY, PlayState::SWAP, BTN_SPACE);
+	bindKey(player, scope, PLAY, PlayState::PUSH, 'z');
+	bindKey(player, scope, PLAY, PlayState::SWAP, 'x');
 
-	Input::bindKey(player, scope, PLAY, PlayState::PAUSE, 't');
+	bindKey(player, scope, PLAY, PlayState::PAUSE, 't');
 }
 
 /**
@@ -105,26 +104,10 @@ void Triforce::bindDefaultActionKeys()
  */
 void Triforce::displayMenu()
 {
-	composeFrame();
+	glutPostRedisplay();
 	background.drawGLbackground();
 	menuButtons->display();
 	glutSwapBuffers();
-}
-
-void Triforce::composeFrame()
-{
-	/*
-	if(mainTimer->elapsed(last_time, 300))
-	{
-		processFrame();
-		last_time=mainTimer->time();
-	}
-	*/
-	glutPostRedisplay();
-}
-
-void Triforce::processFrame()
-{
 }
 
 void Triforce::loadImages()
@@ -158,7 +141,6 @@ void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
 		}
 		break;
 	case Input::Action::STATE_PRESS:
-	case Input::Action::STATE_HOLD:
 		switch((enum Actions)actionType)
 		{
 		case MenuState::ACTIVATE:

@@ -45,17 +45,19 @@
  *   
  *  To control the repeat rate, an Input function will have to be inserted into
  *  the display() loop, which will fire the action again if the key has not
- *  been released within a certain number of ms.
+ *  been released within a certain number of ms (but with STATE_HOLD rather than
+ *  STATE_PRESS.
  * 
  *    Each class registering actions with Input will supply:
  *       a pointer to itself
  *       a pointer to its action function, which knows how to handle each action
  *          type supported by the class.
- *       enums of the type of actions it supports
+ *       an enum value representing the type of action it supports (for each
+ *         action)
  *       strings describing those actions (for a future config class)
  *
  *     When input events occur, the state is checked, and the appropriate action
- *     function is called. Which arguments are passed to the action function
+ *     functions are called. Which arguments are passed to the action function
  *     depends upon how the keys are bound.
  *
  */
@@ -82,9 +84,7 @@ namespace Input
 		string shortDesc; // 1-2 word description of what action does
 
 		void *actionsClassInstance; // class instance that action belongs to
-
-		// callback of registered action function
-		ActionFunc action;
+		ActionFunc action; // callback of registered action function
 	public:
 		Action() : action(NULL), actionsClassInstance(NULL){};
 		// declare an action with no definition (no action function attached)
@@ -92,44 +92,45 @@ namespace Input
 		  action(NULL), actionsClassInstance(NULL),
 		  scope(scope), activeState(activeState), actionType(actionType),
 		  shortDesc(shortDesc){}
+
+		bool isDefined() {return actionsClassInstance && action;}
+		bool isSameAction(Action * action);
 		bool isSameAction(ActionScope scope, int activeState, int actionType);
 		bool isRelatedAction(ActionScope scope, int activeState);
 		bool hasActiveStateOf(int activeState) {return this->activeState == activeState;}
+
 		void doAction(int actionState);
-
-#if 0
-		// declare/define an action function (with an action function attached)
-		Action(int activeState, int actionType, string shortDesc,
-			void *actionsClassInstance, ActionFunc action) :
-			activeState(activeState), actionType(actionType), shortDesc(shortDesc),
-			actionsClassInstance(actionsClassInstance), action(action){}
-#endif
-
 	    void define(void *actionsClassInstance, ActionFunc);
 	};
 
 	class Player
 	{
 	private:
+		bool enabled;
 		list<Action *> actions;
 	public:
+		Player();
 		void addAction(Action *action);
 		bool isActionDefined(Action::ActionScope scope, int activeState, int actionType); // should have 1
 		bool hasActionsDefined(Action::ActionScope scope, int activeState); // may have >1
 		Action *getAction(Action::ActionScope scope, int activeState, int actionType);
+		void enable();
+		void disable();
+		bool isEnabled() {return enabled;}
 	};
 
 
 	// getStateFunc returns state of program, and only uses actions with the same state
-	void setGSFunc(int (*getStateFunc)()); 
+	void setGSFunc(int (*getStateFunc)());
 	void setGSLabels(const string *labels); 
 
 	void addPlayer();
 
 	/**
-	 * Button/key Inputs
+	 * Button/key input interface
 	 */
 
+	enum ButtonCodes { BTN_ESC=27, BTN_SPACE=32, BTN_ENTER=13};
 	void keyPress(unsigned char key, int x, int y);
 	void keyRelease(unsigned char key, int x, int y);
 	void keySpecialPress(int key, int x, int y);
@@ -137,7 +138,19 @@ namespace Input
 	void mousePress(int button, int mouseState, int x, int y);
 
 	/**
-	 * Motion Inputs
+	 * Binding
+	 */
+
+	// the Triforce constructor binds the default keys for the entire game
+	// TODO: Eventually, a class that loads config files will handle overriding these bindings.
+	void bindKey(Action action, unsigned char key);
+	void bindKey(int player, Action::ActionScope scope, int activeState, int actionType, unsigned char key);
+	void bindSpecialKey(Action action, int key);
+	void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int actionType, int key);
+	void bindButton(Action action, int button);
+
+	/**
+	 * Motion input interface
 	 */
 
 	// The x/y args will be passed to the member functions of the other classes
@@ -145,7 +158,8 @@ namespace Input
     // based on the state. It is left up to the caller to ensure that no two
 	// motion functions handle the same x/y area. It could be handled here,
 	// but in practice it shouldn't be a problem, and it adds a little more
-	// flexibility this way.
+	// flexibility this way (perhaps having two functions for the same area
+	// would be useful in some cases).
 
 	void mouseMotion(int x, int y);
 	void mousePassiveMotion(int x, int y);
@@ -165,17 +179,4 @@ namespace Input
 	Action * findActionDecl(Action::ActionScope scope, int activeState, int actionType);
 	void removeActions(void *classInstance);
 	void setActionLabels(int activeState, const string *labels);
-
-	/**
-	 * Binding
-	 */
-
-	// the Triforce constructor binds the default keys for the entire game
-	// TODO: Eventually, a class that loads config files will handle overriding these bindings.
-	void bindKey(Action action, unsigned char key);
-	void bindKey(int player, Action::ActionScope scope, int activeState, int actionType, unsigned char key);
-	void bindSpecialKey(Action action, int key);
-	void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int actionType, int key);
-	void bindButton(Action action, int button);
-
 } //Input

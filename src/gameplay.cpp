@@ -61,7 +61,7 @@ void GamePlay::defineActions()
 	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
 	Triforce::GameState state = Triforce::PLAY;
 
-	defineAction(scope, state, PAUSE, this, doAction);
+	defineAction(scope, state, PAUSE, this, doAction); // duplicate definition (OK)
 }
 
 void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
@@ -89,7 +89,8 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 	case Input::Action::STATE_RELEASE:
 	*/
 	}
-	glutPostRedisplay();
+	// FIXME: safe to remove this?
+	//glutPostRedisplay();
 }
 
 GamePlay::GamePlay() { 
@@ -101,6 +102,7 @@ GamePlay::GamePlay() {
 	srand(time(NULL));
 	loadImages(); 
 	grid = new Grid(this);
+	defineActions();
 }
 
 void GamePlay::display() {

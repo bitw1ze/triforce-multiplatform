@@ -5,11 +5,6 @@
 typedef unsigned int uint32;
 typedef unsigned long uint64;
 
-// FIXME: these should be moved to Input at some point
-#define ESC 27
-#define SPACE 32
-#define ENTER 13
-
 namespace Globals {
 	const uint32
 		screen_w		= 1024,

@@ -7,11 +7,17 @@ namespace Input
 {
 namespace
 {
-	list<Action *> availableActions; // all declared but undefined actions are here
-	vector<Player *> players;
-	map<unsigned char, list<Action *>> keyBindings;
-	map<int, list<Action *>> specialKeyBindings;
-	map<int, list<Action *>> mouseButtonBindings;
+	typedef list<Action *> Actions;
+	typedef vector<Player *> Players;
+	typedef map<unsigned char, Actions> KeyBindings;
+	typedef map<int, Actions> SpecialKeyBindings;
+	typedef map<int, Actions> MouseButtonBindings;
+
+	Actions availableActions; // all declared but undefined actions are here
+	Players players;
+	KeyBindings keyBindings;
+	SpecialKeyBindings specialKeyBindings;
+	MouseButtonBindings mouseButtonBindings;
 
 	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
 	const string *stateLabels; // array of labels; indices are states returned by getState()
@@ -20,23 +26,29 @@ namespace
 	/*
 	 * Handle mouse motion
 	 */ 
-	typedef int ActiveState;
-	typedef void (*MouseMotionFunc)(void *classInstance, int x, int y);
 	class MouseCallback
 	{
+	private:
+		typedef void (*MouseMotionFunc)(void *classInstance, int x, int y);
 	public:
 		void *classInstance;
 		MouseMotionFunc mouseMotionFunc;
 	};
-	typedef map<ActiveState, MouseCallback>::iterator MouseMotionIter;
-	map<ActiveState, MouseCallback> mouseMotionFuncs;
-	map<ActiveState, MouseCallback> mousePassiveMotionFuncs;
+
+	typedef int ActiveState;
+	typedef map<ActiveState, MouseCallback> MouseMotion;
+
+	MouseMotion mouseMotionFuncs;
+	MouseMotion mousePassiveMotionFuncs;
 
 	/*
 	 * Keys currently being held down
 	 */ 
-	list<unsigned char> keysDown;
-	list<unsigned char> keysSpecialDown;
+	typedef list<unsigned char> KeysDown;
+	typedef list<int> SpecialKeysDown;
+
+	KeysDown keysDown;
+	SpecialKeysDown keysSpecialDown;
 
 	void warnTooManyStateHandlers(string callerName)
 	{
@@ -44,12 +56,51 @@ namespace
 			 << "function to handle the same input for the same programs state "
 			 << "(" << callerName << ")" << endl;
 	}
+
+	// update bindings when adding 2nd, 3rd, etc actions for same scope/state/type
+	void bindUpdateAll(Action * action)
+	{
+		Actions::iterator a;
+		for (KeyBindings::iterator k = keyBindings.begin(); k != keyBindings.end(); ++k)
+		{
+			a = k->second.begin();
+			if ((*a)->isSameAction(action))
+			{
+				k->second.push_back(action);
+				break;
+			}
+		}
+		for (SpecialKeyBindings::iterator k = specialKeyBindings.begin(); k != specialKeyBindings.end(); ++k)
+		{
+			a = k->second.begin();
+			if ((*a)->isSameAction(action))
+			{
+				k->second.push_back(action);
+				break;
+			}
+		}
+		for (MouseButtonBindings::iterator k = mouseButtonBindings.begin(); k != mouseButtonBindings.end(); ++k)
+		{
+			a = k->second.begin();
+			if ((*a)->isSameAction(action))
+			{
+				k->second.push_back(action);
+				break;
+			}
+		}
+	}
 } // unnamed
 
 void Action::define(void * actionClassInstance, ActionFunc action)
 {
 	this->actionsClassInstance = actionClassInstance;
 	this->action = action;
+}
+
+bool Action::isSameAction(Action * action)
+{
+	// if the overloaded function changes, this won't compile (good)
+	return isSameAction(action->scope, action->activeState, action->actionType);
 }
 
 bool Action::isSameAction(ActionScope scope, int activeState, int actionType)
@@ -71,6 +122,11 @@ void Action::doAction(int actionState)
 		action(actionsClassInstance, actionState, actionType);
 }
 
+Player::Player()
+{
+	enabled = false;
+}
+
 void Player::addAction(Action *action)
 {
 	actions.push_back(action);
@@ -78,7 +134,7 @@ void Player::addAction(Action *action)
 
 bool Player::isActionDefined(Action::ActionScope scope, int activeState, int actionType)
 {
-	for (list<Action *>::iterator a = availableActions.begin(); a != availableActions.end(); ++a)
+	for (Actions::iterator a = availableActions.begin(); a != availableActions.end(); ++a)
 		if ((*a)->isSameAction(scope, activeState, actionType))
 			return true;
 	return false;
@@ -86,7 +142,7 @@ bool Player::isActionDefined(Action::ActionScope scope, int activeState, int act
 
 bool Player::hasActionsDefined(Action::ActionScope scope, int activeState)
 {
-	for (list<Action *>::iterator a = availableActions.begin(); a != availableActions.end(); ++a)
+	for (Actions::iterator a = availableActions.begin(); a != availableActions.end(); ++a)
 		if ((*a)->isRelatedAction(scope, activeState))
 			return true;
 	return false;
@@ -94,7 +150,7 @@ bool Player::hasActionsDefined(Action::ActionScope scope, int activeState)
 
 Action * Player::getAction(Action::ActionScope scope, int activeState, int actionType)
 {
-	for (list<Action *>::iterator a = actions.begin(); a != actions.end(); ++a)
+	for (Actions::iterator a = actions.begin(); a != actions.end(); ++a)
 		if ((*a)->isSameAction(scope, activeState, actionType))
 			return *a;
 	return (Action *)NULL;
@@ -123,12 +179,12 @@ void addPlayer()
 
 void keyPress(unsigned char key, int x, int y)
 {
-	map<unsigned char, list<Action *>>::iterator b = keyBindings.find(key);
+	KeyBindings::iterator b = keyBindings.find(key);
 	if (b == keyBindings.end())
 		return;
 
 	//TODO: push key to the container that indicates it is being held (then remove it on Release)
-	list<Action *>::iterator action;
+	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
 			(*action)->doAction(Action::STATE_PRESS);
@@ -136,12 +192,12 @@ void keyPress(unsigned char key, int x, int y)
 
 void keyRelease(unsigned char key, int x, int y)
 {
-	map<unsigned char, list<Action *>>::iterator b = keyBindings.find(key);
+	KeyBindings::iterator b = keyBindings.find(key);
 	if (b == keyBindings.end())
 		return;
 
 	//TODO: push key to the container that indicates it is being held (then remove it on Release)
-	list<Action *>::iterator action;
+	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
 			(*action)->doAction(Action::STATE_RELEASE);
@@ -149,12 +205,12 @@ void keyRelease(unsigned char key, int x, int y)
 
 void keySpecialPress(int key, int x, int y)
 {
-	map<int, list<Action *>>::iterator b = specialKeyBindings.find(key);
+	SpecialKeyBindings::iterator b = specialKeyBindings.find(key);
 	if (b == specialKeyBindings.end())
 		return;
 
 	//TODO: push key to the container that indicates it is being held (then remove it on Release)
-	list<Action *>::iterator action;
+	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
 			(*action)->doAction(Action::STATE_PRESS);
@@ -162,12 +218,12 @@ void keySpecialPress(int key, int x, int y)
 
 void keySpecialRelease(int key, int x, int y)
 {
-	map<int, list<Action *>>::iterator b = specialKeyBindings.find(key);
+	SpecialKeyBindings::iterator b = specialKeyBindings.find(key);
 	if (b == specialKeyBindings.end())
 		return;
 
 	//TODO: push key to the container that indicates it is being held (then remove it on Release)
-	list<Action *>::iterator action;
+	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
 			(*action)->doAction(Action::STATE_RELEASE);
@@ -188,7 +244,7 @@ void mouseMotion(int x, int y)
 	if (!getState)
 		return;
 
-	MouseMotionIter it;
+	MouseMotion::iterator it;
 	it = mouseMotionFuncs.find(getState());
 	if (it != mouseMotionFuncs.end())
 		it->second.mouseMotionFunc(it->second.classInstance, x, y);
@@ -200,7 +256,7 @@ void mousePassiveMotion(int x, int y)
 	if (!getState)
 		return;
 
-	MouseMotionIter it;
+	MouseMotion::iterator it;
 	it = mousePassiveMotionFuncs.find(getState());
 	if (it != mousePassiveMotionFuncs.end())
 		it->second.mouseMotionFunc(it->second.classInstance, x, y);
@@ -212,7 +268,7 @@ void addMouseMotionFunc(void *classInstance, int activeState, void (*mouseMotion
 	cb.classInstance = classInstance;
 	cb.mouseMotionFunc = mouseMotion;
 
-	pair<MouseMotionIter,bool> ret;
+	pair<MouseMotion::iterator,bool> ret;
 	ret = mouseMotionFuncs.insert(
 			pair<ActiveState,MouseCallback>(activeState, cb));
 	if (!ret.second)
@@ -225,7 +281,7 @@ void addMousePassiveMotionFunc(void *classInstance, int activeState, void (*mous
 	cb.classInstance = classInstance;
 	cb.mouseMotionFunc = mouseMotion;
 
-	pair<MouseMotionIter,bool> ret;
+	pair<MouseMotion::iterator,bool> ret;
 	ret = mousePassiveMotionFuncs.insert(
 			pair<ActiveState,MouseCallback>(activeState, cb));
 	if (!ret.second)
@@ -234,10 +290,10 @@ void addMousePassiveMotionFunc(void *classInstance, int activeState, void (*mous
 
 void removeMotions(void *classInstance)
 {
-	for (MouseMotionIter m = mouseMotionFuncs.begin(); m != mouseMotionFuncs.end(); ++m)
+	for (MouseMotion::iterator m = mouseMotionFuncs.begin(); m != mouseMotionFuncs.end(); ++m)
 		if (m->second.classInstance == classInstance)
 			mouseMotionFuncs.erase(m);
-	for (MouseMotionIter m = mousePassiveMotionFuncs.begin(); m != mousePassiveMotionFuncs.end(); ++m)
+	for (MouseMotion::iterator m = mousePassiveMotionFuncs.begin(); m != mousePassiveMotionFuncs.end(); ++m)
 		if (m->second.classInstance == classInstance)
 			mousePassiveMotionFuncs.erase(m);
 }
@@ -253,14 +309,27 @@ void declareAction(Action::ActionScope scope, int activeState, int actionType, s
 
 void defineAction(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action)
 {
-	vector<Player *>::iterator p = players.begin();
+	Players::iterator p = players.begin();
 	switch (scope)
 	{
 	case Action::SCOPE_FIRST_PLAYER:
 		// only check first player to see if this action is defined
 		Action * a = (*p)->getAction(scope, activeState, actionType);
 		if (a)
-			a->define(classInstance, action);
+		{
+			if (a->isDefined())
+			{
+				// link another action for the same thing
+				Action * newAction = new Action(*a);
+				newAction->define(classInstance, action);
+				(*p)->addAction(newAction);
+
+				// FIXME: update bindings to account for this action
+				bindUpdateAll(newAction);
+			}
+			else
+				a->define(classInstance, action);
+		}
 		else // player doesn't have this action yet, so create it
 		{
 			a = new Action(*findActionDecl(scope, activeState, actionType));
@@ -268,27 +337,9 @@ void defineAction(Action::ActionScope scope, int activeState, int actionType, vo
 			(*p)->addAction(a);
 		}
 		break;
-		// FIXME: this stuff needs to be reviewed
-		/*
-	case Action::SCOPE_CURRENT_PLAYER:
-		// go through each player; if every player has this action defined, create
-		// a new player and add the action to him
-		for (; p != players.end(); ++p)
-			if (!((*p)->isActionDefined(scope, activeState, actionType)))
-			{
-				(*p)->addAction(newAction);
-				break;
-			}
-			// push back a new player, since the action is defined for everyone else
-			players.push_back(new Player());
-			players.back()->addAction(newAction);
-		break;
-	case Action::SCOPE_ALL_PLAYERS:
-		// add definition to all player actions containers
-		for (; p != players.end(); ++p)
-			(*p)->addAction(newAction);
-		break;
-		*/
+	// FIXME: support for other players not yet fully implemented
+	//case Action::SCOPE_CURRENT_PLAYER:
+	//case Action::SCOPE_ALL_PLAYERS:
 	}
 }
 
@@ -296,7 +347,7 @@ Action * findActionDecl(Action::ActionScope scope, int activeState, int actionTy
 {
 	// Find the action decl that matches this definition; this is the action to
 	//  duplicate/add to players.
-	list<Action *>::iterator a = availableActions.begin();
+	Actions::iterator a = availableActions.begin();
 	for (; a != availableActions.end(); ++a)
 		if ((*a)->isSameAction(scope, activeState, actionType))
 			return *a;
@@ -321,12 +372,12 @@ void bindKey(int player, Action::ActionScope scope, int activeState, int actionT
 		action = new Action(*findActionDecl(scope, activeState, actionType));
 	players[player]->addAction(action);
 
-	map<unsigned char, list<Action *>>::iterator binding = keyBindings.find(key);
+	KeyBindings::iterator binding = keyBindings.find(key);
 	if (binding == keyBindings.end()) // add binding for a new key
 	{
-		list<Action *> al; // create dummy list to push to k
+		Actions al; // create dummy list to push to k
 		al.push_back(action);
-		keyBindings.insert(pair<unsigned char, list<Action *>>(key, al));
+		keyBindings.insert(pair<unsigned char, Actions>(key, al));
 	}
 	else // or a binding for another state for an existing key
 		binding->second.push_back(action);
@@ -344,12 +395,12 @@ void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int 
 		action = new Action(*findActionDecl(scope, activeState, actionType));
 	players[player]->addAction(action);
 
-	map<int, list<Action *>>::iterator binding = specialKeyBindings.find(key);
+	SpecialKeyBindings::iterator binding = specialKeyBindings.find(key);
 	if (binding == specialKeyBindings.end()) // add binding for a new key
 	{
-		list<Action *> al; // create dummy list to push to k
+		Actions al; // create dummy list to push to k
 		al.push_back(action);
-		specialKeyBindings.insert(pair<int, list<Action *>>(key, al));
+		specialKeyBindings.insert(pair<int, Actions>(key, al));
 	}
 	else // or a binding for another state for an existing key
 		binding->second.push_back(action);

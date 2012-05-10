@@ -79,7 +79,7 @@ void Grid::defineActions()
 
 	defineAction(scope, state, SWAP, this, doAction);
 	defineAction(scope, state, PUSH, this, doAction);
-	defineAction(scope, state, PAUSE, this, doAction);
+	defineAction(scope, state, PAUSE, this, doAction); // duplicate definition (OK)
 }
 
 void Grid::doAction(void *gridInstance, int actionState, int actionType)
