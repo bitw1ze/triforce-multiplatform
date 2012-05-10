@@ -103,7 +103,7 @@ public:
 	gameState getState() const;
 };
 
-/* Grid class holds abstracts all the operations on grid of blocks for a 
+/* Grid class abstracts all the operations on grid of blocks for a 
    single player */
 
 class Grid {
@@ -215,10 +215,11 @@ public:
 	Combo(const Combo &ge);
 	Combo & operator =(const Combo &ge);
 	bool operator ==(const Combo &ev);
-	void clone(const Combo &ge);	Cell *left() const { return _left; }
+	void clone(const Combo &ge);
 
 	void init();
 
+	Cell *left() const { return _left; }
 	Cell *left(int r, int c);
 	Cell *right() const { return _right; }
 	Cell *right(int r, int c);
