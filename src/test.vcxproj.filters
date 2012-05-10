@@ -39,7 +39,10 @@
     <ClCompile Include="input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gridevent.cpp">
+    <ClCompile Include="gridevents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gridcontroller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

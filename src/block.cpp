@@ -1,10 +1,7 @@
 /*	block.cpp
 
 	Block is an extension of CObject. A Block represents a single Block in a
-	Grid. Each Block contains pointers to each adjacent Block to the left,
-	right, up, and down. Therefore, one can think of the matrix of blocks as
-	a linked data structure where every object has direct access to every
-	adjacent Block.
+	Grid. It contains the block's sprite and some useful methods.
 
 	A Block can be in one of five (5) states, as described below:
 		inactive:	The Block has just entered the Grid area on the bottom but
@@ -20,12 +17,7 @@
 					the current block or it has been swapped to a space with disabled
 					block(s) below. While falling, a Block cannot be swapped.
 		disabled:	The Block has been destroyed and will no longer be displayed.
-
-	Blocks are responsible for detecting matches, combos and falling states. They 
-	can set states for other blocks and for the Grid they reside in.
-
-	Since Blocks are linked, there are functions to make it easier to find offsets
-	from a given block and to get the distance between two blocks. */
+		*/
 
 #include "game.h"
 
@@ -78,8 +70,6 @@ void Block::setFallOffset(int f) {
 	fallOffset = f;
 }
 
-/*	changeState
-	Changes the state of the block. Much to be done with this function */
 void Block::changeState(gameState gs) {
 	state = gs;
 }

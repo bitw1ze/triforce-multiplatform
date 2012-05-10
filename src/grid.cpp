@@ -10,6 +10,50 @@
 #include "game.h"
 #include "input.h"
 
+/*	TODOs: 
+		- Make the grid manage its own timer and control when rows are pushed.
+		- Overload the draw function in blocks to control how they are drawn when
+			called based on its state.
+		- Inspect code and make sure that all modules have control over their own inner features.
+*/
+
+/*	constructor
+	Initialize objects and vars such as position, dimensions, and speed.
+	Also create the initial rows of the game */
+Grid::Grid(GamePlay *gp) {
+	gridController = GridController(this);
+	gamePlay = gp;
+	blockSprites = gp->blockSprites;
+	block_w = blockSprites[0]->GetWidth();
+	block_h = blockSprites[0]->GetHeight();
+	grid_yspeed = block_h / 12;
+	grid_yoff = 0;
+	gridPos.x = gp->getWidth()/2 - (block_w * ncols)/2;
+	gridPos.y = gp->getHeight() - (block_h * 2);
+	cursor = new Cursor(this, gp->cursorSprite);
+	last_push = 0;
+	timer_push = 400;
+	last_combo = 0;
+	timer_combo = 0;
+	last_fall = 0;
+	timer_fall = 0;
+	last_cursor_anim = 0;
+	timer_cursor_anim = 50;
+	state = play;
+	current_cursor_frame = 0;
+
+	int startingRows = nrows / 2 - 1;
+
+	for (int row=0; row < startingRows; ++row)
+		addRow();
+
+	for (int row = 0; row < startingRows; ++row) 
+		for (int col = 0; col < ncols; ++col) 
+			blocks[row][col].offsetY( -1 * block_h * row );
+
+	defineActions();
+}
+
 void Grid::declareActions()
 {
 	using namespace Input;
@@ -68,50 +112,6 @@ void Grid::doAction(void *gridInstance, int actionState, int actionType)
 	glutPostRedisplay();
 }
 
-
-/*	TODOs: 
-		- Make the grid manage its own timer and control when rows are pushed.
-		- Overload the draw function in blocks to control how they are drawn when
-			called based on its state.
-		- Inspect code and make sure that all modules have control over their own inner features.
-*/
-
-/*	constructor
-	Initialize objects and vars such as position, dimensions, and speed.
-	Also create the initial rows of the game */
-Grid::Grid(GamePlay *gp) {
-	gamePlay = gp;
-	blockSprites = gp->blockSprites;
-	block_w = blockSprites[0]->GetWidth();
-	block_h = blockSprites[0]->GetHeight();
-	grid_yspeed = block_h / 12;
-	grid_yoff = 0;
-	gridPos.x = gp->getWidth()/2 - (block_w * ncols)/2;
-	gridPos.y = gp->getHeight() - (block_h * 2);
-	cursor = new Cursor(this, gp->cursorSprite);
-	last_push = 0;
-	timer_push = 400;
-	last_combo = 0;
-	timer_combo = 0;
-	last_fall = 0;
-	timer_fall = 0;
-	last_cursor_anim = 0;
-	timer_cursor_anim = 50;
-	state = play;
-	current_cursor_frame = 0;
-
-	int startingRows = nrows / 2 - 1;
-
-	for (int row=0; row < startingRows; ++row)
-		addRow();
-
-	for (int row = 0; row < startingRows; ++row) 
-		for (int col = 0; col < ncols; ++col) 
-			blocks[row][col].offsetY( -1 * block_h * row );
-
-	defineActions();
-}
-
 void Grid::changeState(gameState gs) {
 	switch (gs) {
 	case combo:
@@ -133,7 +133,7 @@ void Grid::display() {
 }
 
 void Grid::composeFrame() {
-	GridEvent::composeFrame(this);
+	gridController.composeFrame(this);
 
 	for (uint32 i=0; i<blocks.size(); ++i) 
 		for (uint32 j=0; j<ncols; ++j)
@@ -221,10 +221,9 @@ void Grid::addRow() {
 		newRow[col].grid = this;
 	}
 
-	GridEvent combo(this);
 	if (blocks.size() > 3) {
 		for (int i=0; i<ncols; ++i) { 
-			GridEvent::detectCombo(this, Cell(1, i));
+			gridController.detectCombo(Cell(1, i));
 		}
 	}
 }
@@ -257,11 +256,11 @@ void Grid::swapBlocks() {
 		belowFall = false;
 
 	if (!belowFall && swap(blocks[r][c1], blocks[r][c2])) {
-		if (!GridEvent::detectFall(this, Fall(r, c1)))
-			GridEvent::detectCombo(this, Cell(r, c1));
+		if (!gridController.detectFall(Fall(r, c1)))
+			gridController.detectCombo(Cell(r, c1));
 
-		if (!GridEvent::detectFall(this, Fall(r, c2)))
-			if (GridEvent::detectCombo(this, Cell(r, c2)));
+		if (!gridController.detectFall(Fall(r, c2)))
+			gridController.detectCombo(Cell(r, c2));
 
 	}
 }
