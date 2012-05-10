@@ -258,11 +258,12 @@ void Grid::swapBlocks() {
 		belowFall = false;
 
 	if (!belowFall && swap(blocks[r][c1], blocks[r][c2])) {
-		if (!GridEvent::detectCombo(this, Cell(r, c1)))
-			GridEvent::detectFall(this, Fall(r, c1));
+		if (!GridEvent::detectFall(this, Fall(r, c1)))
+			GridEvent::detectCombo(this, Cell(r, c1));
 
-		if (!GridEvent::detectCombo(this, Cell(r, c2)))
-			GridEvent::detectFall(this, Fall(r, c2));
+		if (!GridEvent::detectFall(this, Fall(r, c2)))
+			if (GridEvent::detectCombo(this, Cell(r, c2)));
+
 	}
 }
 
