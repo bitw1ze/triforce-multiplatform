@@ -103,37 +103,6 @@ public:
 	gameState getState() const;
 };
 
-class GridController {
-protected:
-	Grid *grid;
-	
-	list<Combo> comboEvents;
-	list<Fall> fallEvents;	
-public:
-	GridController(Grid *g = NULL) {}
-	GridController(const GridController &g);
-	GridController & operator =(const GridController &);
-	~GridController();
-	void set(Grid *g);
-	void clone(const GridController &g);
-	
-	void composeFrame();
-
-	bool checkComboFinished(Combo &ev);
-	bool detectFallAfterCombo(Combo &e);
-	bool detectFall(Fall &cell);
-
-	void initFallState(Fall &fall);
-	void cleanupFall(Fall &fall);
-	void doFall(Fall &cell);
-	bool detectCombo(Cell &cell);
-
-	void startTimer();
-	void initComboState(Combo &combo);
-
-	void setBlockStates( list<Cell> &, Block::gameState gs);
-};
-
 /* Grid class holds abstracts all the operations on grid of blocks for a 
    single player */
 
@@ -263,7 +232,7 @@ public:
 	comboState getState() { return state; }
 	void changeState(comboState st) { state = st; }
 
-	const list<Cell> & getList();
+	const list<Cell> getList();
 
 	int count() const;
 	void activate();
@@ -317,4 +286,35 @@ public:
 	int getRow() const { return row; }
 	int getCol() const { return col; }
 	void shiftRow();
+};
+
+class GridController {
+protected:
+	Grid *grid;
+	
+	list<Combo> comboEvents;
+	list<Fall> fallEvents;	
+public:
+	GridController(Grid *g = NULL);
+	GridController(const GridController &g);
+	GridController & operator =(const GridController &);
+	~GridController();
+	void set(Grid *g);
+	void clone(const GridController &g);
+	
+	void composeFrame();
+
+	bool checkComboFinished(Combo &ev);
+	bool detectFallAfterCombo(Combo &e);
+	bool detectFall(Fall &cell);
+
+	void initFallState(Fall &fall);
+	void cleanupFall(Fall &fall);
+	void doFall(Fall &cell);
+	bool detectCombo(Cell &cell);
+
+	void startTimer();
+	void initComboState(Combo &combo);
+
+	void setBlockStates( list<Cell> &, Block::gameState gs);
 };

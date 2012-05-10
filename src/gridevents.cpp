@@ -88,7 +88,7 @@ void Combo::init() {
 	startTime = mainTimer->time();
 }
 
-const list<Cell> & Combo::getList() {
+const list<Cell> Combo::getList() {
 	int r, c;
 
 	list<Cell> cells;
