@@ -126,11 +126,10 @@ void Grid::changeState(gameState gs) {
 /*	display
 	Call the draw function on all blocks, then draw the cursor over it. */
 void Grid::display() {
-	cursor->draw(current_cursor_frame);
 	for (uint32 i=0; i<blocks.size(); ++i)
 		for (uint32 j=0; j<ncols; ++j)
 			blocks[i][j].display();
-	cursor->draw(0);
+	cursor->draw(current_cursor_frame);
 }
 
 void Grid::composeFrame() {
