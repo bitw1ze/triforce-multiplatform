@@ -107,12 +107,14 @@ GamePlay::GamePlay() {
 
 void GamePlay::display() {
 	composeFrame();
+
 	background.drawGLbackground ();
-
 	grid->display();
+	int gridHeight = grid->getBlockLength() * nrows,
+		xPos = grid->getX() - 21,
+	    yPos = grid->getY() - 35 - gridHeight;
+    gridBorderSprite->draw(0, xPos, yPos);
 
-    gridBorderSprite->draw(0, grid->getX() - 21,
-	                       grid->getY() - 35 - (grid->getBlockLength() * (nrows)));
 	glutSwapBuffers();
 }
 
