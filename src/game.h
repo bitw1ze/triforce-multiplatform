@@ -13,6 +13,7 @@
 #include <vector>
 #include "2DGraphics.h"
 #include "globals.h"
+#include "buttons.h"
 
 using namespace std;
 using namespace Globals;
@@ -77,6 +78,8 @@ protected:
 
 	gameState state;
 	HUD *hud;
+
+	Buttons * menuButtons;
 	
 public:
 	static void declareActions();
@@ -98,6 +101,7 @@ public:
 	int getHeight() { return background.getViewportHeight();} 
 
 	void changeState(gameState gs);
+	static void changeStateWrapper(void *gamePlayInstance, int state);
 	gameState getState() const;
 };
 
@@ -194,7 +198,7 @@ public:
 class Combo {
 public: 
 	static int comboInterval;
-	static enum comboState { NONE, HORI, VERT, MULTI };
+	enum comboState { NONE, HORI, VERT, MULTI };
 protected:
 	Cell *_left, *_right, *_up, *_down, *_mid;
 	list<Cell> combo;

@@ -9,9 +9,12 @@ namespace
 {
 	typedef list<Action *> Actions;
 	typedef vector<Player *> Players;
-	typedef map<unsigned char, Actions> KeyBindings;
-	typedef map<int, Actions> SpecialKeyBindings;
-	typedef map<int, Actions> MouseButtonBindings;
+	typedef unsigned char Key;
+	typedef int SpecialKey;
+	typedef int MouseButton;
+	typedef map<Key, Actions> KeyBindings;
+	typedef map<SpecialKey, Actions> SpecialKeyBindings;
+	typedef map<MouseButton, Actions> MouseButtonBindings;
 
 	Actions availableActions; // all declared but undefined actions are here
 	Players players;
@@ -31,12 +34,14 @@ namespace
 	private:
 		typedef void (*MouseMotionFunc)(void *classInstance, int x, int y);
 	public:
+		MouseCallback(void *classInstance, MouseMotionFunc mouseMotionFunc) : classInstance(classInstance), mouseMotionFunc(mouseMotionFunc) {}
 		void *classInstance;
 		MouseMotionFunc mouseMotionFunc;
 	};
 
 	typedef int ActiveState;
-	typedef map<ActiveState, MouseCallback> MouseMotion;
+	typedef list<MouseCallback> MouseCallbacks;
+	typedef map<ActiveState, MouseCallbacks> MouseMotion;
 
 	MouseMotion mouseMotionFuncs;
 	MouseMotion mousePassiveMotionFuncs;
@@ -49,13 +54,6 @@ namespace
 
 	KeysDown keysDown;
 	SpecialKeysDown keysSpecialDown;
-
-	void warnTooManyStateHandlers(string callerName)
-	{
-		cout << "Warning: ignored attempt to register more than one callback"
-			 << "function to handle the same input for the same programs state "
-			 << "(" << callerName << ")" << endl;
-	}
 
 	// update bindings when adding 2nd, 3rd, etc actions for same scope/state/type
 	void bindUpdateAll(Action * action)
@@ -244,10 +242,10 @@ void mouseMotion(int x, int y)
 	if (!getState)
 		return;
 
-	MouseMotion::iterator it;
-	it = mouseMotionFuncs.find(getState());
-	if (it != mouseMotionFuncs.end())
-		it->second.mouseMotionFunc(it->second.classInstance, x, y);
+	MouseMotion::iterator mm = mouseMotionFuncs.find(getState());
+	if (mm != mouseMotionFuncs.end())
+		for (MouseCallbacks::iterator mc = mm->second.begin(); mc != mm->second.end(); ++mc)
+			mc->mouseMotionFunc(mc->classInstance, x, y);
 }
 
 // Activated when mouse moves while a mouse button ISN'T held down.
@@ -256,46 +254,50 @@ void mousePassiveMotion(int x, int y)
 	if (!getState)
 		return;
 
-	MouseMotion::iterator it;
-	it = mousePassiveMotionFuncs.find(getState());
-	if (it != mousePassiveMotionFuncs.end())
-		it->second.mouseMotionFunc(it->second.classInstance, x, y);
+	MouseMotion::iterator mm = mousePassiveMotionFuncs.find(getState());
+	if (mm != mousePassiveMotionFuncs.end())
+		for (MouseCallbacks::iterator mc = mm->second.begin(); mc != mm->second.end(); ++mc)
+			mc->mouseMotionFunc(mc->classInstance, x, y);
 }
 
 void addMouseMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
 {
-	MouseCallback cb;
-	cb.classInstance = classInstance;
-	cb.mouseMotionFunc = mouseMotion;
-
-	pair<MouseMotion::iterator,bool> ret;
-	ret = mouseMotionFuncs.insert(
-			pair<ActiveState,MouseCallback>(activeState, cb));
-	if (!ret.second)
-		warnTooManyStateHandlers(__FUNCTION__);
+	MouseCallback cb(classInstance, mouseMotion);
+	MouseMotion::iterator mm = mouseMotionFuncs.find(activeState);
+	if (mm == mouseMotionFuncs.end())
+	{
+		MouseCallbacks cbs; // create dummy list to push to
+		cbs.push_back(cb);
+		mouseMotionFuncs.insert(pair<ActiveState, MouseCallbacks>(activeState, cbs));
+	}
+	else
+		mm->second.push_back(cb);
 }
 
 void addMousePassiveMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
 {
-	MouseCallback cb;
-	cb.classInstance = classInstance;
-	cb.mouseMotionFunc = mouseMotion;
-
-	pair<MouseMotion::iterator,bool> ret;
-	ret = mousePassiveMotionFuncs.insert(
-			pair<ActiveState,MouseCallback>(activeState, cb));
-	if (!ret.second)
-		warnTooManyStateHandlers(__FUNCTION__);
+	MouseCallback cb(classInstance, mouseMotion);
+	MouseMotion::iterator mm = mousePassiveMotionFuncs.find(activeState);
+	if (mm == mousePassiveMotionFuncs.end())
+	{
+		MouseCallbacks cbs; // create dummy list to push to
+		cbs.push_back(cb);
+		mousePassiveMotionFuncs.insert(pair<ActiveState, MouseCallbacks>(activeState, cbs));
+	}
+	else
+		mm->second.push_back(cb);
 }
 
 void removeMotions(void *classInstance)
 {
 	for (MouseMotion::iterator m = mouseMotionFuncs.begin(); m != mouseMotionFuncs.end(); ++m)
-		if (m->second.classInstance == classInstance)
-			mouseMotionFuncs.erase(m);
+		for (MouseCallbacks::iterator mc = m->second.begin(); mc != m->second.end(); ++mc)
+			if (mc->classInstance == classInstance)
+				m->second.erase(mc);
 	for (MouseMotion::iterator m = mousePassiveMotionFuncs.begin(); m != mousePassiveMotionFuncs.end(); ++m)
-		if (m->second.classInstance == classInstance)
-			mousePassiveMotionFuncs.erase(m);
+		for (MouseCallbacks::iterator mc = m->second.begin(); mc != m->second.end(); ++mc)
+			if (mc->classInstance == classInstance)
+				m->second.erase(mc);
 }
 
 /**

@@ -29,6 +29,19 @@ GamePlay::GamePlay() {
 	loadImages(); 
 	grid = new Grid(this);
 	hud = new HUD(grid->getX() + (float)gridWidth * 1.15, grid->getY() + .03 * (float)gridHeight);
+
+	menuButtons = new Buttons(this->getWidth(), this->getHeight());
+	menuButtons->add(this, GamePlay::quit, changeStateWrapper, Triforce::quitBtns, this->getWidth()*.7, this->getHeight()*.7);
+
+	Input::addMousePassiveMotionFunc(menuButtons, GamePlay::play,
+								 	 menuButtons->mousePassiveMotion);
+	Input::addMousePassiveMotionFunc(menuButtons, GamePlay::pause,
+								 	 menuButtons->mousePassiveMotion);
+	Input::addMouseMotionFunc(menuButtons, GamePlay::play, // same as passive
+	                          menuButtons->mousePassiveMotion);
+	Input::addMouseMotionFunc(menuButtons, GamePlay::pause,
+	                          menuButtons->mousePassiveMotion);
+
 	defineActions();
 }
 
@@ -91,6 +104,7 @@ void GamePlay::display() {
 	int xPos = grid->getX() - 21,
 	yPos = grid->getY() - 35 - gridHeight;
     gridBorderSprite->draw(0, xPos, yPos);
+	menuButtons->display();
 
 	glutSwapBuffers();
 }
@@ -168,6 +182,11 @@ void GamePlay::loadImages()
 
 void GamePlay::changeState(gameState gs) {
 	state = gs;
+}
+
+void GamePlay::changeStateWrapper(void *gamePlayInstance, int state) {
+	GamePlay *g = (GamePlay *)gamePlayInstance;
+	g->changeState((gameState)state);
 }
 
 GamePlay::gameState GamePlay::getState() const {

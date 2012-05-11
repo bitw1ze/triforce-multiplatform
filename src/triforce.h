@@ -32,12 +32,12 @@ namespace MenuState {
 class Triforce {
 public :
 	enum GameState {MENU, PLAY, PAUSE, QUIT, _NUMBER_OF_STATES};
-private:
-	const static string gameStateLabels[_NUMBER_OF_STATES];
-
 	static const string bgFile,
 		                playBtns[],
 		                quitBtns[];
+
+private:
+	const static string gameStateLabels[_NUMBER_OF_STATES];
 
 	static GameState state;
 	static GamePlay *gamePlay;

@@ -6,7 +6,6 @@ display and compose the frame, swap and match Blocks, and push/add new
 Blocks onto the Grid.
 */
 
-
 #include "game.h"
 #include "input.h"
 
