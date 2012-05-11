@@ -12,36 +12,8 @@ of the game. It is also responsible for cleaning up when the game is finished.
 // Constants
 const string GamePlay::bgFile = "bg-play.bmp";
 const string GamePlay::gridBorderFile = "gridborder.bmp";
-const string GamePlay::blockFiles[] = {
-	"block-blue.bmp",
-	"block-green.bmp",
-	"block-purple.bmp",
-	"block-red.bmp",
-	"block-special.bmp",
-	"block-teal.bmp",
-	"block-yellow.bmp"};
-const string GamePlay::blockComboFiles[] = {
-	"block-blue-combo.bmp",
-	"block-green-combo.bmp",
-	"block-purple-combo.bmp",
-	"block-red-combo.bmp",
-	"block-special-combo.bmp",
-	"block-teal-combo.bmp",
-	"block-yellow-combo.bmp"};
-const string GamePlay::blockInactiveFiles[] = {
-	"block-blue-inactive.bmp",
-	"block-green-inactive.bmp",
-	"block-purple-inactive.bmp",
-	"block-red-inactive.bmp",
-	"block-special-inactive.bmp",
-	"block-teal-inactive.bmp",
-	"block-yellow-inactive.bmp"};
 
 const int GamePlay::numCursorFiles = 10;
-const string GamePlay::cursorFiles[] = {
-	"cursor1.bmp", "cursor2.bmp", "cursor3.bmp", "cursor4.bmp", "cursor5.bmp",
-	"cursor6.bmp", "cursor7.bmp", "cursor8.bmp", "cursor9.bmp", "cursor10.bmp"
-};
 
 int GamePlay::blockLength;
 int GamePlay::gridHeight;
@@ -97,7 +69,6 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 				g->changeState(GamePlay::play);
 			}
 			else if (g->getState() == GamePlay::play) {
-				cout << "pressed pause\n";
 				g->changeState(GamePlay::pause);
 			}
 			break;
@@ -153,31 +124,41 @@ void GamePlay::composeFrame()
 
 void GamePlay::loadImages()
 {
-  background.load( themeDirectory + bgFile );
-  background.loadGLTextures();
+	string cwd;
 
-  // r,g,b is background color to be filtered, frameCount and frame number
-  int r=254, g=0, b=254, frameCount=3, frame=0;
+	cwd = themeDirectory;
+	background.load( cwd + bgFile );
+	background.loadGLTextures();
 
-  // load grid border
-  gridBorderSprite = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
-  gridBorderSprite->loadFrame(frame, themeDirectory + gridBorderFile, r, g, b);
-  gridBorderSprite->loadGLTextures();
+	// r,g,b is background color to be filtered, frameCount and frame number
+	int r=254, g=0, b=254, frameCount=3, frame=0;
+
+	// load grid border
+	gridBorderSprite = new CBaseSprite(frameCount, screen_w, screen_h);
+	gridBorderSprite->loadFrame(frame, themeDirectory + gridBorderFile, r, g, b);
+	gridBorderSprite->loadGLTextures();
   
-  for (int i=0; i<nblocktypes; ++i) {
-	  // Block files are designed to not require a color filter. They aren't
-	  // guaranteed to work as expected when their bg's are filtered out and a
-	  // background image of a different color is used.
-	  blockSprites[i] = new CBaseSprite(frameCount, background.getViewportWidth(), background.getViewportHeight());
-	  blockSprites[i]->loadFrame(frame, themeDirectory + blockFiles[i], r, g, b);
-	  blockSprites[i]->loadFrame(frame+1, themeDirectory + blockComboFiles[i], r, g, b);
-	  blockSprites[i]->loadFrame(frame+2, themeDirectory + blockInactiveFiles[i], r, g, b);
-	  blockSprites[i]->loadGLTextures();
+	char num[3];
+	cwd = themeDirectory + "blocks\\";
+	for (int i=0; i<nblocktypes; ++i) {
+		// Block files are designed to not require a color filter. They aren't
+		// guaranteed to work as expected when their bg's are filtered out and a
+		// background image of a different color is used.
+		
+		sprintf_s(num, "%d", i);
+		blockSprites[i] = new CBaseSprite(frameCount, screen_w, screen_h);
+		blockSprites[i]->loadFrame(frame+0, cwd + "normal\\" + num + ".bmp", r, g, b);
+		blockSprites[i]->loadFrame(frame+1, cwd + "combo\\" + num + ".bmp", r, g, b);
+		blockSprites[i]->loadFrame(frame+2, cwd + "inactive\\" + num + ".bmp", r, g, b);
+		blockSprites[i]->loadGLTextures();
   }
 
-  cursorSprite = new CBaseSprite(numCursorFiles, background.getViewportWidth(), background.getViewportHeight());
-  for (int i = 0; i < numCursorFiles; ++i)
-	  cursorSprite->loadFrame(i, themeDirectory + cursorFiles[i], r, g, b);
+  cursorSprite = new CBaseSprite(numCursorFiles, screen_w, screen_h);
+  cwd = themeDirectory + "cursor\\";
+  for (int i = 0; i < numCursorFiles; ++i) {
+	  sprintf_s(num, "%d", i);
+	  cursorSprite->loadFrame(i, cwd + num + ".bmp", r, g, b);
+  }
   cursorSprite->loadGLTextures();
 
   GamePlay::blockLength = blockSprites[0]->GetHeight();

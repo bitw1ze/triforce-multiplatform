@@ -6,6 +6,7 @@
 #pragma once
 
 #include <string>
+#include <sstream>
 #include <list>
 #include <ctime>
 #include <deque>
@@ -35,7 +36,7 @@ namespace PlayState {
 		_NUMBER_OF_ACTIONS
 	};
     static const string actionLabels[_NUMBER_OF_ACTIONS] = {
-		"Up", "Down", "Left", "Right"
+		"Up", "Down", "Left", "Right",
 		"Swap", "Push", "Pause"
 	};
 }
@@ -62,9 +63,7 @@ public:
 protected:
 	/* bitmap files */
 	static const string 
-		blockFiles[],
-		blockComboFiles[],
-		blockInactiveFiles[],
+		blockNames[],
 		cursorFiles[],
 		gridBorderFile,
 		bgFile;
