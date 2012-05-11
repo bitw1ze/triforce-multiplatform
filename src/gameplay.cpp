@@ -36,8 +36,8 @@ GamePlay::GamePlay() {
 		xpos = this->getWidth() - xOffset,
 		ypos = this->getHeight() - yOffset;
 	menuButtons->add(this, GamePlay::quit, changeStateWrapper, Triforce::quitBtns, xpos, ypos);
-	ypos += yOffset;
-	//menuButtons->add(this, GamePlay::pause, changeStateWrapper, Triforce::pauseBtns, xpos, ypos);
+	ypos -= yOffset;
+	menuButtons->add(this, GamePlay::pause, changeStateWrapper, Triforce::pauseBtns, xpos, ypos);
 
 	Input::addMousePassiveMotionFunc(menuButtons, Triforce::PLAY,
 								 	 menuButtons->mousePassiveMotion);

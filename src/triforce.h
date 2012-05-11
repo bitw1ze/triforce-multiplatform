@@ -34,6 +34,7 @@ public :
 	enum GameState {MENU, HELP, PLAY, PAUSE, QUIT, _NUMBER_OF_STATES};
 	static const string bgFile,
 		                playBtns[],
+		                pauseBtns[],
 		                helpBtns[],
 		                quitBtns[];
 

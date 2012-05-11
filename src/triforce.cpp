@@ -14,6 +14,9 @@ const string Triforce::quitBtns[] = {
 const string Triforce::helpBtns[] = {
 	"helpBtn.bmp", "helpBtnHover.bmp", "helpBtnPressed.bmp"
 };
+const string Triforce::pauseBtns[] = {
+	"pauseBtn.bmp", "pauseBtnHover.bmp", "pauseBtnPressed.bmp"
+};
 
 Triforce::GameState Triforce::state = MENU;
 GamePlay * Triforce::gamePlay = NULL;
