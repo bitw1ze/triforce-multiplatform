@@ -203,7 +203,7 @@ void Grid::pushRow() {
 	matrix (front of deque). It will make sure not to generate combos since
 	that is the player's job.	*/
 void Grid::addRow() {
-	if (blocks.size() > nrows) 
+	if (blocks.size() > nrows - 1) 
 		blocks.pop_back();
 
 	if (blocks.size() > 0)
