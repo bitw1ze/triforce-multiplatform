@@ -31,9 +31,10 @@ namespace MenuState {
  //   B) use member functions instead (i.e. multiple class instances makes sense)
 class Triforce {
 public :
-	enum GameState {MENU, PLAY, PAUSE, QUIT, _NUMBER_OF_STATES};
+	enum GameState {MENU, HELP, PLAY, PAUSE, QUIT, _NUMBER_OF_STATES};
 	static const string bgFile,
 		                playBtns[],
+		                helpBtns[],
 		                quitBtns[];
 
 private:

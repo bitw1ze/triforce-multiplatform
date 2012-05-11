@@ -6,10 +6,13 @@ const string Triforce::gameStateLabels[Triforce::_NUMBER_OF_STATES] = {
 
 const string Triforce::bgFile = "bg-menu.bmp";
 const string Triforce::playBtns[] = {
-	"playBtn_small.bmp", "playBtnHover_small.bmp", "playBtnPressed_small.bmp"
+	"playBtn.bmp", "playBtnHover.bmp", "playBtnPressed.bmp"
 };
 const string Triforce::quitBtns[] = {
-	"quitBtn_small.bmp", "quitBtnHover_small.bmp", "quitBtnPressed_small.bmp"
+	"quitBtn.bmp", "quitBtnHover.bmp", "quitBtnPressed.bmp"
+};
+const string Triforce::helpBtns[] = {
+	"helpBtn.bmp", "helpBtnHover.bmp", "helpBtnPressed.bmp"
 };
 
 Triforce::GameState Triforce::state = MENU;
@@ -121,31 +124,31 @@ void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
 
 	switch ((enum Input::Action::ActionState)actionState)
 	{
-	case Input::Action::STATE_RELEASE:
-		switch((enum Actions)actionType)
-		{
-		case MenuState::LEFT:
-		case MenuState::UP:
-			t->menuButtons->hoverPrev();
-			break;
-		case MenuState::RIGHT:
-		case MenuState::DOWN:
-			t->menuButtons->hoverNext();
-			break;
-		case MenuState::ACTIVATE:
-			t->menuButtons->activateCurrent();
-			break;
-		case MenuState::QUIT:
-			exit(0);
-			break;
-		}
-		break;
 	case Input::Action::STATE_PRESS:
 		switch((enum Actions)actionType)
 		{
-		case MenuState::ACTIVATE:
-			t->menuButtons->pressCurrent();
-			break;
+			case MenuState::ACTIVATE:
+				t->menuButtons->pressCurrent();
+				break;
+		}
+		break;
+	case Input::Action::STATE_RELEASE:
+		switch((enum Actions)actionType)
+		{
+			case MenuState::LEFT:
+			case MenuState::UP:
+				t->menuButtons->hoverPrev();
+				break;
+			case MenuState::RIGHT:
+			case MenuState::DOWN:
+				t->menuButtons->hoverNext();
+				break;
+			case MenuState::ACTIVATE:
+				t->menuButtons->activateCurrent();
+				break;
+			case MenuState::QUIT:
+				exit(0);
+				break;
 		}
 		break;
 	}
@@ -166,7 +169,8 @@ Triforce::Triforce()
 	int vpWidth = background.getViewportWidth(),
  	    vpHeight = background.getViewportHeight();
 	menuButtons = new Buttons(vpWidth, vpHeight);
-	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.8);
+	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.7);
+	menuButtons->add(this, HELP, setStateWrapper, helpBtns, vpWidth*.5 - 64, vpHeight*.8);
 	menuButtons->add(this, QUIT, setStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
 
 	/*
@@ -202,6 +206,7 @@ void Triforce::display()
 	switch (state)
 	{
 	case MENU: // fall through
+	case HELP:
 	case PAUSE:
 		displayMenu();
 		break;
@@ -226,6 +231,9 @@ void Triforce::setState(GameState s)
 	case PLAY:
 		if (state == MENU) // state change from menu to play
 			gamePlay = new GamePlay;
+		break;
+	case HELP:
+		s = state; //FIXME: temporarily ignore this state
 		break;
 	case PAUSE:
 		break; // TODO: not yet implemented

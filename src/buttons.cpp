@@ -2,9 +2,10 @@
 
 Buttons::Buttons(int viewportWidth, int viewportHeight) {
 	curFrame = 0;
-	r = 3;
-	g = 7;
-	b = 23;
+
+	r = 254;
+	g = 0;
+	b = 254;
 	vpWidth = viewportWidth;
 	vpHeight = viewportHeight;
 }

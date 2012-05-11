@@ -31,17 +31,21 @@ GamePlay::GamePlay() {
 	hud = new HUD(grid->getX() + (float)gridWidth * 1.15, grid->getY() + .03 * (float)gridHeight);
 
 	menuButtons = new Buttons(this->getWidth(), this->getHeight());
-	int xpos = this->getWidth() - 150,
-		ypos = this->getHeight() - 85;
+	int yOffset = 85,
+		xOffset = 150,
+		xpos = this->getWidth() - xOffset,
+		ypos = this->getHeight() - yOffset;
 	menuButtons->add(this, GamePlay::quit, changeStateWrapper, Triforce::quitBtns, xpos, ypos);
+	ypos += yOffset;
+	//menuButtons->add(this, GamePlay::pause, changeStateWrapper, Triforce::pauseBtns, xpos, ypos);
 
-	Input::addMousePassiveMotionFunc(menuButtons, GamePlay::play,
+	Input::addMousePassiveMotionFunc(menuButtons, Triforce::PLAY,
 								 	 menuButtons->mousePassiveMotion);
-	Input::addMousePassiveMotionFunc(menuButtons, GamePlay::pause,
+	Input::addMousePassiveMotionFunc(menuButtons, Triforce::PLAY,
 								 	 menuButtons->mousePassiveMotion);
-	Input::addMouseMotionFunc(menuButtons, GamePlay::play, // same as passive
+	Input::addMouseMotionFunc(menuButtons, Triforce::PLAY, // same as passive
 	                          menuButtons->mousePassiveMotion);
-	Input::addMouseMotionFunc(menuButtons, GamePlay::pause,
+	Input::addMouseMotionFunc(menuButtons, Triforce::PLAY,
 	                          menuButtons->mousePassiveMotion);
 
 	defineActions();
