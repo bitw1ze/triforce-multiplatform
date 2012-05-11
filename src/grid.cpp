@@ -192,7 +192,7 @@ void Grid::pushRow() {
 			blocks[i][j].offsetY(-grid_yspeed);
 	
 	if (grid_yoff >= block_h) {
-		grid_yoff = 0;
+		grid_yoff %= block_h;
 		cursor->shiftRow();
 		addRow();
 	}
