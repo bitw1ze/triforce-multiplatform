@@ -234,47 +234,42 @@ bool GridController::detectFallAfterCombo(Combo &ev) {
 	
 	case Combo::HORI:
 		r = ev.left()->row + 1;
-		if (r >= (int)grid->blocks.size())
-			return false;
 
-		for (c = ev.left()->col; c <= ev.right()->col; ++c) {
-			detectFall(Fall(r, c));
-		}
+		if (r < (int)grid->blocks.size() - 1)
+			for (c = ev.left()->col; c <= ev.right()->col; ++c) 
+				detectFall(Fall(r, c));
 
 		break;
 
 	case Combo::VERT:
 		r = ev.up()->row + 1;
 		c = ev.up()->col;
-		if (r >= (int)grid->blocks.size())
-			return false;
-		else {
+		if (r < (int)grid->blocks.size() - 1)
 			detectFall(Fall(r, c));
-		}
 		
 		break;
 
 	case Combo::MULTI:
 		r = ev.left()->row + 1;
-		if (r >= (int)grid->blocks.size())
-			return false;
-		for (c = ev.left()->col; c <= ev.right()->col; ++c) {
-			if (r != ev.mid()->row)
-				detectFall(Fall(r, c));
+		if (r < (int)grid->blocks.size() - 1) {
+			
+			for (c = ev.left()->col; c <= ev.right()->col; ++c)
+				if (r != ev.mid()->row)
+					detectFall(Fall(r, c));
+		
+			r = ev.up()->row + 1;
+			c = ev.up()->col;
+			detectFall(Fall(r, c));
 		}
-		r = ev.up()->row + 1;
-		c = ev.up()->col;
-		detectFall(Fall(r, c));
 
 		break;
 
 	default:
-		ev.changeState(Combo::NONE);
 		return false;
+
 	}
 	
 	ev.changeState(Combo::NONE);
-
 	return true;
 }
 

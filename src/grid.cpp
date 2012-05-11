@@ -243,12 +243,8 @@ void Grid::swapBlocks() {
 	c2 = c1 + 1;
 	r = cursor->getRow();
 
-	if (r >= (int)blocks.size())
-		return;
-
-	
 	bool belowFall;
-	if (r < blocks.size() -1) {
+	if (r < (int)blocks.size() - 1) {
 		belowFall = blocks[r+1][c1].getState() == Block::fall 
 			|| blocks[r+1][c2].getState() == Block::fall;
 	}
@@ -340,6 +336,9 @@ Grid::~Grid() {
 bool swap(Block &left, Block &right) {
 	Block::gameState ls = left.getState();
 	Block::gameState rs = right.getState();
+
+	cout << "left yoff: " << left.getFallOffset() << endl;
+	cout << "right yoff: " << right.getFallOffset() << endl;
 
 	if ( ls == Block::combo || rs == Block::combo ||
 		ls == Block::fall || rs == Block::fall)
