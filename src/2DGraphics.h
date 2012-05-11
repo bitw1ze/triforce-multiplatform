@@ -1,7 +1,8 @@
 /*	2DGraphics.h
 	by Dr. Arif Wani and modified by Gabe Pike
-	I added some extra functions to this file to make it
-	easier to use in our project. */
+
+	I added some extra functions to this file to make it easier 
+	to use the library in our project. */
 #pragma once
 
 #ifdef _MSC_VER

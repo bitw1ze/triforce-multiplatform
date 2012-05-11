@@ -1,8 +1,6 @@
-/*	game.h
-	by Gabe Pike
-	Changes:
-		- added prototypes for methods used by other classes
-		- created a Point struct and a Cell struct for better x/y and row/col handling
+/*	game.h 
+
+	Contains headers for all classes that are a part of actualy gameplay.
 */
 
 #pragma once
@@ -158,9 +156,6 @@ public:
 	Cursor *cursor;
 	deque< vector<Block> > blocks; //i.e. blocks[row][col]
 };
-
-/* The Block class abstracts operations on a single block, such as getting and 
-   setting the x and y values and setting states */
 
 class Block : public CObject {
 public: enum gameState { inactive, enabled, disabled, combo, fall };

@@ -1,21 +1,7 @@
-/*	grid.cpp
-	by Gabe Pike
-	Changes:
-		- added game states to the grid
-		- detect combos and break blocks when a combo is found
-		- added destructor
-		- documented all the methods
-*/
+/*	grid.cpp */
 
 #include "game.h"
 #include "input.h"
-
-/*	TODOs: 
-		- Make the grid manage its own timer and control when rows are pushed.
-		- Overload the draw function in blocks to control how they are drawn when
-			called based on its state.
-		- Inspect code and make sure that all modules have control over their own inner features.
-*/
 
 /*	constructor
 	Initialize objects and vars such as position, dimensions, and speed.

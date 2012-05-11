@@ -1,8 +1,4 @@
-/*	main.cpp
-	by Gabe Pike
-	Changes:
-		- window resolution is now forced
-*/
+/*	main.cpp */
 
 #include "triforce.h"
 
