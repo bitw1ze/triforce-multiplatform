@@ -101,7 +101,6 @@ void GridController::cleanupFall(Fall &fall) {
 	}
 
 	fall.enabled = false;
-
 }
 
 void GridController::doFall(Fall &cell) {

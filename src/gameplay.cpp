@@ -42,6 +42,8 @@ const string GamePlay::cursorFiles[] = {
 	"cursor6.bmp", "cursor7.bmp", "cursor8.bmp", "cursor9.bmp", "cursor10.bmp"
 };
 
+int GamePlay::blockLength;
+
 /* GamePlay methods */
 void GamePlay::declareActions()
 {
@@ -110,7 +112,7 @@ void GamePlay::display() {
 
 	background.drawGLbackground ();
 	grid->display();
-	int gridHeight = grid->getBlockLength() * nrows,
+	int gridHeight = GamePlay::blockLength * nrows,
 		xPos = grid->getX() - 21,
 	    yPos = grid->getY() - 35 - gridHeight;
     gridBorderSprite->draw(0, xPos, yPos);
@@ -172,6 +174,8 @@ void GamePlay::loadImages()
   for (int i = 0; i < numCursorFiles; ++i)
 	  cursorSprite->loadFrame(i, themeDirectory + cursorFiles[i], r, g, b);
   cursorSprite->loadGLTextures();
+
+  GamePlay::blockLength = blockSprites[0]->GetHeight();
 }
 
 void GamePlay::changeState(gameState gs) {

@@ -45,17 +45,17 @@ void Block::clone(const Block &src) {
 }
 
 void Block::fallDown() {
-	int offset = getHeight() / fallFactor;;
+	int offset = GamePlay::blockLength / fallFactor;;
 	fallOffset += offset;
 	offsetY(offset);
-	if (fallOffset >= getHeight()) {
+	if (fallOffset >= GamePlay::blockLength) {
 		resetFall();
 	}
 }
 
 void Block::resetFall() {
 	fallOffset = 0;
-	offsetY(-getHeight());
+	offsetY(-GamePlay::blockLength);
 }
 
 int Block::getFallOffset() const {

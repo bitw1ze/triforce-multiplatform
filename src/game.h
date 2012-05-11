@@ -81,6 +81,9 @@ protected:
 	gameState state;
 
 public:
+	static int blockLength;
+	
+public:
 	static void declareActions();
 	void defineActions();
 	static void doAction(void *gridInstance, int actionState, int actionType);
@@ -112,8 +115,7 @@ public:
 	GridController *gridController;
 	enum gameState { play, combo };
 protected:
-	int block_w, block_h,
-		grid_yspeed, grid_yoff,
+	int	grid_yspeed, grid_yoff,
 		lastPush, pushInterval, comboInterval,
 		last_cursor_anim, timer_cursor_anim, current_cursor_frame;
 	Point gridPos;
@@ -144,7 +146,6 @@ public:
 	int getYOffset() { return grid_yoff; }
 	int getX() { return gridPos.x; }
 	int getY() { return gridPos.y; }
-	int getBlockLength() { return block_h; }
 	int countEnabledRows() const;
 
 	int downMatch(int r, int c, bool ignoreActive = false);

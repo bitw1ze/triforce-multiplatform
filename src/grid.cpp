@@ -24,12 +24,10 @@ Grid::Grid(GamePlay *gp) {
 	gridController = new GridController(this);
 	gamePlay = gp;
 	blockSprites = gp->blockSprites;
-	block_w = blockSprites[0]->GetWidth();
-	block_h = blockSprites[0]->GetHeight();
-	grid_yspeed = block_h / 12;
+	grid_yspeed = GamePlay::blockLength / 12;
 	grid_yoff = 0;
-	gridPos.x = gp->getWidth()/2 - (block_w * ncols)/2;
-	gridPos.y = gp->getHeight() - (block_h * 2);
+	gridPos.x = gp->getWidth()/2 - (GamePlay::blockLength * ncols)/2;
+	gridPos.y = gp->getHeight() - (GamePlay::blockLength * 2);
 	cursor = new Cursor(this, gp->cursorSprite);
 	lastPush = 0;
 	pushInterval = 400;
@@ -46,7 +44,7 @@ Grid::Grid(GamePlay *gp) {
 
 	for (int row = 0; row < startingRows; ++row) 
 		for (int col = 0; col < ncols; ++col) 
-			blocks[row][col].offsetY( -1 * block_h * row );
+			blocks[row][col].offsetY( -1 * GamePlay::blockLength * row );
 
 	defineActions();
 }
@@ -154,8 +152,8 @@ void Grid::composeFrame() {
 }
 
 bool Grid::containsPoint(int x, int y) {
-	bool containsX = x > gridPos.x && x < gridPos.x + (int)ncols*block_h;
-	bool containsY = !(y > gridPos.y - grid_yoff || y < gridPos.y - (int)(nrows)*block_h);
+	bool containsX = x > gridPos.x && x < gridPos.x + (int)ncols*GamePlay::blockLength;
+	bool containsY = !(y > gridPos.y - grid_yoff || y < gridPos.y - (int)(nrows)*GamePlay::blockLength);
 	return containsX && containsY;
 }
 
@@ -188,8 +186,8 @@ void Grid::pushRow() {
 		for (uint32 j=0; j<ncols; ++j) 
 			blocks[i][j].offsetY(-grid_yspeed);
 	
-	if (grid_yoff >= block_h) {
-		grid_yoff %= block_h;
+	if (grid_yoff >= GamePlay::blockLength) {
+		grid_yoff %= GamePlay::blockLength;
 		cursor->shiftRow();
 		addRow();
 	}
@@ -213,7 +211,7 @@ void Grid::addRow() {
 	for (int col=0; col<ncols; ++col) {
 		// Randomize the blocks without generating combos
 		do {
-			blocks[0][col].init(blockSprites[rand() % nblocktypes], gridPos.x + col * block_w, gridPos.y);
+			blocks[0][col].init(blockSprites[rand() % nblocktypes], gridPos.x + col * GamePlay::blockLength, gridPos.y);
 		} while ( leftMatch(0, col, true) >= 2 || upMatch(0, col, true) >= 2 );
 		newRow[col].grid = this;
 	}

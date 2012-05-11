@@ -101,7 +101,7 @@ bool Cursor::moveRight(bool doDraw) {
 }
 
 bool Cursor::moveDown(bool doDraw) {
-	if (getY() + 2*grid->getBlockLength() <= grid->getY()) {
+	if (getY() + 2 * GamePlay::blockLength <= grid->getY()) {
 		--row;
 		offsetY( cursor_delta );
 		if (doDraw)
@@ -149,12 +149,12 @@ void Cursor::mousePassiveMotion(void *cursorInstance, int x, int y) {
 
 	// move cursor inside grid
 	glutSetCursor(GLUT_CURSOR_LEFT_SIDE);
-	if (c->getX() + 2*c->grid->getBlockLength() - x_threshold*c->grid->getBlockLength() < x && c->col < ncols - 2)
+	if (c->getX() + 2*GamePlay::blockLength - x_threshold * GamePlay::blockLength < x && c->col < ncols - 2)
 		c->moveRight();
-	else if (x - x_threshold*c->grid->getBlockLength() < c->getX() && c->col > 0)
+	else if (x - x_threshold*GamePlay::blockLength < c->getX() && c->col > 0)
 		c->moveLeft();
 	else if (c->getY() > y && c->row < nrows)
 	    c->moveUp();
-	else if (y > c->getY() + c->grid->getBlockLength() && c->row > 0)
+	else if (y > c->getY() + GamePlay::blockLength && c->row > 0)
 		c->moveDown(); 
 }
