@@ -234,7 +234,7 @@ bool GridController::detectFallAfterCombo(Combo &ev) {
 	case Combo::HORI:
 		r = ev.left()->row + 1;
 
-		if (r < (int)grid->blocks.size() - 1)
+		if (r < (int)grid->blocks.size())
 			for (c = ev.left()->col; c <= ev.right()->col; ++c) 
 				detectFall(Fall(r, c));
 
@@ -243,14 +243,14 @@ bool GridController::detectFallAfterCombo(Combo &ev) {
 	case Combo::VERT:
 		r = ev.up()->row + 1;
 		c = ev.up()->col;
-		if (r < (int)grid->blocks.size() - 1)
+		if (r < (int)grid->blocks.size())
 			detectFall(Fall(r, c));
 		
 		break;
 
 	case Combo::MULTI:
 		r = ev.left()->row + 1;
-		if (r < (int)grid->blocks.size() - 1) {
+		if (r < (int)grid->blocks.size()) {
 			
 			for (c = ev.left()->col; c <= ev.right()->col; ++c)
 				if (r != ev.mid()->row)
