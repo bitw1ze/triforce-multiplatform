@@ -29,10 +29,6 @@ class Fall;
 
 extern CTimer *mainTimer;
 
-/* GamePlay is the main interface for controlling everything else within the 
-   game. Classes other than GamePlay declared in this header will be
-   implemented in their own .cpp files to make things more modular. This
-   seems to be the best solution. */
 namespace PlayState {
 	enum Actions {
 		UP, DOWN, LEFT, RIGHT,
