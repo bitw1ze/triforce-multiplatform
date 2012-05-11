@@ -71,8 +71,8 @@ protected:
 	static const int numCursorFiles;
 
 	/* frame stuff */
-	int current_frame, 
-		last_time;
+	int current_frame;
+	uint64 last_time;
 
 	BMPClass background;
 
@@ -112,8 +112,10 @@ public:
 	enum gameState { play, combo };
 protected:
 	int	grid_yspeed, grid_yoff,
-		lastPush, pushInterval, comboInterval,
-		last_cursor_anim, timer_cursor_anim, current_cursor_frame;
+		pushInterval, comboInterval,
+		current_cursor_frame;
+	uint64 last_cursor_anim, timer_cursor_anim;
+	uint64 lastPush;
 	Point gridPos;
 	GamePlay *gamePlay;
 	CBaseSprite** blockSprites;
@@ -198,7 +200,7 @@ protected:
 	Cell *_left, *_right, *_up, *_down, *_mid;
 	list<Cell> combo;
 	int interval;
-	int startTime;
+	uint64 startTime;
 	comboState state;
 
 public:
@@ -236,7 +238,7 @@ public:
 class Fall : public Cell {
 public:
 	static int fallInterval;
-	int lastFall;
+	uint64 lastFall;
 	int numFalls;
 	bool enabled;
 

@@ -1,6 +1,6 @@
 #include "game.h"
 
-float HUD::color[3] = {1.0, (float)233/255, 1.0};
+float HUD::color[3] = {1.0, 1.0, 1.0};
 
 HUD::HUD(int _x, int _y) {
 	font = GLUT_BITMAP_TIMES_ROMAN_24;
@@ -11,7 +11,6 @@ void HUD::init(int _x = 0, int _y = 0) {
 	startTime = mainTimer->time();
 	x = (float)_x / screen_w;
 	y = (float)_y / screen_h;
-	cout << x << " " << y << " " << endl;
 }
 
 void HUD::composeFrame() {

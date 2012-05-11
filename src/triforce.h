@@ -45,8 +45,8 @@ private:
 	Buttons * menuButtons;
 	BMPClass background;
 
-	int current_frame,
-		last_time;
+	int current_frame;
+	uint64 last_time;
 
 	void bindDefaultActionKeys();
 
