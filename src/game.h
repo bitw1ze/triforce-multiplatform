@@ -79,7 +79,6 @@ protected:
 	gameState state;
 	HUD *hud;
 
-	Buttons * menuButtons;
 	
 public:
 	static void declareActions();
@@ -103,6 +102,9 @@ public:
 	void changeState(gameState gs);
 	static void changeStateWrapper(void *gamePlayInstance, int state);
 	gameState getState() const;
+
+	// FIXME: once mouse buttons are working in Input, this should be protected
+	Buttons * menuButtons;
 };
 
 /* Grid class abstracts all the operations on grid of blocks for a 

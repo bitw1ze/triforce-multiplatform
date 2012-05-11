@@ -31,7 +31,9 @@ GamePlay::GamePlay() {
 	hud = new HUD(grid->getX() + (float)gridWidth * 1.15, grid->getY() + .03 * (float)gridHeight);
 
 	menuButtons = new Buttons(this->getWidth(), this->getHeight());
-	menuButtons->add(this, GamePlay::quit, changeStateWrapper, Triforce::quitBtns, this->getWidth()*.7, this->getHeight()*.7);
+	int xpos = this->getWidth() - 150,
+		ypos = this->getHeight() - 85;
+	menuButtons->add(this, GamePlay::quit, changeStateWrapper, Triforce::quitBtns, xpos, ypos);
 
 	Input::addMousePassiveMotionFunc(menuButtons, GamePlay::play,
 								 	 menuButtons->mousePassiveMotion);
@@ -96,6 +98,8 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 }
 
 void GamePlay::display() {
+	if (state == GamePlay::quit)
+		Triforce::setState(Triforce::QUIT);
 	composeFrame();
 
 	background.drawGLbackground ();
