@@ -114,9 +114,7 @@ public:
 protected:
 	int block_w, block_h,
 		grid_yspeed, grid_yoff,
-		last_push, last_combo,
-		timer_push, timer_combo,
-		last_fall, timer_fall,
+		lastPush, pushInterval, comboInterval,
 		last_cursor_anim, timer_cursor_anim, current_cursor_frame;
 	Point gridPos;
 	GamePlay *gamePlay;
@@ -171,7 +169,6 @@ class Block : public CObject {
 public: enum gameState { inactive, enabled, disabled, combo, fall };
 protected:
 	gameState state;
-	CTimer *timer;
 	int fallOffset;
 
 public:
@@ -314,8 +311,6 @@ public:
 	void doFall(Fall &cell);
 	bool detectCombo(Cell &cell);
 
-	void startTimer();
 	void initComboState(Combo &combo);
-
 	void setBlockStates( list<Cell> &, Block::gameState gs);
 };

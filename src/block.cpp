@@ -24,9 +24,6 @@
 const int Block::fallFactor = 8;
 
 Block::Block() : CObject() {
-	timer = new CTimer(); 
-	timer->start();
-
 	fallOffset = 0;
 	state = inactive; 
 }
@@ -44,7 +41,6 @@ Block & Block::operator =(const Block &block) {
 void Block::clone(const Block &src) {
 	changeState(src.getState());
 	setSprite(src.getSprite());
-	timer = src.timer;
 	fallOffset = src.fallOffset;
 }
 

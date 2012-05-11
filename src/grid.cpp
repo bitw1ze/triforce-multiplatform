@@ -31,15 +31,12 @@ Grid::Grid(GamePlay *gp) {
 	gridPos.x = gp->getWidth()/2 - (block_w * ncols)/2;
 	gridPos.y = gp->getHeight() - (block_h * 2);
 	cursor = new Cursor(this, gp->cursorSprite);
-	last_push = 0;
-	timer_push = 400;
-	last_combo = 0;
-	timer_combo = 0;
-	last_fall = 0;
-	timer_fall = 0;
+	lastPush = 0;
+	pushInterval = 400;
+	comboInterval = 0;
+	state = play;
 	last_cursor_anim = 0;
 	timer_cursor_anim = 50;
-	state = play;
 	current_cursor_frame = 0;
 
 	int startingRows = nrows / 2 - 1;
@@ -117,7 +114,7 @@ void Grid::changeState(gameState gs) {
 	case combo:
 		break;
 	case play:
-		last_push = mainTimer->time();
+		lastPush = mainTimer->time();
 		break;
 	}
 	state = gs;
@@ -147,9 +144,9 @@ void Grid::composeFrame() {
 
 	switch (state) {
 	case play:
-		if (mainTimer->elapsed(last_push, timer_push)) {
+		if (mainTimer->elapsed(lastPush, pushInterval)) {
 			pushRow();
-			last_push = mainTimer->time();
+			lastPush = mainTimer->time();
 		}
 		break;
 
@@ -229,7 +226,7 @@ void Grid::addRow() {
 }
 
 void Grid::incComboInterval(int interval) {
-	timer_combo += interval;
+	comboInterval += interval;
 }
 
 /*	swapBlocks()
@@ -243,8 +240,11 @@ void Grid::swapBlocks() {
 	c2 = c1 + 1;
 	r = cursor->getRow();
 
+	if (r >= blocks.size())
+		return;
+
 	bool belowFall;
-	if (r < (int)blocks.size() - 1) {
+	if (r < blocks.size() - 1) {
 		belowFall = blocks[r+1][c1].getState() == Block::fall 
 			|| blocks[r+1][c2].getState() == Block::fall;
 	}
