@@ -118,6 +118,7 @@ void Grid::display() {
 			blocks[i][j].display();
 	cursor->draw(current_cursor_frame);
 	cursor->alignCursorToMouse();
+	integerPrintf(.75, .5, GamePlay::font1, gridController->chains(), GamePlay::fcolor1);
 }
 
 void Grid::composeFrame() {

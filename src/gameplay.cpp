@@ -18,14 +18,17 @@ const int GamePlay::numCursorFiles = 10;
 int GamePlay::blockLength;
 int GamePlay::gridHeight;
 int GamePlay::gridWidth;
+void * GamePlay::font1 = GLUT_BITMAP_TIMES_ROMAN_24;
+float GamePlay::fcolor1[3] = {1, 1, 1};
 
 GamePlay::GamePlay() { 
+	srand(time(NULL));
+
 	state = play;
 	current_frame = 0; 
 	
 	last_time=mainTimer->time();
 
-	srand(time(NULL));
 	loadImages(); 
 	grid = new Grid(this);
 	hud = new HUD(grid->getX() + (float)gridWidth * 1.15, grid->getY() + .03 * (float)gridHeight);

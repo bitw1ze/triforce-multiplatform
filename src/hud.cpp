@@ -1,9 +1,6 @@
 #include "game.h"
 
-float HUD::color[3] = {1.0, 1.0, 1.0};
-
 HUD::HUD(int _x, int _y) {
-	font = GLUT_BITMAP_TIMES_ROMAN_24;
 	init(_x, _y);
 }
 
@@ -25,5 +22,5 @@ void HUD::calcTime() {
 
 void HUD::display() {
 	sprintf_s(timeStr, "%02d:%02d\0", currentMinutes, currentSeconds);
-	textPrintf(x, y, font, timeStr, color);
+	textPrintf(x, y, (void *)GamePlay::font1, timeStr, GamePlay::fcolor1);
 }

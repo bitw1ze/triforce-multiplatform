@@ -61,6 +61,8 @@ public:
 	static int blockLength;
 	static int gridHeight;
 	static int gridWidth;
+	static void *font1;
+	static float fcolor1[3];
 protected:
 	/* bitmap files */
 	static const string 
@@ -289,8 +291,13 @@ public:
 	void shiftRow();
 };
 
+class Chain {
+
+};
+
 class GridController {
 protected:
+	int chainCount;
 	Grid *grid;
 	
 	list<Combo> comboEvents;
@@ -316,6 +323,8 @@ public:
 
 	void initComboState(Combo &combo);
 	void setBlockStates(list<Cell> &, Block::gameState gs);
+
+	int chains() { return chainCount; }
 };
 
 class HUD {
@@ -325,8 +334,6 @@ protected:
 	int currentSeconds;
 	int currentMinutes;
 	float x, y;
-	void *font;
-	static float color[3];
 	char timeStr[10];
 
 protected:

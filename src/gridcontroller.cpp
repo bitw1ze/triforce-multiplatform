@@ -25,6 +25,7 @@ GridController & GridController::operator =(const GridController &gc) {
 
 void GridController::set(Grid *g) {
 	grid = g;
+	chainCount = 0;
 }
 
 void GridController::clone(const GridController &g) {
@@ -106,9 +107,17 @@ void GridController::cleanupFall(Fall &fall) {
 		grid->blocks[row][c].changeState(Block::enabled);
 	}
 
+	int isChain = false;
+
 	for (row = r-1; row < r + fall.numFalls; ++row) {
-		detectCombo(Cell(row, c));
+		if (detectCombo(Cell(row, c))) {
+			isChain = true;
+			++chainCount;
+		}
 	}
+
+	if (!isChain)
+		chainCount = 0;
 
 	fall.enabled = false;
 }
@@ -199,7 +208,7 @@ bool GridController::detectCombo(Cell &cell) {
 		match1 = grid->downMatch(r, c);
 		match2 = grid->upMatch(r, c);
 
-		if ( match1 + match2 >= 2) {
+		if (match1 + match2 >= 2) {
 			combo.mid(r, c);
 			combo.down(r - match1, c);
 			combo.up(r + match2, c);
@@ -222,9 +231,10 @@ bool GridController::detectCombo(Cell &cell) {
 			initComboState(combo);
 			return true;
 		}
-
-		combo.changeState(Combo::NONE);
-		return false;
+		else {
+			combo.changeState(Combo::NONE);
+			return false;
+		}
 	}
 }
 
