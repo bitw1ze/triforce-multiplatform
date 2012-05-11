@@ -161,7 +161,7 @@ public:
 	void printDebug();
 
 	Cursor *cursor;
-	deque< vector<Block> > blocks;
+	deque< vector<Block> > blocks; //i.e. blocks[row][col]
 };
 
 /* The Block class abstracts operations on a single block, such as getting and 

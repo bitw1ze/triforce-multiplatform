@@ -118,10 +118,12 @@ void GamePlay::display() {
 	glutSwapBuffers();
 }
 
+#if 0
 void GamePlay::processFrame()
 {
 	//grid->setCoords();
 }
+#endif
 
 void GamePlay::composeFrame()
 {
@@ -130,7 +132,7 @@ void GamePlay::composeFrame()
 		grid->composeFrame();
 		if(mainTimer->elapsed(last_time,300))
 		{
-			processFrame();
+			//processFrame();
 			last_time=mainTimer->time();
 			if(++current_frame>=1)
 				current_frame=0;
