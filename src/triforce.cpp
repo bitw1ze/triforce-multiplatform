@@ -246,7 +246,7 @@ void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
 	{
 		switch (button) {
 		case GLUT_LEFT_BUTTON:
-			if (mouseState == GLUT_DOWN)
+			if (mouseState == GLUT_DOWN && gamePlay->grid->containsPoint(x, y))
 				gamePlay->grid->swapBlocks();
 		}
 	}
