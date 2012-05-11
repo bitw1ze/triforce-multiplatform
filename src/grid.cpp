@@ -1,4 +1,11 @@
-/*	grid.cpp */
+/*	grid.cpp
+
+A Grid represents a single player. It is responsible displaying all the
+objects inside the Grid (Blocks and Cursor). It contains functions to
+display and compose the frame, swap and match Blocks, and push/add new 
+Blocks onto the Grid.
+*/
+
 
 #include "game.h"
 #include "input.h"

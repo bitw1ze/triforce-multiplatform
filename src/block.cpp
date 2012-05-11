@@ -1,7 +1,8 @@
 /*	block.cpp
 
 	Block is an extension of CObject. A Block represents a single Block in a
-	Grid. It contains the block's sprite and some useful methods.
+	Grid. The state and position of Blocks are controlled by the Grid
+	and GridController class.
 
 	A Block can be in one of five (5) states, as described below:
 		inactive:	The Block has just entered the Grid area on the bottom but

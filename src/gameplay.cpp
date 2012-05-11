@@ -1,8 +1,9 @@
 /*	gameplay.cpp
-	by Gabe Pike
-	Changes:
-		- handed off control of pushing new rows onto the grid to grid.cpp
-		- now displays a border around the grid
+		
+GamePlay is the entry point of the actual game. It is responsible for 
+initializing the gameplay area. It loads the resources needed in the game, 
+calls the Grid display and composeFrame functions, and controls the state 
+of the game. It is also responsible for cleaning up when the game is finished.
 */
 
 #include "game.h"

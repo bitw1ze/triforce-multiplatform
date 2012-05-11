@@ -1,3 +1,13 @@
+/* gridcontroller.cpp
+
+GridController controls the events that occur in a Grid instance. It keeps
+track of Fall and Combo events. Grid calls GridController's composeFrame().
+Every call to composeFrame() updates the state of events. GridController
+detects Falls and Combos, initializes them, and cleans up after them when
+they are done. It also calls the doFall() method to make Blocks fall for
+every iteration that the Fall is active.
+*/
+
 #include "game.h"
 
 GridController::GridController(Grid *grid) {

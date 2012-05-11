@@ -1,3 +1,23 @@
+/* gridevent.cpp
+
+This file contains the Fall class and Combo class. Each class contains
+information relevant to their respective events. They only have methods
+and variables that are useful to the GridController class. They do not
+actually control the state of Blocks because that is GridController's job.
+
+Combo member variables:
+	- coordinates of the up, down, left, and right, and mid Blocks.
+	- type/state of combo (horizontal, vertical, or multiple).
+	- time that the combo was activated.
+	- interval that the combo lasts.
+
+Fall member variables:
+	- starting coordinate of the falling block
+	- number of blocks that need to fall
+	- last time that a fall iteration occured
+	- current status (enabled/disabled)
+*/
+
 #include "game.h"
 
 int Fall::fallInterval = 10;
