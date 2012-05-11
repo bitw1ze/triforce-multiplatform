@@ -18,6 +18,7 @@
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="gridcontroller.cpp" />
     <ClCompile Include="gridevents.cpp" />
+    <ClCompile Include="hud.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="triforce.cpp" />

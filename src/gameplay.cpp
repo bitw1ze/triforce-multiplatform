@@ -44,6 +44,21 @@ const string GamePlay::cursorFiles[] = {
 };
 
 int GamePlay::blockLength;
+int GamePlay::gridHeight;
+int GamePlay::gridWidth;
+
+GamePlay::GamePlay() { 
+	state = play;
+	current_frame = 0; 
+	
+	last_time=mainTimer->time();
+
+	srand(time(NULL));
+	loadImages(); 
+	grid = new Grid(this);
+	hud = new HUD(grid->getX() + (float)gridWidth * 1.15, grid->getY() + .03 * (float)gridHeight);
+	defineActions();
+}
 
 /* GamePlay methods */
 void GamePlay::declareActions()
@@ -96,26 +111,14 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 	//glutPostRedisplay();
 }
 
-GamePlay::GamePlay() { 
-	state = play;
-	current_frame = 0; 
-	
-	last_time=mainTimer->time();
-
-	srand(time(NULL));
-	loadImages(); 
-	grid = new Grid(this);
-	defineActions();
-}
-
 void GamePlay::display() {
 	composeFrame();
 
 	background.drawGLbackground ();
 	grid->display();
-	int gridHeight = GamePlay::blockLength * nrows,
-		xPos = grid->getX() - 21,
-	    yPos = grid->getY() - 35 - gridHeight;
+	hud->display();
+	int xPos = grid->getX() - 21,
+	yPos = grid->getY() - 35 - gridHeight;
     gridBorderSprite->draw(0, xPos, yPos);
 
 	glutSwapBuffers();
@@ -133,6 +136,7 @@ void GamePlay::composeFrame()
 	switch (state) {
 	case play:
 		grid->composeFrame();
+		hud->composeFrame();
 		if(mainTimer->elapsed(last_time,300))
 		{
 			//processFrame();
@@ -177,6 +181,8 @@ void GamePlay::loadImages()
   cursorSprite->loadGLTextures();
 
   GamePlay::blockLength = blockSprites[0]->GetHeight();
+  GamePlay::gridHeight = GamePlay::blockLength * nrows;
+  GamePlay::gridWidth = GamePlay::blockLength * ncols;
 }
 
 void GamePlay::changeState(gameState gs) {

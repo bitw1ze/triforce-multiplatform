@@ -24,6 +24,7 @@ class Grid;
 class Cell;
 class Combo;
 class Fall;
+class HUD;
 
 extern CTimer *mainTimer;
 
@@ -55,6 +56,9 @@ public:
 class GamePlay {
 public:
 	enum gameState {play, pause, quit};
+	static int blockLength;
+	static int gridHeight;
+	static int gridWidth;
 protected:
 	/* bitmap files */
 	static const string 
@@ -73,9 +77,7 @@ protected:
 	BMPClass background;
 
 	gameState state;
-
-public:
-	static int blockLength;
+	HUD *hud;
 	
 public:
 	static void declareActions();
@@ -304,5 +306,26 @@ public:
 	bool detectCombo(Cell &cell);
 
 	void initComboState(Combo &combo);
-	void setBlockStates( list<Cell> &, Block::gameState gs);
+	void setBlockStates(list<Cell> &, Block::gameState gs);
+};
+
+class HUD {
+protected:
+	uint64 startTime;
+	uint64 currentTime;
+	int currentSeconds;
+	int currentMinutes;
+	float x, y;
+	void *font;
+	static float color[3];
+	char timeStr[10];
+
+protected:
+	void calcTime();
+	void init(int x, int y);
+
+public:
+	HUD(int x, int y);
+	void composeFrame();
+	void display();
 };
