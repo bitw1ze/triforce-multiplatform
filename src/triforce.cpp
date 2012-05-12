@@ -170,11 +170,12 @@ Triforce::Triforce()
 	 * Create menu buttons
 	 */
 	int vpWidth = background.getViewportWidth(),
- 	    vpHeight = background.getViewportHeight();
+ 	    vpHeight = background.getViewportHeight(),
+		midHeight = vpHeight/2;
 	menuButtons = new Buttons(vpWidth, vpHeight);
-	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, vpHeight*.7);
-	menuButtons->add(this, HELP, setStateWrapper, helpBtns, vpWidth*.5 - 64, vpHeight*.8);
-	menuButtons->add(this, QUIT, setStateWrapper, quitBtns, vpWidth*.5 - 64, vpHeight*.9);
+	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, midHeight - vpHeight*.1);
+	menuButtons->add(this, HELP, setStateWrapper, helpBtns, vpWidth*.5 - 64, midHeight);
+	menuButtons->add(this, QUIT, setStateWrapper, quitBtns, vpWidth*.5 - 64, midHeight + vpHeight*.1);
 
 	/*
 	 * Configure input
