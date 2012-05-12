@@ -17,7 +17,8 @@ Buttons::~Buttons() {
 
 void Buttons::display() {
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
-		(*button)->draw((*button)->getFrameNum());
+		if ((*button)->enabled)
+			(*button)->draw((*button)->getFrameNum());
 }
 
 /**
@@ -56,6 +57,8 @@ void Buttons::add(void *classInstance, int actionArg,
 }
 
 void Buttons::hoverPrev() {
+	if (areAllDisabled())
+		return;
 	if (!(*currentBtn)->hovering) // prefer to use a hovering button over the currentBtn
 		for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 			if ((*button)->hovering)
@@ -69,6 +72,8 @@ void Buttons::hoverPrev() {
 }
 
 void Buttons::hoverNext() {
+	if (areAllDisabled())
+		return;
 	if (!(*currentBtn)->hovering) // prefer to use a hovering button over the currentBtn
 		for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 			if ((*button)->hovering)
@@ -100,6 +105,32 @@ void Buttons::unpressAll() {
 		(*button)->pressing = false;
 }
 
+void Buttons::disable(int actionArg)
+{
+	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
+		if ((*button)->actionArg == actionArg)
+		{
+			if (currentBtn == button)
+				hoverNext();
+			(*button)->disable();
+		}
+}
+
+void Buttons::enable(int actionArg)
+{
+	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
+		if ((*button)->actionArg == actionArg)
+			(*button)->enable();
+}
+
+bool Buttons::areAllDisabled()
+{
+	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
+		if ((*button)->enabled)
+			return false;
+	return true;
+}
+
 void Buttons::activateCurrent() {
 	if ((*currentBtn)->hovering && (*currentBtn)->pressing)
 		(*currentBtn)->activate();
@@ -115,6 +146,8 @@ Buttons::Button * Buttons::getBtnUnderCursor(int x, int y) {
 	CBaseSprite * sprite;
 	for (BtnIter_t button = buttons.begin(); button != buttons.end(); ++button)
 		{
+			if (!(*button)->enabled)
+				continue;
 			(*button)->Getxy(minX, minY);
 			sprite = (*button)->getSprite();
 			maxX = minX + sprite->GetWidth();
@@ -146,13 +179,14 @@ void Buttons::mousePassiveMotion(void *buttonsInstance, int x, int y) {
 	Buttons * b = (Buttons *)buttonsInstance;
 	Button * button = b->getBtnUnderCursor(x, y);
 	b->unhoverAll();
-	if (button)
+	if (button && button->enabled)
 		button->hover();
 }
 
 Buttons::Button::Button(CBaseSprite * sprite, int xpos, int ypos) {
 	pressing = false;
 	hovering = false;
+	enabled = true;
 	init(sprite, xpos, ypos, 0, 0, NULL);
 }
 

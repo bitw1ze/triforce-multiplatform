@@ -37,15 +37,13 @@ GamePlay::GamePlay() {
 		ypos = this->getHeight() - yOffset;
 	menuButtons->add(this, GamePlay::quit, changeStateWrapper, Triforce::quitBtns, xpos, ypos);
 	ypos -= yOffset;
+	menuButtons->add(this, GamePlay::play, changeStateWrapper, Triforce::playBtns, xpos, ypos);
 	menuButtons->add(this, GamePlay::pause, changeStateWrapper, Triforce::pauseBtns, xpos, ypos);
+	menuButtons->disable(GamePlay::play);
 
 	Input::addMousePassiveMotionFunc(menuButtons, Triforce::PLAY,
 								 	 menuButtons->mousePassiveMotion);
-	Input::addMousePassiveMotionFunc(menuButtons, Triforce::PLAY,
-								 	 menuButtons->mousePassiveMotion);
 	Input::addMouseMotionFunc(menuButtons, Triforce::PLAY, // same as passive
-	                          menuButtons->mousePassiveMotion);
-	Input::addMouseMotionFunc(menuButtons, Triforce::PLAY,
 	                          menuButtons->mousePassiveMotion);
 
 	defineActions();
@@ -84,12 +82,7 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 		switch((enum Actions)actionType)
 		{
 		case PAUSE:
-			if (g->getState() == pause) {
-				g->changeState(GamePlay::play);
-			}
-			else if (g->getState() == GamePlay::play) {
-				g->changeState(GamePlay::pause);
-			}
+			g->changeState(pause);
 			break;
 		}
 	/*
@@ -189,7 +182,20 @@ void GamePlay::loadImages()
 }
 
 void GamePlay::changeState(gameState gs) {
-	state = gs;
+	if (state == play && gs == pause)
+	{
+		menuButtons->disable(pause);
+		menuButtons->enable(play);
+		state = pause;
+	}
+	else if (state == pause && gs == play)
+	{
+		menuButtons->disable(play);
+		menuButtons->enable(pause);
+		state = play;
+	}
+	else
+		state = gs;
 }
 
 void GamePlay::changeStateWrapper(void *gamePlayInstance, int state) {

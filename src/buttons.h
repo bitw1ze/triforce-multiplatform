@@ -15,6 +15,7 @@ protected:
 	public:
 		bool hovering;
 		bool pressing;
+		bool enabled;
 
 		Button(CBaseSprite *sprite, int xpos, int ypos);
 		void unhover();
@@ -27,6 +28,8 @@ protected:
 		void * actionClassInstance;
 		int actionArg;
 		void (*action)(void *classInstance, int actionArg);
+		void disable() {enabled = hovering = pressing = false;}
+		void enable() {enabled = true;}
 	};
 
 	typedef list<Button *> Btns_t;
@@ -51,6 +54,9 @@ public:
  	         const string btnFiles[3], int xpos = 0, int ypos = 0);
 	void unhoverAll();
 	void unpressAll();
+	void enable(int actionArg);
+	void disable(int actionArg);
+	bool areAllDisabled();
 
 	//keyboard
 	void hoverPrev();
