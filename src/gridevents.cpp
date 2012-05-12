@@ -49,12 +49,14 @@ void Fall::init() {
 	numFalls = 0; 
 	lastFall = -1; 
 	enabled = false; 
+	fallType = NOFALL;
 }
 
 void Fall::clone(const Fall &src) { 
 	numFalls = src.numFalls; 
 	lastFall = src.lastFall; 
 	enabled = src.enabled; 
+	fallType = src.fallType;
 }
 
 Combo::Combo() {

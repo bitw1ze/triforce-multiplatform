@@ -248,6 +248,8 @@ public:
 	uint64 lastFall;
 	int numFalls;
 	bool enabled;
+	typedef enum { NOFALL, COMBO, SWAP } FallType;
+	FallType fallType;
 
 public:
 	Fall();
@@ -257,7 +259,6 @@ public:
 	bool operator ==(const Fall &fl);
 	void init();
 	void clone(const Fall &src);
-
 };
 
 /* The Cursor class controls the operations on the player's cursor, like moving
@@ -314,7 +315,7 @@ public:
 
 	bool checkComboFinished(Combo &ev);
 	bool detectFallAfterCombo(Combo &e);
-	bool detectFall(Fall &cell);
+	bool detectFall(Fall &fall, Fall::FallType fallType);
 
 	void initFallState(Fall &fall);
 	void cleanupFall(Fall &fall);

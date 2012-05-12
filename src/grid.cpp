@@ -244,10 +244,12 @@ void Grid::swapBlocks() {
 		belowFall = false;
 
 	if (!belowFall && swap(blocks[r][c1], blocks[r][c2])) {
-		if (!gridController->detectFall(Fall(r, c1)))
+		if (!gridController->detectFall(Fall(r, c1), Fall::SWAP) &
+			!gridController->detectFall(Fall(r+1, c1), Fall::SWAP))
 			gridController->detectCombo(Cell(r, c1));
 
-		if (!gridController->detectFall(Fall(r, c2)))
+		if (!gridController->detectFall(Fall(r, c2), Fall::SWAP) &
+			!gridController->detectFall(Fall(r+1, c2), Fall::SWAP))
 			gridController->detectCombo(Cell(r, c2));
 
 	}
@@ -329,8 +331,8 @@ bool swap(Block &left, Block &right) {
 	Block::gameState ls = left.getState();
 	Block::gameState rs = right.getState();
 
-	cout << "left yoff: " << left.getFallOffset() << endl;
-	cout << "right yoff: " << right.getFallOffset() << endl;
+	//cout << "left yoff: " << left.getFallOffset() << endl;
+	//cout << "right yoff: " << right.getFallOffset() << endl;
 
 	if ( ls == Block::combo || rs == Block::combo ||
 		ls == Block::fall || rs == Block::fall)

@@ -107,17 +107,18 @@ void GridController::cleanupFall(Fall &fall) {
 		grid->blocks[row][c].changeState(Block::enabled);
 	}
 
-	int isChain = false;
+	int tempChains = 0;
 
 	for (row = r-1; row < r + fall.numFalls; ++row) {
-		if (detectCombo(Cell(row, c))) {
-			isChain = true;
-			++chainCount;
-		}
+		if (detectCombo(Cell(row, c))) 
+			++tempChains;
 	}
 
-	if (!isChain)
-		chainCount = 0;
+	cout << "Falltype: " << fall.fallType << endl;
+	cout << "chains: " << tempChains << endl;
+
+	if (fall.fallType == Fall::COMBO) 
+		chainCount = (tempChains > 0) ? (chainCount + tempChains) : tempChains;
 
 	fall.enabled = false;
 }
@@ -256,7 +257,7 @@ bool GridController::detectFallAfterCombo(Combo &ev) {
 
 		if (r < (int)grid->blocks.size())
 			for (c = ev.left()->col; c <= ev.right()->col; ++c) 
-				detectFall(Fall(r, c));
+				detectFall(Fall(r, c), Fall::COMBO);
 
 		break;
 
@@ -264,7 +265,7 @@ bool GridController::detectFallAfterCombo(Combo &ev) {
 		r = ev.up()->row + 1;
 		c = ev.up()->col;
 		if (r < (int)grid->blocks.size())
-			detectFall(Fall(r, c));
+			detectFall(Fall(r, c), Fall::COMBO);
 		
 		break;
 
@@ -274,11 +275,11 @@ bool GridController::detectFallAfterCombo(Combo &ev) {
 			
 			for (c = ev.left()->col; c <= ev.right()->col; ++c)
 				if (r != ev.mid()->row)
-					detectFall(Fall(r, c));
+					detectFall(Fall(r, c), Fall::COMBO);
 		
 			r = ev.up()->row + 1;
 			c = ev.up()->col;
-			detectFall(Fall(r, c));
+			detectFall(Fall(r, c), Fall::COMBO);
 		}
 
 		break;
@@ -292,36 +293,24 @@ bool GridController::detectFallAfterCombo(Combo &ev) {
 	return true;
 }
 
-bool GridController::detectFall(Fall &cell) {
-	int r = cell.row;
-	int c = cell.col;
+bool GridController::detectFall(Fall &fall, Fall::FallType fallType) {
+	int r = fall.row;
+	int c = fall.col;
 
-	if (r >= (int)grid->blocks.size())
+	if (r >= (int)grid->blocks.size() || r <= 0)
 		return false;
 
-	Block::gameState downState;
-	Block::gameState midState;
-	Block::gameState upState; 
-
-	downState = r > 1 ? grid->blocks[r-1][c].getState() : (Block::gameState)-1;
+	Block::gameState midState, downState;
+	downState = grid->blocks[r-1][c].getState();
 	midState = grid->blocks[r][c].getState();
-	upState = r < (int)grid->blocks.size() - 1 ? grid->blocks[r+1][c].getState() : (Block::gameState)-1;
 
-	if (( downState == Block::disabled || downState == Block::fall ) && midState == Block::enabled) {
-		initFallState(cell);
-		fallEvents.push_back(cell);
-		
-		return true;
-	}
-	else if ( midState == Block::disabled && upState == Block::enabled ) {
-		Fall fall(r+1, c);
+	if ((downState == Block::disabled || downState == Block::fall) && midState == Block::enabled) {
+		fall.fallType = fallType;
 		initFallState(fall);
 		fallEvents.push_back(fall);
-
 		return true;
 	}
-
-	return false;
+	else return false;
 }
 
 void GridController::initFallState(Fall &cell) {
