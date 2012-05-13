@@ -117,6 +117,7 @@ void Grid::display() {
 		for (uint32 j=0; j<ncols; ++j)
 			blocks[i][j].display();
 	cursor->draw(current_cursor_frame);
+	cursor->alignCursorToMouse();
 }
 
 void Grid::composeFrame() {

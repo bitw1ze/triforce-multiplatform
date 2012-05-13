@@ -265,6 +265,7 @@ class Cursor : public CObject {
 protected:
 	int row, col,
 		cursor_delta;
+	Point lastMousePos;
 	Grid *grid;
 
 	static const string spriteFile;
@@ -273,6 +274,7 @@ public:
 	static void declareActions();
 	void defineActions();
 	static void doAction(void *cursorInstance, int actionState, int actionType);
+	void alignCursorToMouse();
 	static void mousePassiveMotion(void *cursorInstance, int x, int y);
 
 	Cursor(Grid *, CBaseSprite *);
