@@ -13,10 +13,11 @@
   <ItemGroup>
     <ClCompile Include="block.cpp" />
     <ClCompile Include="buttons.cpp" />
+    <ClCompile Include="fall.cpp" />
     <ClCompile Include="gameplay.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="grid.cpp" />
-    <ClCompile Include="gridevents.cpp" />
+    <ClCompile Include="combo.cpp" />
     <ClCompile Include="hud.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />

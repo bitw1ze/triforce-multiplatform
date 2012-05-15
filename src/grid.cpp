@@ -138,7 +138,7 @@ void Grid::display() {
 		for (uint32 j=0; j<ncols; ++j)
 			blocks[i][j].display();
 	cursor->draw(current_cursor_frame);
-	cursor->alignCursorToMouse();
+	//cursor->alignCursorToMouse();
 	integerPrintf(.75, .5, GamePlay::font1, chains(), GamePlay::fcolor1);
 }
 
@@ -551,7 +551,7 @@ bool Grid::detectFall(const Combo &ev) {
 
 		if (r < (int)blocks.size())
 			for (c = ev.left()->col; c <= ev.right()->col; ++c) 
-				if (detectFall(r, c))
+				if (detectFall(r, c, false))
 					fall.push_back(FallNode(r, c));
 
 		break;
@@ -560,7 +560,7 @@ bool Grid::detectFall(const Combo &ev) {
 		r = ev.up()->row + 1;
 		c = ev.up()->col;
 		if (r < (int)blocks.size())
-			if (detectFall(r, c))
+			if (detectFall(r, c), false)
 				fall.push_back(FallNode(r, c));
 		
 		break;
@@ -569,9 +569,9 @@ bool Grid::detectFall(const Combo &ev) {
 		r = ev.left()->row + 1;
 		if (r < (int)blocks.size()) {
 			for (c = ev.left()->col; c <= ev.right()->col; ++c) {
-				if (r != ev.mid()->row && detectFall(r, c))
+				if (r != ev.mid()->row && detectFall(r, c, false))
 					fall.push_back(FallNode(r, c));
-				else if (detectFall(ev.up()->row+1, c))
+				else if (detectFall(ev.up()->row+1, c, false))
 					fall.push_back(FallNode(ev.up()->row+1, c));
 			}
 		}
@@ -590,7 +590,7 @@ bool Grid::detectFall(const Combo &ev) {
 	return true;
 }
 
-bool Grid::detectFall(int r, int c) {
+bool Grid::detectFall(int r, int c, bool initialize) {
 	if (r >= (int)blocks.size() || r <= 0)
 		return false;
 
@@ -601,9 +601,11 @@ bool Grid::detectFall(int r, int c) {
 	if ((downState == Block::disabled || downState == Block::fall) && midState == Block::enabled) {
 		//initFallState(cell);
 		//fallEvents.push_back(cell);
-		Fall fall(FallNode(r, c));
-		fall.init(*this);
-		fallEvents.push_back(fall);
+		if (initialize) {
+			Fall fall(FallNode(r, c));
+			fall.init(*this);
+			fallEvents.push_back(fall);
+		}
 		return true;
 	}
 	else return false;

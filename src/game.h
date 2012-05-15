@@ -101,7 +101,6 @@ public:
 
 class FallNode : public Cell {
 public:
-	static int fallInterval;
 	uint64 lastFall;
 	int numFalls;
 	bool enabled;
@@ -123,6 +122,7 @@ class Fall : public list<FallNode> {
 protected:
 
 public:
+	static int fallInterval;
 	bool possibleChain;  // FIXME: put in protected section
 
 	Fall();
@@ -280,7 +280,7 @@ public:
 	
 	bool update(Combo &c);
 	bool detectFall(const Combo & combo);
-	bool detectFall(int r, int c);
+	bool detectFall(int r, int c, bool initialize = true);
 
 	
 	bool detectCombo(Cell &cell);
