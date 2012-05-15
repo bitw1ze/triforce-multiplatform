@@ -233,11 +233,12 @@ public:
 	enum gameState { play, combo };
 	int chainCount; // FIXME: put in protected after refactoring Fall
 protected:
-	int	grid_yspeed, grid_yoff,
-		pushInterval, comboInterval,
+	int	pushOffset, pushSpeed, pushInterval, pushAccelInterval,
+		comboInterval,
 		current_cursor_frame;
+	float pushAccel;
 	uint64 last_cursor_anim, timer_cursor_anim;
-	uint64 lastPush;
+	uint64 lastPush, lastPushAccel;
 	Point gridPos;
 	CBaseSprite** blockSprites;
 	gameState state;
@@ -271,7 +272,7 @@ public:
 	gameState getState() const { return state; }
 
 	/* set/get properties */
-	int getYOffset() { return grid_yoff; }
+	int getYOffset() { return pushOffset; }
 	int getX() { return gridPos.x; }
 	int getY() { return gridPos.y; }
 	int countEnabledRows() const;

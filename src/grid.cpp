@@ -19,18 +19,30 @@ Grid::Grid() {
 
 void Grid::set() {
 	blockSprites = GamePlay::blockSprites;
-	grid_yspeed = GamePlay::blockLength / 12;
-	grid_yoff = 0;
+	
+	pushSpeed = 2;
+	pushInterval = 300;
+	pushOffset = 0;
+	lastPush = 0;
+
+	pushAccel = 0.9; // reduces the time it takes to push a row
+	pushAccelInterval = 25 * 1000; // seconds
+	lastPushAccel = 0;
+
+	comboInterval = 0; // FIXME: put in Combo
+
 	gridPos.x = GamePlay::getWidth()/2 - (GamePlay::blockLength * ncols)/2;
 	gridPos.y = GamePlay::getHeight() - (GamePlay::blockLength * 2);
+
 	cursor = new Cursor(this, GamePlay::cursorSprite);
-	lastPush = 0;
-	pushInterval = 400;
-	comboInterval = 0;
+
 	state = play;
+
+	// FIXME: put in cursor
 	last_cursor_anim = 0;
 	timer_cursor_anim = 50;
 	current_cursor_frame = 0;
+
 	chainCount = 0;
 }
 
@@ -138,7 +150,7 @@ void Grid::display() {
 		for (uint32 j=0; j<ncols; ++j)
 			blocks[i][j].display();
 	cursor->draw(current_cursor_frame);
-	//cursor->alignCursorToMouse();
+	cursor->alignCursorToMouse();
 	integerPrintf(.75, .5, GamePlay::font1, chains(), GamePlay::fcolor1);
 }
 
@@ -157,6 +169,12 @@ void Grid::composeFrame() {
 
 	switch (state) {
 	case play:
+		// accelerate the speed that blocks are pushed
+		if (mainTimer->elapsed(lastPushAccel, pushAccelInterval)) {
+			pushInterval = (int)( (float)pushInterval * pushAccel );
+			lastPushAccel = mainTimer->time();
+		}
+
 		if (mainTimer->elapsed(lastPush, pushInterval)) {
 			pushRow();
 			lastPush = mainTimer->time();
@@ -168,7 +186,7 @@ void Grid::composeFrame() {
 
 bool Grid::containsPoint(int x, int y) {
 	bool containsX = x > gridPos.x && x < gridPos.x + (int)ncols*GamePlay::blockLength;
-	bool containsY = !(y > gridPos.y - grid_yoff || y < gridPos.y - (int)(nrows)*GamePlay::blockLength);
+	bool containsY = !(y > gridPos.y - pushOffset || y < gridPos.y - (int)(nrows)*GamePlay::blockLength);
 	return containsX && containsY;
 }
 
@@ -194,15 +212,15 @@ int Grid::countEnabledRows() const {
 /*	pushRow
 	Gradually push a new row onto the play area. */
 void Grid::pushRow() {
-	grid_yoff += grid_yspeed;
+	pushOffset += pushSpeed;
 
-	cursor->offsetY(-grid_yspeed);
+	cursor->offsetY(-pushSpeed);
 	for (uint32 i=0; i<blocks.size(); ++i) 
 		for (uint32 j=0; j<ncols; ++j) 
-			blocks[i][j].offsetY(-grid_yspeed);
+			blocks[i][j].offsetY(-pushSpeed);
 	
-	if (grid_yoff >= GamePlay::blockLength) {
-		grid_yoff %= GamePlay::blockLength;
+	if (pushOffset >= GamePlay::blockLength) {
+		pushOffset %= GamePlay::blockLength;
 		cursor->shiftRow();
 		addRow();
 	}
