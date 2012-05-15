@@ -20,7 +20,7 @@ using namespace Globals;
 
 class Cell;
 class Combo;
-class Fall;
+class FallNode;
 class Block;
 class Grid;
 class Cursor;
@@ -50,7 +50,9 @@ public:
 	Cell() { row = 0; col = 0; }
 	Cell(const Cell &src) { row = src.row; col = src.col; }
 	Cell(int r, int c, bool e = true) { row = r, col = c; }
-	bool operator ==(const Cell &cell) { return row == cell.row && col == cell.col; }
+	friend bool operator ==(const Cell left, const Cell right) { 
+		return left.row == right.row && left.col == right.col;
+	}
 	int row, col;
 };
 
@@ -85,7 +87,7 @@ public:
 	Cell *mid() const { return _mid; }
 	Cell *mid(int r, int c);
 
-	comboState getState() { return state; }
+	comboState getState() const { return state; }
 	void changeState(comboState st) { state = st; }
 
 	const list<Cell> getList();
@@ -97,23 +99,46 @@ public:
 	void printDebug();
 };
 
-class Fall : public Cell {
+class FallNode : public Cell {
 public:
 	static int fallInterval;
 	uint64 lastFall;
 	int numFalls;
 	bool enabled;
-	typedef enum { NOFALL, COMBO, SWAP } FallType;
-	FallType fallType;
 
 public:
+	FallNode();
+	FallNode(int r, int c);
+	FallNode(const FallNode &src);
+	FallNode & operator =(const FallNode &src);
+	void clone(const FallNode &src);
+	void set();
+
+	void init(Grid &grid);
+	int cleanup(Grid &grid);
+	bool update(Grid &grid);
+};
+
+class Fall : public list<FallNode> {
+protected:
+
+public:
+	bool possibleChain;  // FIXME: put in protected section
+
 	Fall();
-	Fall(int r, int c);
-	Fall(const Fall &src);
-	Fall & operator =(const Fall &src);
-	bool operator ==(const Fall &fl);
-	void init();
+	Fall(const Cell &);
+	Fall(const list<FallNode> &);
+	void set();
 	void clone(const Fall &src);
+	Fall & operator =(const Fall &src);
+
+	void adjustRow();
+	bool isEnabled();
+	void enable();
+
+	void init(Grid &grid);
+	void cleanup(Grid &grid);
+	bool update(Grid &grid);
 };
 
 class Block : public CObject {
@@ -200,6 +225,7 @@ public:
 	Cursor *cursor;
 	deque< vector<Block> > blocks; //i.e. blocks[row][col]
 	enum gameState { play, combo };
+	int chainCount; // FIXME: put in protected after refactoring Fall
 protected:
 	int	grid_yspeed, grid_yoff,
 		pushInterval, comboInterval,
@@ -209,8 +235,6 @@ protected:
 	Point gridPos;
 	CBaseSprite** blockSprites;
 	gameState state;
-	
-	int chainCount;
 	
 	list<Combo> comboEvents;
 	list<Fall> fallEvents;	
@@ -254,13 +278,11 @@ public:
 	void incComboInterval(int interval);
 	bool containsPoint(int x, int y);
 	
-	bool checkComboFinished(Combo &c);
-	bool detectFall(Combo &c);
-	bool detectFall(Fall &fall, Fall::FallType fallType);
+	bool update(Combo &c);
+	bool detectFall(const Combo & combo);
+	bool detectFall(int r, int c);
 
-	void initFallState(Fall &fall);
-	void cleanupFall(Fall &fall);
-	void doFall(Fall &cell);
+	
 	bool detectCombo(Cell &cell);
 
 	void initComboState(Combo &combo);
