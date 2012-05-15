@@ -12,15 +12,18 @@ Blocks onto the Grid.
 /*	constructor
 	Initialize objects and vars such as position, dimensions, and speed.
 	Also create the initial rows of the game */
-Grid::Grid(GamePlay *gp) {
-	gridController = new GridController(this);
-	gamePlay = gp;
-	blockSprites = gp->blockSprites;
+Grid::Grid() {
+	set();
+	init();
+}
+
+void Grid::set() {
+	blockSprites = GamePlay::blockSprites;
 	grid_yspeed = GamePlay::blockLength / 12;
 	grid_yoff = 0;
-	gridPos.x = gp->getWidth()/2 - (GamePlay::blockLength * ncols)/2;
-	gridPos.y = gp->getHeight() - (GamePlay::blockLength * 2);
-	cursor = new Cursor(this, gp->cursorSprite);
+	gridPos.x = GamePlay::getWidth()/2 - (GamePlay::blockLength * ncols)/2;
+	gridPos.y = GamePlay::getHeight() - (GamePlay::blockLength * 2);
+	cursor = new Cursor(this, GamePlay::cursorSprite);
 	lastPush = 0;
 	pushInterval = 400;
 	comboInterval = 0;
@@ -28,7 +31,10 @@ Grid::Grid(GamePlay *gp) {
 	last_cursor_anim = 0;
 	timer_cursor_anim = 50;
 	current_cursor_frame = 0;
+	chainCount = 0;
+}
 
+void Grid::init() {
 	int startingRows = nrows / 2 - 1;
 
 	for (int row=0; row < startingRows; ++row)
@@ -39,6 +45,20 @@ Grid::Grid(GamePlay *gp) {
 			blocks[row][col].offsetY( -1 * GamePlay::blockLength * row );
 
 	defineActions();
+}
+
+Grid::Grid(const Grid &g) {
+	clone(g);
+}
+
+Grid & Grid::operator =(const Grid &g) {
+	clone(g);
+	return *this;
+}
+
+
+void Grid::clone(const Grid &g) {
+	// TODO
 }
 
 void Grid::declareActions()
@@ -56,6 +76,7 @@ void Grid::declareActions()
 	declareAction(scope, state, PUSH, actionLabels[PUSH]);
 	declareAction(scope, state, PAUSE, actionLabels[PAUSE]);
 }
+
 void Grid::defineActions()
 {
 	using namespace Input;
@@ -118,11 +139,11 @@ void Grid::display() {
 			blocks[i][j].display();
 	cursor->draw(current_cursor_frame);
 	cursor->alignCursorToMouse();
-	integerPrintf(.75, .5, GamePlay::font1, gridController->chains(), GamePlay::fcolor1);
+	integerPrintf(.75, .5, GamePlay::font1, chains(), GamePlay::fcolor1);
 }
 
 void Grid::composeFrame() {
-	gridController->composeFrame();
+	updateEvents();
 
 	for (uint32 i=0; i<blocks.size(); ++i) 
 		for (uint32 j=0; j<ncols; ++j)
@@ -207,12 +228,11 @@ void Grid::addRow() {
 		do {
 			blocks[0][col].init(blockSprites[rand() % nblocktypes], gridPos.x + col * GamePlay::blockLength, gridPos.y);
 		} while ( leftMatch(0, col, true) >= 2 || upMatch(0, col, true) >= 2 );
-		newRow[col].grid = this;
 	}
 
 	if (blocks.size() > 3) {
 		for (int i=0; i<ncols; ++i) { 
-			gridController->detectCombo(Cell(1, i));
+			detectCombo(Cell(1, i));
 		}
 	}
 }
@@ -244,13 +264,13 @@ void Grid::swapBlocks() {
 		belowFall = false;
 
 	if (!belowFall && swap(blocks[r][c1], blocks[r][c2])) {
-		if (!gridController->detectFall(Fall(r, c1), Fall::SWAP) &
-			!gridController->detectFall(Fall(r+1, c1), Fall::SWAP))
-			gridController->detectCombo(Cell(r, c1));
+		if (!detectFall(Fall(r, c1), Fall::SWAP) &
+			!detectFall(Fall(r+1, c1), Fall::SWAP))
+			detectCombo(Cell(r, c1));
 
-		if (!gridController->detectFall(Fall(r, c2), Fall::SWAP) &
-			!gridController->detectFall(Fall(r+1, c2), Fall::SWAP))
-			gridController->detectCombo(Cell(r, c2));
+		if (!detectFall(Fall(r, c2), Fall::SWAP) &
+			!detectFall(Fall(r+1, c2), Fall::SWAP))
+			detectCombo(Cell(r, c2));
 
 	}
 }
@@ -379,4 +399,297 @@ void Grid::printDebug() {
 		printf("\n");
 	}
 	printf("\n");
+}
+
+void Grid::initComboState(Combo &combo) {
+	list<Cell> cells = combo.getList();
+
+	combo.init();
+	changeState(Grid::combo);
+	comboEvents.push_back(combo);
+	setBlockStates(cells, Block::combo);
+}
+
+
+bool Grid::checkComboFinished(Combo &ev) {
+	if (ev.getState() != Combo::NONE && ev.elapsed()) {
+		list<Cell> cells = ev.getList();
+		setBlockStates(cells, Block::disabled);
+		detectFall(ev);
+		return true;
+	}
+
+	return false;
+}
+
+void Grid::setBlockStates(list<Cell> & ev, Block::gameState gs) {
+	for (list<Cell>::iterator it = ev.begin(); it != ev.end(); ++it)
+		blocks[(*it).row][(*it).col].changeState(gs);
+}
+
+void Grid::updateEvents() {
+	list<Combo> comboRemovals;
+	list<Fall> fallRemovals;
+
+	for (list<Combo>::iterator ev = comboEvents.begin(); ev != comboEvents.cend(); ++ev) {
+		if (checkComboFinished(*ev)) {
+			comboRemovals.push_back(*ev);
+		}
+	}
+
+	if (comboRemovals.size() > 0) {
+		for (list<Combo>::iterator ev = comboRemovals.begin(); ev != comboRemovals.cend(); ++ev) 
+			comboEvents.remove(*ev);
+
+		comboRemovals.clear();
+
+		if (comboEvents.size() == 0)
+			changeState(Grid::play);
+	}
+
+	for (list<Fall>::iterator fl = fallEvents.begin(); fl != fallEvents.cend(); ++fl) {
+		doFall(*fl);
+		if (!(*fl).enabled) {
+			fallRemovals.push_back(*fl);
+		}
+	}
+
+	if (fallRemovals.size() > 0) {
+		for (list<Fall>::iterator fl = fallRemovals.begin(); fl != fallRemovals.cend(); ++fl) 
+			fallEvents.remove(*fl);
+
+		fallRemovals.clear();
+	}
+}
+
+void Grid::cleanupFall(Fall &fall) {
+	int r = fall.row;
+	int c = fall.col;
+
+	int row;
+
+	// re-enable all the blocks that were falling
+	for (row = r; row < r + fall.numFalls; ++row) {
+		blocks[row][c].changeState(Block::enabled);
+	}
+
+	int tempChains = 0;
+
+	for (row = r-1; row < r + fall.numFalls; ++row) {
+		if (detectCombo(Cell(row, c))) 
+			++tempChains;
+	}
+
+	//cout << "Falltype: " << fall.fallType << endl;
+	//cout << "chains: " << tempChains << endl;
+
+	if (fall.fallType == Fall::COMBO) 
+		chainCount = (tempChains > 0) ? (chainCount + tempChains) : tempChains;
+
+	fall.enabled = false;
+}
+
+void Grid::doFall(Fall &cell) {
+	// row and column begin at the block immediately above a broken combo block
+	int & r = cell.row;
+	int c = cell.col;
+	int row;
+
+	if (cell.enabled == true && mainTimer->elapsed(cell.lastFall, Fall::fallInterval)) 
+		cell.lastFall = mainTimer->time();
+	else
+		return;
+
+	// loop through all the rows and make them fall one iteration at a time.
+	for (row = r; row < r + cell.numFalls; ++row) {
+		blocks[row][c].fallDown();
+	}
+
+	bool swapDown = (blocks[r][c].getFallOffset() <= 0);
+
+	if (swapDown) {
+	//	printf("r=%d\n", r);
+	//	printDebug();
+		for (row = r; row < r + cell.numFalls; ++row) {
+			blocks[row-1][c] = blocks[row][c];
+		}
+		blocks[row-1][c].changeState(Block::disabled);
+
+		--r;
+
+		// Clean up and exit if we are finished falling.
+		bool fallFinished = blocks[r-1][c].getState() != Block::disabled
+			&& blocks[r-1][c].getState() != Block::fall;
+		if (fallFinished) {
+	//		printDebug();
+			cleanupFall(cell);
+	//		printDebug();
+			return;
+		}
+	}
+}
+
+/*	detectCombo
+	This function uses the match<direction> functions to find all possible combos.
+	A combo can be stored as a set of Cells, where a Cell is a Class that holds the
+	row and column of a block. A combo in one direction (e.g. 3 blocks in a row 
+	horizontal) is stored in 2 cells, and a combo in two directions (e.g. 5 blocks 
+	vertical and 3 blocks horizontal) is stored in 4 cells.
+	
+	This function computes the cells by first finding a horizontal match. If a match
+	is found, it will then iteratively search for a vertical from each block in the
+	horizontal match.  */
+bool Grid::detectCombo(Cell &cell) {
+	int r = cell.row;
+	int c = cell.col;
+
+	Combo combo;
+
+	int match1 = leftMatch(r, c);
+	int match2 = rightMatch(r, c);
+
+	if (match1 + match2 >= 2) {
+		combo.mid(r, c);
+		combo.left(r, c - match1);
+		combo.right(r, c + match2);
+
+		for (int col = combo.left()->col; col <= combo.right()->col; ++col) {
+			match1 = downMatch(r, col);
+			match2 = upMatch(r, col);
+
+			if (match1 + match2 >= 2) {
+				combo.down(r - match1, col);
+				combo.up(r + match2, col);
+
+				combo.changeState(Combo::MULTI);
+				initComboState(combo);
+				return true;
+			}
+		}
+
+		combo.changeState(Combo::HORI);
+		initComboState(combo);
+		return true;
+	}
+	else {
+		match1 = downMatch(r, c);
+		match2 = upMatch(r, c);
+
+		if (match1 + match2 >= 2) {
+			combo.mid(r, c);
+			combo.down(r - match1, c);
+			combo.up(r + match2, c);
+
+			for (int row=combo.down()->row; row <= combo.up()->row; ++row) {
+				match1 = leftMatch(row, c);
+				match2 = rightMatch(row, c);
+
+				if (match1 + match2 >= 2) {
+					combo.left(row, c - match1);
+					combo.right(row, c + match2);
+
+					combo.changeState(Combo::MULTI);
+					initComboState(combo);
+					return true;
+				} 
+			}
+
+			combo.changeState(Combo::VERT);
+			initComboState(combo);
+			return true;
+		}
+		else {
+			combo.changeState(Combo::NONE);
+			return false;
+		}
+	}
+}
+
+/*	detectFallAfterCombo
+	This fall detection subroutine passes the highest block for each row in the combo */
+
+bool Grid::detectFall(Combo &ev) {
+	if (ev.getState() == Combo::NONE)
+		return false;
+
+	list<Fall> falls;
+
+	int r, c;
+
+	switch (ev.getState()) {
+	
+	case Combo::HORI:
+		r = ev.left()->row + 1;
+
+		if (r < (int)blocks.size())
+			for (c = ev.left()->col; c <= ev.right()->col; ++c) 
+				detectFall(Fall(r, c), Fall::COMBO);
+
+		break;
+
+	case Combo::VERT:
+		r = ev.up()->row + 1;
+		c = ev.up()->col;
+		if (r < (int)blocks.size())
+			detectFall(Fall(r, c), Fall::COMBO);
+		
+		break;
+
+	case Combo::MULTI:
+		r = ev.left()->row + 1;
+		if (r < (int)blocks.size()) {
+			
+			for (c = ev.left()->col; c <= ev.right()->col; ++c)
+				if (r != ev.mid()->row)
+					detectFall(Fall(r, c), Fall::COMBO);
+		
+			r = ev.up()->row + 1;
+			c = ev.up()->col;
+			detectFall(Fall(r, c), Fall::COMBO);
+		}
+
+		break;
+
+	default:
+		return false;
+
+	}
+	
+	ev.changeState(Combo::NONE);
+	return true;
+}
+
+bool Grid::detectFall(Fall &fall, Fall::FallType fallType) {
+	int r = fall.row;
+	int c = fall.col;
+
+	if (r >= (int)blocks.size() || r <= 0)
+		return false;
+
+	Block::gameState midState, downState;
+	downState = blocks[r-1][c].getState();
+	midState = blocks[r][c].getState();
+
+	if ((downState == Block::disabled || downState == Block::fall) && midState == Block::enabled) {
+		fall.fallType = fallType;
+		initFallState(fall);
+		fallEvents.push_back(fall);
+		return true;
+	}
+	else return false;
+}
+
+void Grid::initFallState(Fall &cell) {
+	int r = cell.row;
+	int c = cell.col;
+
+	cell.enabled = true;
+
+	while (r < (int)blocks.size() && blocks[r][c].getState() == Block::enabled) {
+		blocks[r][c].changeState(Block::fall);
+		++r;
+	}
+
+	cell.numFalls = r - cell.row;
+	cell.lastFall = mainTimer->time();
 }

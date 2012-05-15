@@ -47,7 +47,7 @@ bool Fall::operator ==(const Fall &fl) {
 
 void Fall::init() { 
 	numFalls = 0; 
-	lastFall = -1; 
+	lastFall = 0; 
 	enabled = false; 
 	fallType = NOFALL;
 }

@@ -20,6 +20,10 @@ int GamePlay::gridHeight;
 int GamePlay::gridWidth;
 void * GamePlay::font1 = GLUT_BITMAP_TIMES_ROMAN_24;
 float GamePlay::fcolor1[3] = {1, 1, 1};
+CBaseSprite * GamePlay::blockSprites[nblocktypes];
+CBaseSprite * GamePlay::cursorSprite;
+CBaseSprite * GamePlay::gridBorderSprite;
+BMPClass GamePlay::background;
 
 GamePlay::GamePlay() { 
 	srand(time(NULL));
@@ -30,7 +34,7 @@ GamePlay::GamePlay() {
 	last_time=mainTimer->time();
 
 	loadImages(); 
-	grid = new Grid(this);
+	grid = new Grid();
 	hud = new HUD(grid->getX() + (float)gridWidth * 1.15, grid->getY() + .03 * (float)gridHeight);
 
 	menuButtons = new Buttons(this->getWidth(), this->getHeight());
