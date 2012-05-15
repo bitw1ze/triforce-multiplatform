@@ -236,7 +236,8 @@ void Grid::addRow() {
 
 	if (blocks.size() > 3) {
 		for (int i=0; i<ncols; ++i) { 
-			detectCombo(Cell(1, i));
+			if (detectCombo(Cell(1, i)) && chainCount == 0)
+				chainCount = 1;
 		}
 	}
 }
@@ -272,15 +273,15 @@ void Grid::swapBlocks() {
 			fallEvents.push_back(FallNode(r, c1));
 		else if (detectFall(r+1, c1))
 			fallEvents.push_back(FallNode(r+1, c1));
-		else
-			detectCombo(Cell(r, c1));
+		else if (detectCombo(Cell(r, c1)) && chainCount == 0)
+			chainCount = 1;
 
 		if (detectFall(r, c2))
 			fallEvents.push_back(FallNode(r, c2));
 		else if (detectFall(r+1, c2))
 			fallEvents.push_back(FallNode(r+1, c2));
-		else
-			detectCombo(Cell(r, c2));
+		else if (detectCombo(Cell(r, c2)) && chainCount == 0) 
+			chainCount = 1;
 	}
 }
 
@@ -452,12 +453,18 @@ void Grid::updateEvents() {
 
 	if (fallEvents.size() > 0) {
 		for (list<Fall>::iterator fl = fallEvents.begin(); fl != fallEvents.end(); ) {
-			if (!(*fl).update(*this)) 
+			if (!(*fl).update(*this)) {
+				if ((*fl).possibleChain) 
+					chainCount = (*fl).getChainCount() > 0 ? chainCount + (*fl).getChainCount() : 0;
 				fallEvents.erase(fl++);
+			}
 			else 
 				++fl;
 		}
 	}
+
+	if (comboEvents.size() == 0 && fallEvents.size() == 0)
+		chainCount = 0;
 }
 
 /*	detectCombo

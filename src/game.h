@@ -104,6 +104,7 @@ public:
 	uint64 lastFall;
 	int numFalls;
 	bool enabled;
+	int chainCount;
 
 public:
 	FallNode();
@@ -114,12 +115,15 @@ public:
 	void set();
 
 	void init(Grid &grid);
-	int cleanup(Grid &grid);
+	void cleanup(Grid &grid);
 	bool update(Grid &grid);
+
+	int getChainCount() const { return chainCount; };
 };
 
 class Fall : public list<FallNode> {
 protected:
+	int chainCount;
 
 public:
 	static int fallInterval;
@@ -139,6 +143,8 @@ public:
 	void init(Grid &grid);
 	void cleanup(Grid &grid);
 	bool update(Grid &grid);
+
+	int getChainCount() const { return chainCount; }
 };
 
 class Block : public CObject {

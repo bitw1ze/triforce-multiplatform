@@ -40,10 +40,12 @@ Fall & Fall::operator =(const Fall &src) {
 
 void Fall::set() {
 	possibleChain = false;
+	chainCount = 0;
 }
 
 void Fall::clone(const Fall &src) {
 	possibleChain = src.possibleChain;
+	chainCount = src.chainCount;
 }
 
 void Fall::init(Grid &grid) {
@@ -57,11 +59,13 @@ bool Fall::update(Grid &grid) {
 			++it;
 		else {
 			(*it).cleanup(grid);
+			chainCount += (*it).getChainCount();
 			erase(it++);
+			return size() > 0;
 		}
 	}
 
-	return size() > 0;
+	return true;
 }
 
 void Fall::cleanup(Grid &grid) {
@@ -94,12 +98,14 @@ void FallNode::set() {
 	numFalls = 0; 
 	lastFall = 0; 
 	enabled = false; 
+	chainCount = 0;
 }
 
 void FallNode::clone(const FallNode &src) { 
 	numFalls = src.numFalls; 
 	lastFall = src.lastFall; 
 	enabled = src.enabled; 
+	chainCount = src.chainCount;
 }
 
 void FallNode::init(Grid &grid) {
@@ -116,7 +122,7 @@ void FallNode::init(Grid &grid) {
 	lastFall = mainTimer->time();
 }
 
-int FallNode::cleanup(Grid &grid) {
+void FallNode::cleanup(Grid &grid) {
 	int r = row;
 	int c = col;
 
@@ -127,17 +133,14 @@ int FallNode::cleanup(Grid &grid) {
 		grid.blocks[i][c].changeState(Block::enabled);
 	}
 
-	int tempChains = 0;
-
 	for (i = r-1; i < r + numFalls; ++i) {
 		if (grid.detectCombo(Cell(i, c))) 
-			++tempChains;
+			++chainCount;
 	}
 
 	//cout << "Falltype: " << fall.fallType << endl;
 	//cout << "chains: " << tempChains << endl;
 
-	return tempChains;
 	enabled = false;
 }
 
