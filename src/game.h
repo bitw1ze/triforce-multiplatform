@@ -335,7 +335,16 @@ public:
 };
 
 class Chain {
+public:
+	int count;
+	int row, col;
+	uint64 lastActivation;
+	uint64 displayDuration;
 
+public:
+	Chain(int cnt = 1);
+	bool update();
+	void activate();
 };
 
 class HUD {
