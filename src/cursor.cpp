@@ -7,9 +7,6 @@ void Cursor::declareActions()
 	using namespace PlayState;
 
 	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
-	// FIXME: I have a hunch that SCOPE_CURRENT_PLAYER stuff is broken, so
-    //	      comment it out and use SCOPE_FIRST_PLAYER for now
-	//Action::ActionScope scope = Input::Action::SCOPE_CURRENT_PLAYER;
 	Triforce::GameState state = Triforce::PLAY;
 
 	declareAction(scope, state, UP, actionLabels[UP]);
