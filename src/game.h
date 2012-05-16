@@ -263,7 +263,7 @@ protected:
 	
 	list<Combo> comboEvents;
 	list<Fall> fallEvents;	
-	list<Chain &> chainEvents;
+	//list<Chain &> chainEvents;
 
 public:
 	Grid();
