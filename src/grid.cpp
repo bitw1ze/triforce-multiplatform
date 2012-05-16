@@ -42,8 +42,6 @@ void Grid::set() {
 	last_cursor_anim = 0;
 	timer_cursor_anim = 50;
 	current_cursor_frame = 0;
-
-	chainCount = 0;
 }
 
 void Grid::init() {
@@ -148,7 +146,10 @@ void Grid::display() {
 			blocks[i][j].display();
 	cursor->draw(current_cursor_frame);
 	cursor->alignToMouse();
-	integerPrintf(.75, .5, GamePlay::font1, chains(), GamePlay::fcolor1);
+	//integerPrintf(.75, .5, GamePlay::font1, chains(), GamePlay::fcolor1);
+	
+	for (list<Chain>::iterator it = chainEvents.begin(); it != chainEvents.end(); ++it)
+		it->display(*this);
 }
 
 void Grid::composeFrame() {
@@ -254,10 +255,8 @@ void Grid::addRow() {
 		(*it).adjustRow();
 
 	if (blocks.size() > 3) {
-		for (int i=0; i<ncols; ++i) { 
-			if (detectCombo(Cell(1, i)) && chainCount == 0)
-				chainCount = 1;
-		}
+		for (int i=0; i<ncols; ++i) 
+			detectCombo(Cell(1, i));
 	}
 }
 
@@ -292,15 +291,15 @@ void Grid::swapBlocks() {
 			fallEvents.push_back(FallNode(r, c1));
 		else if (detectFall(r+1, c1))
 			fallEvents.push_back(FallNode(r+1, c1));
-		else if (detectCombo(Cell(r, c1)) && chainCount == 0)
-			chainCount = 1;
+		else 
+			detectCombo(Cell(r, c1));
 
 		if (detectFall(r, c2))
 			fallEvents.push_back(FallNode(r, c2));
 		else if (detectFall(r+1, c2))
 			fallEvents.push_back(FallNode(r+1, c2));
-		else if (detectCombo(Cell(r, c2)) && chainCount == 0) 
-			chainCount = 1;
+		else 
+			detectCombo(Cell(r, c2));
 	}
 }
 
@@ -450,18 +449,21 @@ void Grid::updateEvents() {
 
 	if (fallEvents.size() > 0) {
 		for (list<Fall>::iterator fl = fallEvents.begin(); fl != fallEvents.end(); ) {
-			if (!(*fl).update(*this)) {
-				if ((*fl).possibleChain) 
-					chainCount = (*fl).getChainCount() > 0 ? chainCount + (*fl).getChainCount() : 0;
+			if (!(*fl).update(*this)) 
 				fallEvents.erase(fl++);
-			}
 			else 
 				++fl;
 		}
 	}
 
-	if (comboEvents.size() == 0 && fallEvents.size() == 0)
-		chainCount = 0;
+	if (chainEvents.size() > 0) {
+		for (list<Chain>::iterator it = chainEvents.begin(); it != chainEvents.end(); ) {
+			if (!it->update()) 
+				chainEvents.erase(it++);
+			else
+				++it;
+		}
+	}
 }
 
 /*	detectCombo
@@ -474,11 +476,11 @@ void Grid::updateEvents() {
 	This function computes the cells by first finding a horizontal match. If a match
 	is found, it will then iteratively search for a vertical from each block in the
 	horizontal match.  */
-bool Grid::detectCombo(Cell &cell) {
+bool Grid::detectCombo(Cell &cell, int chains) {
 	int r = cell.row;
 	int c = cell.col;
 
-	Combo combo;
+	Combo combo(chains);
 
 	int match1 = leftMatch(r, c);
 	int match2 = rightMatch(r, c);
@@ -533,7 +535,15 @@ bool Grid::detectCombo(Cell &cell) {
 		}
 	}
 
-	initCombo:
+	initCombo: // goto label for cleaner code. all valid combos will go here.
+
+	if (combo.getChainCount() >= 2) {
+		if (combo.getState() == Combo::VERT) 
+			chainEvents.push_back( Chain(*combo.up(), combo.getChainCount()) );
+		else 
+			chainEvents.push_back( Chain(*combo.left(), combo.getChainCount()) );
+	}
+
 	combo.init(*this);
 	comboEvents.push_back(combo);
 	return false;
@@ -542,26 +552,26 @@ bool Grid::detectCombo(Cell &cell) {
 /*	detectFall(const Combo &)
 	This fall detection subroutine passes the highest block for each row in the combo */
 
-bool Grid::detectFall(const Combo &ev) {
+bool Grid::detectFall(const Combo &combo) {
 	int r, c;
 
-	Fall fall;
+	Fall fall(combo.getChainCount());
 
-	switch (ev.getState()) {
+	switch (combo.getState()) {
 	
 	case Combo::HORI:
-		r = ev.left()->row + 1;
+		r = combo.left()->row + 1;
 
 		if (r < (int)blocks.size())
-			for (c = ev.left()->col; c <= ev.right()->col; ++c) 
+			for (c = combo.left()->col; c <= combo.right()->col; ++c) 
 				if (detectFall(r, c, false))
 					fall.push_back(FallNode(r, c));
 
 		break;
 
 	case Combo::VERT:
-		r = ev.up()->row + 1;
-		c = ev.up()->col;
+		r = combo.up()->row + 1;
+		c = combo.up()->col;
 		if (r < (int)blocks.size())
 			if (detectFall(r, c), false)
 				fall.push_back(FallNode(r, c));
@@ -569,13 +579,13 @@ bool Grid::detectFall(const Combo &ev) {
 		break;
 
 	case Combo::MULTI:
-		r = ev.left()->row + 1;
+		r = combo.left()->row + 1;
 		if (r < (int)blocks.size()) {
-			for (c = ev.left()->col; c <= ev.right()->col; ++c) {
-				if (r != ev.mid()->row && detectFall(r, c, false))
+			for (c = combo.left()->col; c <= combo.right()->col; ++c) {
+				if (r != combo.mid()->row && detectFall(r, c, false))
 					fall.push_back(FallNode(r, c));
-				else if (detectFall(ev.up()->row+1, c, false))
-					fall.push_back(FallNode(ev.up()->row+1, c));
+				else if (detectFall(combo.up()->row+1, c, false))
+					fall.push_back(FallNode(combo.up()->row+1, c));
 			}
 		}
 						

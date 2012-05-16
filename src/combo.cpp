@@ -12,10 +12,8 @@ Combo member variables:
 
 int Combo::comboInterval = 500;
 
-Combo::Combo() {
-	_left = _right = _up = _down = _mid = NULL;
-	interval = 0;
-	state = NONE;
+Combo::Combo(int chains) {
+	set(chains);
 }
 
 Combo::Combo(const Combo &src) {
@@ -28,7 +26,20 @@ Combo & Combo::operator =(const Combo &src) {
 	return *this;
 }
 
+void Combo::set(int chains) {
+	chainCount = chains + 1;
+
+	_left = _right = _up = _down = _mid = NULL;
+
+	startTime = 0;
+	interval = 0;
+
+	state = NONE;
+}
+
 void Combo::clone(const Combo &src) {
+	chainCount = src.chainCount; 
+
 	_left = src._left;
 	_right = src._right;
 	_up = src._up;
@@ -39,8 +50,6 @@ void Combo::clone(const Combo &src) {
 	startTime = src.startTime;
 
 	state = src.state;
-
-	combo = src.combo;
 }
 
 bool Combo::operator ==(const Combo &ev) {

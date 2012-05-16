@@ -1,11 +1,19 @@
 #include "game.h"
 
+const uint64 Chain::displayDuration = 1500;
+
 Chain::Chain(int r, int c, int cnt) {
 	set(r, c, cnt);
 }
 
+Chain::Chain(const Cell &cell, int cnt) {
+	set(cell.row, cell.col, cnt);
+	init();
+}
+
 Chain::Chain(const Chain &src) {
 	clone(src);
+	init();
 }
 
 void Chain::set(int r, int c, int cnt) {
@@ -13,7 +21,6 @@ void Chain::set(int r, int c, int cnt) {
 	col = c;
 	count = cnt;
 	lastActivation = 0;
-	displayDuration = cnt;
 }
 
 void Chain::clone(const Chain &src) {
@@ -21,17 +28,21 @@ void Chain::clone(const Chain &src) {
 	col = src.col;
 	count = src.count;
 	lastActivation = src.lastActivation;
-	displayDuration = src.displayDuration;
 }
 
 bool Chain::update() {
-	return mainTimer->elapsed(lastActivation, displayDuration);
+	cout << "update chain\n";
+	return !mainTimer->elapsed(lastActivation, displayDuration);
 }
 
-void Chain::activate() {
+void Chain::init() {
 	lastActivation = mainTimer->time();
 }
 
 void Chain::display(Grid &grid) {
-	
+	char str[5];
+	float x = grid.blocks[row][col].getX() / (float)screen_w;
+	float y = 1.0 - (float)(grid.blocks[row][col].getY()) / ((float)screen_h);
+	sprintf_s(str, "x%d", count);
+	textPrintf(x, y, GamePlay::font1, str, GamePlay::fcolor1);
 }

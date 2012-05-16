@@ -14,21 +14,21 @@ FallNode member variables:
 
 int Fall::fallInterval = 10;
 
-Fall::Fall() : list<FallNode>() {
+Fall::Fall(int chains) : list<FallNode>() {
 	__super::list();
-	set();
+	set(chains);
 }
 
-Fall::Fall(const Cell & cell) : list<FallNode>() {
+Fall::Fall(const Cell & cell, int chains) : list<FallNode>() {
 	__super::list();
-	set();
+	set(chains);
 
 	push_back((const FallNode &)cell);
 }
 
-Fall::Fall(const list<FallNode> &lst) {
+Fall::Fall(const list<FallNode> &lst, int chains) {
 	__super::operator =(lst);
-	set();
+	set(chains);
 	possibleChain = true;
 }
 
@@ -38,9 +38,9 @@ Fall & Fall::operator =(const Fall &src) {
 	return *this;
 }
 
-void Fall::set() {
+void Fall::set(int chains) {
 	possibleChain = false;
-	chainCount = 0;
+	chainCount = chains;
 }
 
 void Fall::clone(const Fall &src) {
@@ -50,7 +50,7 @@ void Fall::clone(const Fall &src) {
 
 void Fall::init(Grid &grid) {
 	for (iterator it = begin(); it != end(); ++it)
-		(*it).init(grid);
+		(*it).init(grid, chainCount);
 }
 
 bool Fall::update(Grid &grid) {
@@ -108,10 +108,11 @@ void FallNode::clone(const FallNode &src) {
 	chainCount = src.chainCount;
 }
 
-void FallNode::init(Grid &grid) {
+void FallNode::init(Grid &grid, int chains) {
 	int r = row;
 	int c = col;
 	enabled = true;
+	chainCount = chains;
 
 	while (r < (int)grid.blocks.size() && grid.blocks[r][c].getState() == Block::enabled) {
 		grid.blocks[r][c].changeState(Block::fall);
@@ -133,7 +134,7 @@ void FallNode::cleanup(Grid &grid) {
 		grid.blocks[i][c].changeState(Block::enabled);
 
 	for (i = r-1; i < r + numFalls; ++i) {
-		if (grid.detectCombo(Cell(i, c))) 
+		if (grid.detectCombo(Cell(i, c), chainCount)) 
 			++chainCount;
 	}
 

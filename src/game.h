@@ -58,18 +58,19 @@ public:
 
 class Chain {
 public:
+	static const uint64 displayDuration;
 	int count;
 	int row, col;
 	uint64 lastActivation;
-	uint64 displayDuration;
 
 public:
-	Chain(int row, int col, int cnt = 1);
+	Chain(int row, int col, int cnt);
+	Chain(const Cell &cell, int cnt);
 	Chain(const Chain &);
 	void set(int row, int col, int cnt);
 	void clone(const Chain &);
 	bool update();
-	void activate();
+	void init();
 	void display(Grid &grid);
 };
 
@@ -79,17 +80,18 @@ public:
 	enum comboState { NONE, HORI, VERT, MULTI };
 protected:
 	Cell *_left, *_right, *_up, *_down, *_mid;
-	list<Cell> combo;
 	int interval;
 	uint64 startTime;
 	comboState state;
+	int chainCount;
 
 public:
-	Combo();
-	Combo(const Combo &ge);
-	Combo & operator =(const Combo &ge);
-	bool operator ==(const Combo &ev);
-	void clone(const Combo &ge);
+	Combo(int chains = 1);
+	Combo(const Combo &combo);
+	Combo & operator =(const Combo &combo);
+	bool operator ==(const Combo &combo);
+	void set(int chains);
+	void clone(const Combo &combo);
 
 	void init(Grid &grid);
 
@@ -110,6 +112,7 @@ public:
 	const list<Cell> getList();
 
 	int count() const;
+	int getChainCount() const { return chainCount; }
 	void activate();
 	bool elapsed() const;
 	bool update(Grid &grid);
@@ -132,7 +135,7 @@ public:
 	void clone(const FallNode &src);
 	void set();
 
-	void init(Grid &grid);
+	void init(Grid &grid, int chains);
 	void cleanup(Grid &grid);
 	bool update(Grid &grid);
 
@@ -147,10 +150,10 @@ public:
 	static int fallInterval;
 	bool possibleChain;  // FIXME: put in protected section
 
-	Fall();
-	Fall(const Cell &);
-	Fall(const list<FallNode> &);
-	void set();
+	Fall(int chains = 0);
+	Fall(const Cell &, int chains = 0);
+	Fall(const list<FallNode> &, int chains = 1);
+	void set(int chains);
 	void clone(const Fall &src);
 	Fall & operator =(const Fall &src);
 
@@ -249,7 +252,6 @@ public:
 	Cursor *cursor;
 	deque< vector<Block> > blocks; //i.e. blocks[row][col]
 	enum gameState { play, combo };
-	int chainCount; // FIXME: put in protected after refactoring Fall
 protected:
 	int	pushOffset, pushSpeed, pushInterval, pushAccelInterval,
 		comboInterval,
@@ -263,7 +265,7 @@ protected:
 	
 	list<Combo> comboEvents;
 	list<Fall> fallEvents;	
-	//list<Chain &> chainEvents;
+	list<Chain> chainEvents;
 
 public:
 	Grid();
@@ -308,11 +310,10 @@ public:
 	bool detectFall(const Combo & combo);
 	bool detectFall(int r, int c, bool initialize = true);
 
-	bool detectCombo(Cell &cell);
+	bool detectCombo(Cell &cell, int chains = 0);
 
 	void setBlockStates(list<Cell> &, Block::gameState gs);
 
-	int chains() { return chainCount; }
 	void printDebug();
 };
 
