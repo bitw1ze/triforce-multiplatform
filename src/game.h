@@ -64,9 +64,13 @@ public:
 	uint64 displayDuration;
 
 public:
-	Chain(int cnt = 1);
+	Chain(int row, int col, int cnt = 1);
+	Chain(const Chain &);
+	void set(int row, int col, int cnt);
+	void clone(const Chain &);
 	bool update();
 	void activate();
+	void display(Grid &grid);
 };
 
 class Combo {
@@ -259,6 +263,7 @@ protected:
 	
 	list<Combo> comboEvents;
 	list<Fall> fallEvents;	
+	list<Chain &> chainEvents;
 
 public:
 	Grid();
