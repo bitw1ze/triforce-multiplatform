@@ -187,6 +187,10 @@ bool Grid::containsPoint(int x, int y) {
 	return containsX && containsY;
 }
 
+bool Grid::containsPoint(Point point) {
+	return containsPoint(point.x, point.y);
+}
+
 int Grid::countEnabledRows() const {
 	uint32 count;
 

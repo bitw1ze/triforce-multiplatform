@@ -284,6 +284,7 @@ public:
 
 	void incComboInterval(int interval);
 	bool containsPoint(int x, int y);
+	bool containsPoint(Point point);
 	
 	bool update(Combo &c);
 	bool detectFall(const Combo & combo);
