@@ -1,3 +1,0 @@
-button press/click
-block clear (staggering sounds
-3... 2... 1 sounds (each should be seperate so timing matches display)
