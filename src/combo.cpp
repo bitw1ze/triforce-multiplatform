@@ -58,9 +58,15 @@ bool Combo::elapsed() const {
 	return mainTimer->elapsed(startTime, interval);
 }
 
-void Combo::init() {
+void Combo::init(Grid &grid) {
 	interval = count() * Combo::comboInterval;
 	startTime = mainTimer->time();
+	
+	list<Cell> cells = getList();
+
+	grid.incComboInterval(interval);
+	grid.changeState(Grid::combo);
+	grid.setBlockStates(cells, Block::combo);
 }
 
 const list<Cell> Combo::getList() {
@@ -182,3 +188,13 @@ int Combo::count() const {
 	}
 }
 
+bool Combo::update(Grid &grid) {
+	if (getState() != Combo::NONE && elapsed()) {
+		list<Cell> cells = getList();
+		grid.setBlockStates(cells, Block::disabled);
+		grid.detectFall(*this);
+		changeState(Combo::NONE);
+		return false;
+	}
+	else return true;
+}

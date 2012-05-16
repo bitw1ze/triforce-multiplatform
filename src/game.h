@@ -56,6 +56,19 @@ public:
 	int row, col;
 };
 
+class Chain {
+public:
+	int count;
+	int row, col;
+	uint64 lastActivation;
+	uint64 displayDuration;
+
+public:
+	Chain(int cnt = 1);
+	bool update();
+	void activate();
+};
+
 class Combo {
 public: 
 	static int comboInterval;
@@ -74,7 +87,7 @@ public:
 	bool operator ==(const Combo &ev);
 	void clone(const Combo &ge);
 
-	void init();
+	void init(Grid &grid);
 
 	Cell *left() const { return _left; }
 	Cell *left(int r, int c);
@@ -95,6 +108,7 @@ public:
 	int count() const;
 	void activate();
 	bool elapsed() const;
+	bool update(Grid &grid);
 
 	void printDebug();
 };
@@ -286,14 +300,11 @@ public:
 	bool containsPoint(int x, int y);
 	bool containsPoint(Point point);
 	
-	bool update(Combo &c);
 	bool detectFall(const Combo & combo);
 	bool detectFall(int r, int c, bool initialize = true);
 
-	
 	bool detectCombo(Cell &cell);
 
-	void initComboState(Combo &combo);
 	void setBlockStates(list<Cell> &, Block::gameState gs);
 
 	int chains() { return chainCount; }
@@ -332,19 +343,6 @@ public:
 	void shiftRow();
 
 	Point getMousePos() {return lastMousePos;}
-};
-
-class Chain {
-public:
-	int count;
-	int row, col;
-	uint64 lastActivation;
-	uint64 displayDuration;
-
-public:
-	Chain(int cnt = 1);
-	bool update();
-	void activate();
 };
 
 class HUD {

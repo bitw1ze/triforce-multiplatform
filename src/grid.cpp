@@ -430,28 +430,6 @@ void Grid::printDebug() {
 	printf("\n");
 }
 
-void Grid::initComboState(Combo &combo) {
-	list<Cell> cells = combo.getList();
-
-	combo.init();
-	changeState(Grid::combo);
-	comboEvents.push_back(combo);
-	setBlockStates(cells, Block::combo);
-}
-
-
-bool Grid::update(Combo &combo) {
-	if (combo.getState() != Combo::NONE && combo.elapsed()) {
-		list<Cell> cells = combo.getList();
-		setBlockStates(cells, Block::disabled);
-		detectFall(combo);
-		combo.changeState(Combo::NONE);
-		return true;
-	}
-
-	return false;
-}
-
 void Grid::setBlockStates(list<Cell> & ev, Block::gameState gs) {
 	for (list<Cell>::iterator it = ev.begin(); it != ev.end(); ++it)
 		blocks[(*it).row][(*it).col].changeState(gs);
@@ -460,7 +438,7 @@ void Grid::setBlockStates(list<Cell> & ev, Block::gameState gs) {
 void Grid::updateEvents() {
 	if (comboEvents.size() > 0) {
 		for (list<Combo>::iterator ev = comboEvents.begin(); ev != comboEvents.end(); ) {
-			if (update(*ev)) 
+			if (!ev->update(*this)) 
 				comboEvents.erase(ev++);
 			else
 				++ev;
@@ -519,14 +497,11 @@ bool Grid::detectCombo(Cell &cell) {
 				combo.up(r + match2, col);
 
 				combo.changeState(Combo::MULTI);
-				initComboState(combo);
-				return true;
+				goto initCombo;
 			}
 		}
 
 		combo.changeState(Combo::HORI);
-		initComboState(combo);
-		return true;
 	}
 	else {
 		match1 = downMatch(r, c);
@@ -546,20 +521,22 @@ bool Grid::detectCombo(Cell &cell) {
 					combo.right(row, c + match2);
 
 					combo.changeState(Combo::MULTI);
-					initComboState(combo);
-					return true;
+					goto initCombo;
 				} 
 			}
 
 			combo.changeState(Combo::VERT);
-			initComboState(combo);
-			return true;
 		}
 		else {
 			combo.changeState(Combo::NONE);
 			return false;
 		}
 	}
+
+	initCombo:
+	combo.init(*this);
+	comboEvents.push_back(combo);
+	return false;
 }
 
 /*	detectFall(const Combo &)
