@@ -41,6 +41,7 @@ Fall & Fall::operator =(const Fall &src) {
 void Fall::set(int chains) {
 	possibleChain = false;
 	chainCount = chains;
+	cout << "chains (Fall): " << chainCount << endl;
 }
 
 void Fall::clone(const Fall &src) {
@@ -55,11 +56,11 @@ void Fall::init(Grid &grid) {
 
 bool Fall::update(Grid &grid) {
 	for (iterator it = begin(); it != end(); ) {
-		if ((*it).update(grid)) 
+		if (it->update(grid)) 
 			++it;
 		else {
-			(*it).cleanup(grid);
-			chainCount += (*it).getChainCount();
+			it->cleanup(grid);
+			chainCount += it->getChainCount();
 			erase(it++);
 		}
 	}
@@ -132,8 +133,10 @@ void FallNode::cleanup(Grid &grid) {
 		grid.blocks[i][c].changeState(Block::enabled);
 
 	for (i = r-1; i < r + numFalls; ++i) {
-		if (grid.detectCombo(Cell(i, c), chainCount)) 
+		if (grid.detectCombo(Cell(i, c), chainCount)) {
 			++chainCount;
+			cout << "chaincount: " << chainCount << endl;
+		}
 	}
 
 	enabled = false;

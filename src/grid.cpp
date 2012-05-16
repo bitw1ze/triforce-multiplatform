@@ -573,7 +573,7 @@ bool Grid::detectFall(const Combo &combo) {
 		r = combo.up()->row + 1;
 		c = combo.up()->col;
 		if (r < (int)blocks.size())
-			if (detectFall(r, c), false)
+			if (detectFall(r, c, false))
 				fall.push_back(FallNode(r, c));
 		
 		break;

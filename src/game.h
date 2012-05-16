@@ -156,7 +156,7 @@ public:
 	static int fallInterval;
 	bool possibleChain;  // FIXME: put in protected section
 
-	Fall(int chains = 0);
+	Fall(int chains = 1);
 	Fall(const Cell &, int chains = 0);
 	Fall(const list<FallNode> &, int chains = 1);
 	void set(int chains);
