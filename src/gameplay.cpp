@@ -12,6 +12,7 @@ of the game. It is also responsible for cleaning up when the game is finished.
 // Constants
 const string GamePlay::bgFile = "bg-play.bmp";
 const string GamePlay::gridBorderFile = "gridborder.bmp";
+const string GamePlay::bonusFile = "bonus.bmp";
 
 const int GamePlay::numCursorFiles = 10;
 
@@ -182,6 +183,10 @@ void GamePlay::loadImages()
 	  cursorSprite->loadFrame(i, cwd + num + ".bmp", r, g, b);
   }
   cursorSprite->loadGLTextures();
+
+  bonusSprite = new CBaseSprite(1, screen_w, screen_h);
+  bonusSprite->loadFrame(0, themeDirectory + bonusFile, r, g, b);
+  bonusSprite->loadGLTextures();
 
   GamePlay::blockLength = blockSprites[0]->GetHeight();
   GamePlay::gridHeight = GamePlay::blockLength * nrows;
