@@ -56,25 +56,50 @@ public:
 	int row, col;
 };
 
+class Bonus : public CObject {
+public:
+	typedef enum { CHAIN, COMBO } BonusType;
+	static const uint64 moveInterval;
+	static const int moveSpeed, totalMove;
+
+	BonusType bonusType;
+	int count;
+	int row, col;
+	uint64 lastMove;
+	int offset;
+	char str[5];
+
+public:
+	Bonus(const Cell &cell, int cnt, BonusType bt, Grid &g);
+	Bonus(const Bonus &);
+	void set(const Cell &cell, int cnt, BonusType bt, Grid &g);
+	void clone(const Bonus &);
+	virtual ~Bonus();
+
+	bool update();
+	void display();
+};
+
 class Combo {
 public: 
 	static int comboInterval;
 	enum comboState { NONE, HORI, VERT, MULTI };
 protected:
 	Cell *_left, *_right, *_up, *_down, *_mid;
-	list<Cell> combo;
 	int interval;
 	uint64 startTime;
 	comboState state;
+	int chainCount;
 
 public:
-	Combo();
-	Combo(const Combo &ge);
-	Combo & operator =(const Combo &ge);
-	bool operator ==(const Combo &ev);
-	void clone(const Combo &ge);
+	Combo(int chains = 1);
+	Combo(const Combo &combo);
+	Combo & operator =(const Combo &combo);
+	bool operator ==(const Combo &combo);
+	void set(int chains);
+	void clone(const Combo &combo);
 
-	void init();
+	void init(Grid &grid);
 
 	Cell *left() const { return _left; }
 	Cell *left(int r, int c);
@@ -93,8 +118,10 @@ public:
 	const list<Cell> getList();
 
 	int count() const;
+	int getChainCount() const { return chainCount; }
 	void activate();
 	bool elapsed() const;
+	bool update(Grid &grid);
 
 	void printDebug();
 };
@@ -114,7 +141,7 @@ public:
 	void clone(const FallNode &src);
 	void set();
 
-	void init(Grid &grid);
+	void init(Grid &grid, int chains);
 	void cleanup(Grid &grid);
 	bool update(Grid &grid);
 
@@ -129,10 +156,10 @@ public:
 	static int fallInterval;
 	bool possibleChain;  // FIXME: put in protected section
 
-	Fall();
-	Fall(const Cell &);
-	Fall(const list<FallNode> &);
-	void set();
+	Fall(int chains = 1);
+	Fall(const Cell &, int chains = 0);
+	Fall(const list<FallNode> &, int chains = 1);
+	void set(int chains);
 	void clone(const Fall &src);
 	Fall & operator =(const Fall &src);
 
@@ -183,9 +210,9 @@ public:
 	static int gridHeight;
 	static int gridWidth;
 	static void *font1;
-	static float fcolor1[3];
-	static const string gridBorderFile, bgFile;
-	static CBaseSprite *blockSprites[nblocktypes], *cursorSprite, *gridBorderSprite;
+	static float fcolor1[3], fcolor2[3];
+	static const string gridBorderFile, bgFile, bonusFile;
+	static CBaseSprite *blockSprites[nblocktypes], *cursorSprite, *gridBorderSprite, *bonusSprite;
 	// FIXME: once mouse buttons are working in Input, this should be protected
 	Buttons * menuButtons;
 	Grid *grid;
@@ -231,7 +258,6 @@ public:
 	Cursor *cursor;
 	deque< vector<Block> > blocks; //i.e. blocks[row][col]
 	enum gameState { play, combo };
-	int chainCount; // FIXME: put in protected after refactoring Fall
 protected:
 	int	pushOffset, pushSpeed, pushInterval, pushAccelInterval,
 		comboInterval,
@@ -245,6 +271,7 @@ protected:
 	
 	list<Combo> comboEvents;
 	list<Fall> fallEvents;	
+	list<Bonus> bonuses;
 
 public:
 	Grid();
@@ -286,17 +313,13 @@ public:
 	bool containsPoint(int x, int y);
 	bool containsPoint(Point point);
 	
-	bool update(Combo &c);
 	bool detectFall(const Combo & combo);
 	bool detectFall(int r, int c, bool initialize = true);
 
-	
-	bool detectCombo(Cell &cell);
+	bool detectCombo(Cell &cell, int chains = 0);
 
-	void initComboState(Combo &combo);
 	void setBlockStates(list<Cell> &, Block::gameState gs);
 
-	int chains() { return chainCount; }
 	void printDebug();
 };
 
@@ -332,10 +355,6 @@ public:
 	void shiftRow();
 
 	Point getMousePos() {return lastMousePos;}
-};
-
-class Chain {
-
 };
 
 class HUD {
