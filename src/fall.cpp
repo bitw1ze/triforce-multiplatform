@@ -41,7 +41,6 @@ Fall & Fall::operator =(const Fall &src) {
 void Fall::set(int chains) {
 	possibleChain = false;
 	chainCount = chains;
-	cout << "chains (Fall): " << chainCount << endl;
 }
 
 void Fall::clone(const Fall &src) {
