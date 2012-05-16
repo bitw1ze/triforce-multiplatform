@@ -148,8 +148,8 @@ void Grid::display() {
 	cursor->alignToMouse();
 	//integerPrintf(.75, .5, GamePlay::font1, chains(), GamePlay::fcolor1);
 	
-	for (list<Chain>::iterator it = chainEvents.begin(); it != chainEvents.end(); ++it)
-		it->display(*this);
+	for (list<Bonus>::iterator it = bonuses.begin(); it != bonuses.end(); ++it)
+		it->display();
 }
 
 void Grid::composeFrame() {
@@ -456,10 +456,10 @@ void Grid::updateEvents() {
 		}
 	}
 
-	if (chainEvents.size() > 0) {
-		for (list<Chain>::iterator it = chainEvents.begin(); it != chainEvents.end(); ) {
+	if (bonuses.size() > 0) {
+		for (list<Bonus>::iterator it = bonuses.begin(); it != bonuses.end(); ) {
 			if (!it->update()) 
-				chainEvents.erase(it++);
+				bonuses.erase(it++);
 			else
 				++it;
 		}
@@ -504,6 +504,7 @@ bool Grid::detectCombo(Cell &cell, int chains) {
 		}
 
 		combo.changeState(Combo::HORI);
+		goto initCombo;
 	}
 	else {
 		match1 = downMatch(r, c);
@@ -528,6 +529,7 @@ bool Grid::detectCombo(Cell &cell, int chains) {
 			}
 
 			combo.changeState(Combo::VERT);
+			goto initCombo;
 		}
 		else {
 			combo.changeState(Combo::NONE);
@@ -538,15 +540,13 @@ bool Grid::detectCombo(Cell &cell, int chains) {
 	initCombo: // goto label for cleaner code. all valid combos will go here.
 
 	if (combo.getChainCount() >= 2) {
-		if (combo.getState() == Combo::VERT) 
-			chainEvents.push_back( Chain(*combo.up(), combo.getChainCount()) );
-		else 
-			chainEvents.push_back( Chain(*combo.left(), combo.getChainCount()) );
+		Cell *cell = combo.up() ? combo.up() : combo.left();
+		bonuses.push_back( Bonus(*cell, combo.getChainCount(), Bonus::CHAIN, *this) );
 	}
 
 	combo.init(*this);
 	comboEvents.push_back(combo);
-	return false;
+	return true;
 }
 
 /*	detectFall(const Combo &)
@@ -582,7 +582,7 @@ bool Grid::detectFall(const Combo &combo) {
 		r = combo.left()->row + 1;
 		if (r < (int)blocks.size()) {
 			for (c = combo.left()->col; c <= combo.right()->col; ++c) {
-				if (r != combo.mid()->row && detectFall(r, c, false))
+				if (c != combo.mid()->col && detectFall(r, c, false))
 					fall.push_back(FallNode(r, c));
 				else if (detectFall(combo.up()->row+1, c, false))
 					fall.push_back(FallNode(combo.up()->row+1, c));

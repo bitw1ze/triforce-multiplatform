@@ -48,7 +48,7 @@
     <ClCompile Include="combo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="chain.cpp">
+    <ClCompile Include="bonus.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

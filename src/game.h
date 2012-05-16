@@ -56,22 +56,28 @@ public:
 	int row, col;
 };
 
-class Chain {
+class Bonus : public CObject {
 public:
-	static const uint64 displayDuration;
+	typedef enum { CHAIN, COMBO } BonusType;
+	static const uint64 moveInterval;
+	static const int moveSpeed, totalMove;
+
+	BonusType bonusType;
 	int count;
 	int row, col;
-	uint64 lastActivation;
+	uint64 lastMove;
+	int offset;
+	char str[5];
 
 public:
-	Chain(int row, int col, int cnt);
-	Chain(const Cell &cell, int cnt);
-	Chain(const Chain &);
-	void set(int row, int col, int cnt);
-	void clone(const Chain &);
+	Bonus(const Cell &cell, int cnt, BonusType bt, Grid &g);
+	Bonus(const Bonus &);
+	void set(const Cell &cell, int cnt, BonusType bt, Grid &g);
+	void clone(const Bonus &);
+	virtual ~Bonus();
+
 	bool update();
-	void init();
-	void display(Grid &grid);
+	void display();
 };
 
 class Combo {
@@ -204,9 +210,9 @@ public:
 	static int gridHeight;
 	static int gridWidth;
 	static void *font1;
-	static float fcolor1[3];
-	static const string gridBorderFile, bgFile;
-	static CBaseSprite *blockSprites[nblocktypes], *cursorSprite, *gridBorderSprite;
+	static float fcolor1[3], fcolor2[3];
+	static const string gridBorderFile, bgFile, bonusFile;
+	static CBaseSprite *blockSprites[nblocktypes], *cursorSprite, *gridBorderSprite, *bonusSprite;
 	// FIXME: once mouse buttons are working in Input, this should be protected
 	Buttons * menuButtons;
 	Grid *grid;
@@ -265,7 +271,7 @@ protected:
 	
 	list<Combo> comboEvents;
 	list<Fall> fallEvents;	
-	list<Chain> chainEvents;
+	list<Bonus> bonuses;
 
 public:
 	Grid();

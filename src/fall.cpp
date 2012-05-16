@@ -61,11 +61,9 @@ bool Fall::update(Grid &grid) {
 			(*it).cleanup(grid);
 			chainCount += (*it).getChainCount();
 			erase(it++);
-			return size() > 0;
 		}
 	}
-
-	return true;
+	return size() > 0;
 }
 
 void Fall::cleanup(Grid &grid) {

@@ -13,7 +13,7 @@
   <ItemGroup>
     <ClCompile Include="block.cpp" />
     <ClCompile Include="buttons.cpp" />
-    <ClCompile Include="chain.cpp" />
+    <ClCompile Include="bonus.cpp" />
     <ClCompile Include="fall.cpp" />
     <ClCompile Include="gameplay.cpp" />
     <ClCompile Include="cursor.cpp" />

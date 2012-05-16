@@ -21,9 +21,11 @@ int GamePlay::gridHeight;
 int GamePlay::gridWidth;
 void * GamePlay::font1 = GLUT_BITMAP_TIMES_ROMAN_24;
 float GamePlay::fcolor1[3] = {1, 1, 1};
+float GamePlay::fcolor2[3] = {0, 0, 0};
 CBaseSprite * GamePlay::blockSprites[nblocktypes];
 CBaseSprite * GamePlay::cursorSprite;
 CBaseSprite * GamePlay::gridBorderSprite;
+CBaseSprite * GamePlay::bonusSprite;
 BMPClass GamePlay::background;
 
 GamePlay::GamePlay() { 
