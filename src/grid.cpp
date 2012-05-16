@@ -147,7 +147,7 @@ void Grid::display() {
 		for (uint32 j=0; j<ncols; ++j)
 			blocks[i][j].display();
 	cursor->draw(current_cursor_frame);
-	cursor->alignCursorToMouse();
+	cursor->alignToMouse();
 	integerPrintf(.75, .5, GamePlay::font1, chains(), GamePlay::fcolor1);
 }
 

@@ -316,7 +316,8 @@ public:
 	static void declareActions();
 	void defineActions();
 	static void doAction(void *cursorInstance, int actionState, int actionType);
-	void alignCursorToMouse();
+	void alignToMouse();
+	bool isAlignedToMouse;
 	static void mousePassiveMotion(void *cursorInstance, int x, int y);
 
 	Cursor(Grid *, CBaseSprite *);
@@ -329,6 +330,8 @@ public:
 	int getRow() const { return row; }
 	int getCol() const { return col; }
 	void shiftRow();
+
+	Point getMousePos() {return lastMousePos;}
 };
 
 class Chain {

@@ -68,6 +68,7 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	init(sprite);
 	setPos(0, 0);
 	lastMousePos.x = lastMousePos.y = 0;
+	isAlignedToMouse = false;
 
 	defineActions();
 }
@@ -135,8 +136,11 @@ void Cursor::shiftRow() {
 		setPos(getCol(), nrows);
 }
 
-void Cursor::alignCursorToMouse() {
+void Cursor::alignToMouse() {
 	const float x_threshold = 0.49;
+	if (!grid->containsPoint(lastMousePos) || isAlignedToMouse)
+		return;
+
 	if (getX() + 2*GamePlay::blockLength - x_threshold * GamePlay::blockLength < lastMousePos.x && col < ncols - 2)
 		moveRight();
 	else if (lastMousePos.x - x_threshold*GamePlay::blockLength < getX() && col > 0)
@@ -151,15 +155,16 @@ void Cursor::mousePassiveMotion(void *cursorInstance, int x, int y) {
 	Cursor *c = (Cursor *)cursorInstance;
 
 	if (!c->grid->containsPoint(x, y))
-	{
 		glutSetCursor(GLUT_CURSOR_INHERIT);
-		return;
+	else
+		glutSetCursor(GLUT_CURSOR_LEFT_SIDE);
+
+	if (c->lastMousePos.x == x && c->lastMousePos.y == y)
+		c->isAlignedToMouse = true;
+	else
+	{
+		c->isAlignedToMouse = false;
+		c->lastMousePos.x = x;
+		c->lastMousePos.y = y;
 	}
-
-	// move cursor inside grid
-	glutSetCursor(GLUT_CURSOR_LEFT_SIDE);
-
-	// set pos to move cursor to (which takes place in display() loop)
-	c->lastMousePos.x = x;
-	c->lastMousePos.y = y;
 }
