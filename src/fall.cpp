@@ -129,17 +129,13 @@ void FallNode::cleanup(Grid &grid) {
 	int i;
 
 	// re-enable all the blocks that were falling
-	for (i = r; i < r + numFalls; ++i) {
+	for (i = r; i < r + numFalls; ++i) 
 		grid.blocks[i][c].changeState(Block::enabled);
-	}
 
 	for (i = r-1; i < r + numFalls; ++i) {
 		if (grid.detectCombo(Cell(i, c))) 
 			++chainCount;
 	}
-
-	//cout << "Falltype: " << fall.fallType << endl;
-	//cout << "chains: " << tempChains << endl;
 
 	enabled = false;
 }
@@ -150,6 +146,9 @@ bool FallNode::update(Grid &grid) {
 	int & r = row;
 	int c = col;
 	int i;
+
+	if (r >= nrows)
+		return true;
 
 	if (enabled == true && mainTimer->elapsed(lastFall, Fall::fallInterval)) 
 		lastFall = mainTimer->time();
@@ -164,8 +163,6 @@ bool FallNode::update(Grid &grid) {
 	bool swapDown = (grid.blocks[r][c].getFallOffset() <= 0);
 
 	if (swapDown) {
-	//	printf("r=%d\n", r);
-	//	printDebug();
 		for (i = r; i < r + numFalls; ++i) {
 			grid.blocks[i-1][c] = grid.blocks[i][c];
 		}
