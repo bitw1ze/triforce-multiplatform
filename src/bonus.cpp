@@ -18,14 +18,17 @@ void Bonus::set(const Cell &cell, int cnt, BonusType bt, Grid &grid) {
 	count = cnt;
 	bonusType = bt;
 	setSprite(new CBaseSprite(*GamePlay::bonusSprite));
+	if (bonusType == Bonus::CHAIN) 
+		text.setSprite(new CBaseSprite(*GamePlay::chainFontSprite));
+	else 
+		text.setSprite(new CBaseSprite(*GamePlay::chainFontSprite));
+
 	Setxy(grid.blocks[row][col].getX(), grid.blocks[row][col].getY() - GamePlay::blockLength/2);
+	text.Setxy(getX(), getY());
 
 	offset = 0;
 	lastMove = 0;
-	if (bonusType == Bonus::CHAIN)
-		sprintf_s(str, "x%d", count);
-	else
-		sprintf_s(str, "%d", count);
+
 
 	lastMove = mainTimer->time();
 }
@@ -49,18 +52,19 @@ bool Bonus::update() {
 		lastMove = mainTimer->time();
 		offset += moveSpeed;
 		offsetY(-moveSpeed);
+		text.offsetY(-moveSpeed);
 	}
 
 	return offset < totalMove;
 }
 
 void Bonus::display() {
-	float x = (getX() + getWidth()/2) / (float)screen_w;
-	float y = 1.0 - (float)(getY() + getHeight()/2) / ((float)screen_h);
 	draw(0);
-	textPrintf(x, y, GamePlay::font1, str, GamePlay::fcolor2);
+	if (bonusType == Bonus::CHAIN)
+		text.draw(count - 2);
+	else if (bonusType == Bonus::COMBO)
+		text.draw(count - 4);
 }
 
 Bonus::~Bonus() {
-//	setSprite(NULL);
 }
