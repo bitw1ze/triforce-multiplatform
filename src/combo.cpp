@@ -110,8 +110,7 @@ const list<Cell> Combo::getList() {
 		c = down()->col;
 		r = down()->row;
 		for (r; r <= up()->row; ++r) {
-			if (r != mid()->row)
-				cells.push_back(Cell(r, c));
+			cells.push_back(Cell(r, c));
 		}
 	}
 

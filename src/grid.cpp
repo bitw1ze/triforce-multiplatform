@@ -4,6 +4,10 @@ A Grid represents a single player. It is responsible displaying all the
 objects inside the Grid (Blocks and Cursor). It contains functions to
 display and compose the frame, swap and match Blocks, and push/add new 
 Blocks onto the Grid.
+
+The Grid also controls events that occur. It detects combos and falls,
+and maintains a list of combo, fall, and bonus events. It calls the
+methods in Fall, Combo, and Bonus to interact with them.
 */
 
 #include "game.h"
