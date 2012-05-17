@@ -1,3 +1,9 @@
+/*	Bonus displays a the amount in a combo or chain in a nice little box
+	on the Grid. Since GLUT fonts are _terrible_, I just made a bunch of
+	bitmaps for a custom font and overlayed it on top of a box.
+
+	Chains are displayed as x# in the box, and a combo is just the #. */
+
 #include "game.h"
 
 const uint64 Bonus::moveInterval = 50;
