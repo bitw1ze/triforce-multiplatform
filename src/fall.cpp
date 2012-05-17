@@ -157,8 +157,8 @@ bool FallNode::update(Grid &grid) {
 		return true;
 
 	// fix for edge case where new row is pushed and blocks are falling all the way to the top
-	if (r + numFalls >= nrows) 
-		numFalls = nrows - r - 1;
+	if (r + numFalls > nrows) 
+		numFalls = nrows - r;
 
 	// loop through all the rows and make them fall one iteration at a time.
 	for (i = r; i < r + numFalls; ++i) {
