@@ -335,6 +335,7 @@ protected:
 	int row, col,
 		cursor_delta;
 	Point lastMousePos;
+	uint64 cursorMoveLast, cursorMoveDelay; // for holding
 	Grid *grid;
 
 	static const string spriteFile;

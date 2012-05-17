@@ -38,21 +38,34 @@ void Cursor::doAction(void *cursorInstance, int actionState, int actionType)
 	Cursor *c = (Cursor *)cursorInstance;
 	switch((enum Input::Action::ActionState)actionState)
 	{
+	case Input::Action::STATE_HOLD:
+		switch((enum Actions)actionType)
+		{
+		case UP:
+		case DOWN:
+		case LEFT:
+		case RIGHT:
+			if (!mainTimer->elapsed(c->cursorMoveLast, c->cursorMoveDelay))
+				return;
+		}// else fall through to STATE_PRESS
 	case Input::Action::STATE_PRESS:
-	//case Input::Action::STATE_HOLD:
 		switch((enum Actions)actionType)
 		{
 		case UP:
 			c->moveUp();
+			c->cursorMoveLast = mainTimer->time();
 			break;
 		case DOWN:
 			c->moveDown();
+			c->cursorMoveLast = mainTimer->time();
 			break;
 		case LEFT:
 			c->moveLeft();
+			c->cursorMoveLast = mainTimer->time();
 			break;
 		case RIGHT:
 			c->moveRight();
+			c->cursorMoveLast = mainTimer->time();
 			break;
 		}
 	// case Input::Action::STATE_RELEASE:
@@ -69,6 +82,7 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	setPos(0, 0);
 	lastMousePos.x = lastMousePos.y = 0;
 	isAlignedToMouse = false;
+	cursorMoveDelay = 100;
 
 	defineActions();
 }
