@@ -114,20 +114,30 @@ void Grid::doAction(void *gridInstance, int actionState, int actionType)
 			break;
 		case PUSH:
 			if (g->getState() == Grid::play)
-				g->pushRow(g->pushSpeed);
-
+				g->changeState(push);
 			break;
 		case PAUSE:
-			
 			g->printDebug();
 			break;
 		}
-	// Put this once release works correctly.
-	/*
+		break;
 	case Input::Action::STATE_HOLD:
-		 g->pushRow(Grid::forcedPushSpeed)
+		switch((enum Actions)actionType)
+		{
+		case PUSH:
+			if (g->getState() == Grid::push)
+				g->pushRow(Grid::forcedPushSpeed);
+			break;
+		}
+		break;
 	case Input::Action::STATE_RELEASE:
-	*/
+		switch((enum Actions)actionType)
+		{
+		case PUSH:
+			if (g->getState() == Grid::push)
+				g->changeState(play);
+			break;
+		}
 	}
 	glutPostRedisplay();
 }
