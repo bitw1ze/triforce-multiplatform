@@ -128,31 +128,18 @@ void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
 	switch ((enum Input::Action::ActionState)actionState)
 	{
 	case Input::Action::STATE_PRESS:
-		switch((enum Actions)actionType)
-		{
-			case MenuState::ACTIVATE:
-				t->menuButtons->pressCurrent();
-				break;
-		}
+		if (actionType & MenuState::ACTIVATE)
+			t->menuButtons->pressCurrent();
 		break;
 	case Input::Action::STATE_RELEASE:
-		switch((enum Actions)actionType)
-		{
-			case MenuState::LEFT:
-			case MenuState::UP:
-				t->menuButtons->hoverPrev();
-				break;
-			case MenuState::RIGHT:
-			case MenuState::DOWN:
-				t->menuButtons->hoverNext();
-				break;
-			case MenuState::ACTIVATE:
-				t->menuButtons->activateCurrent();
-				break;
-			case MenuState::QUIT:
-				exit(0);
-				break;
-		}
+		if (actionType & MenuState::QUIT)
+			exit(0);
+		if (actionType & MenuState::ACTIVATE)
+			t->menuButtons->activateCurrent();
+		if (actionType & MenuState::LEFT || actionType & MenuState:: UP)
+			t->menuButtons->hoverPrev();
+		if (actionType & MenuState::RIGHT || actionType & MenuState:: DOWN)
+			t->menuButtons->hoverNext();
 		break;
 	}
 }

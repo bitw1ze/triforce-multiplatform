@@ -16,9 +16,13 @@ extern CTimer *mainTimer;
 
 namespace MenuState {
 	enum Actions {
-		UP, DOWN, LEFT, RIGHT,
-		ACTIVATE, QUIT,
-		_NUMBER_OF_ACTIONS
+		UP       = 0x01,
+		DOWN     = 0x02,
+		LEFT     = 0x04,
+		RIGHT    = 0x08,
+		ACTIVATE = 0x10,
+		QUIT     = 0x20,
+		_NUMBER_OF_ACTIONS = 6
 	};
 	static const string actionLabels[_NUMBER_OF_ACTIONS] = {
 		"Up", "Down", "Left", "Right",
