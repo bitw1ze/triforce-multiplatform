@@ -62,6 +62,19 @@
  *
  */
 
+/*  Queueing Actions for the display() loop
+ *
+ *  When actions are activated, they are all added to a master queue. The display loop
+ *  performs every action in the queue on every iteration.
+ *
+ *  It is the job of each Action function to handle detection of multiple
+ *  simultaneous keypresses. This is easier to implement, and allows for greater
+ *  flexibility. ex: an Action function could specify the tolerable time-delta
+ *  between any two arbitrary action calls that would be considered a
+ *  simultaneous press.
+ */
+
+
 namespace Input
 {
 
@@ -119,6 +132,32 @@ namespace Input
 		bool isEnabled() {return enabled;}
 	};
 
+	class ActionQueue
+	{
+	private:
+		class ActionEntry
+		{
+		public:
+			Action * action;
+			Action::ActionState state;
+
+			ActionEntry() {} // silence warning about no default constructor
+			ActionEntry(Action * action, Action::ActionState state) : action(action), state(state) {}
+		};
+		deque<ActionEntry> actions;
+
+		// This is to prevent calling actions that no longer exist, due to a game state change
+		//   occuring *immediately* after enqueuing an action.
+		int gameStateActionsAreFor; 
+		bool updateGameState();
+
+	public:
+		ActionQueue();
+		void enqueue(Action * action, Action::ActionState state);
+		void clear() {actions.clear();}
+		void doAll();
+	};
+	void doAllQueuedActions();
 
 	// getStateFunc returns state of program, and only uses actions with the same state
 	void setGSFunc(int (*getStateFunc)());

@@ -21,6 +21,7 @@ namespace
 	KeyBindings keyBindings;
 	SpecialKeyBindings specialKeyBindings;
 	MouseButtonBindings mouseButtonBindings;
+	ActionQueue actionQueue;
 
 	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
 	const string *stateLabels; // array of labels; indices are states returned by getState()
@@ -154,6 +155,50 @@ Action * Player::getAction(Action::ActionScope scope, int activeState, int actio
 	return (Action *)NULL;
 }
 
+ActionQueue::ActionQueue()
+{
+	gameStateActionsAreFor = -1;
+}
+
+bool ActionQueue::updateGameState()
+{
+	int gameState = getState();
+	if (gameState != gameStateActionsAreFor)
+	{
+		gameStateActionsAreFor = gameState;
+		clear();
+		return true;
+	}
+	return false;
+}
+
+void ActionQueue::enqueue(Action * action, Action::ActionState state)
+{
+	updateGameState();
+	ActionEntry entry(action, state);
+	actions.push_back(entry);
+}
+
+void ActionQueue::doAll()
+{
+	ActionEntry ae;
+	while (actions.size())
+	{
+		// detect state changes, even as a result of prior actions in the same queue
+		if (updateGameState()) 
+			return;
+
+        ae = actions.front();
+		ae.action->doAction(ae.state);
+		actions.pop_front();
+	}
+}
+
+void doAllQueuedActions()
+{
+	actionQueue.doAll();
+}
+
 void setGSFunc(int (*getStateFunc)())
 {
 	getState = getStateFunc;
@@ -185,7 +230,7 @@ void keyPress(unsigned char key, int x, int y)
 	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
-			(*action)->doAction(Action::STATE_PRESS);
+			actionQueue.enqueue(*action, Action::STATE_PRESS);
 }
 
 void keyRelease(unsigned char key, int x, int y)
@@ -198,7 +243,7 @@ void keyRelease(unsigned char key, int x, int y)
 	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
-			(*action)->doAction(Action::STATE_RELEASE);
+			actionQueue.enqueue(*action, Action::STATE_RELEASE);
 }
 
 void keySpecialPress(int key, int x, int y)
@@ -211,7 +256,7 @@ void keySpecialPress(int key, int x, int y)
 	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
-			(*action)->doAction(Action::STATE_PRESS);
+			actionQueue.enqueue(*action, Action::STATE_PRESS);
 }
 
 void keySpecialRelease(int key, int x, int y)
@@ -224,7 +269,7 @@ void keySpecialRelease(int key, int x, int y)
 	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
-			(*action)->doAction(Action::STATE_RELEASE);
+			actionQueue.enqueue(*action, Action::STATE_RELEASE);
 }
 
 void mousePress(int button, int mouseState, int x, int y)

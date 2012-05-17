@@ -110,6 +110,8 @@ void Triforce::bindDefaultActionKeys()
  */
 void Triforce::displayMenu()
 {
+	Input::doAllQueuedActions();
+
 	glutPostRedisplay();
 	background.drawGLbackground();
 	menuButtons->display();
