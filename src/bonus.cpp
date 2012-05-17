@@ -8,7 +8,7 @@ Bonus::Bonus(const Cell &cell, int cnt, BonusType bt, Grid &grid) : CObject() {
 	set(cell, cnt, bt, grid);
 }
 
-Bonus::Bonus(const Bonus &src) : CObject(src) {
+Bonus::Bonus(const Bonus &src) {
 	clone(src);
 }
 
@@ -36,12 +36,11 @@ void Bonus::clone(const Bonus &src) {
 	count = src.count;
 	bonusType = src.bonusType;
 	setSprite(new CBaseSprite(*src.getSprite()));
+	text.setSprite(src.text.getSprite());
 	Setxy(src.getX(), src.getY());
+	text.Setxy(src.text.getX(), src.text.getY());
 
 	offset = src.offset;
-	lastMove = src.lastMove;
-	strncpy_s(str, src.str, strlen(str)-1);
-
 	lastMove = src.lastMove;
 }
 
