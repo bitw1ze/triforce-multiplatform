@@ -36,6 +36,7 @@ void Bonus::clone(const Bonus &src) {
 	count = src.count;
 	bonusType = src.bonusType;
 	setSprite(new CBaseSprite(*src.getSprite()));
+	Setxy(src.getX(), src.getY());
 
 	offset = src.offset;
 	lastMove = src.lastMove;

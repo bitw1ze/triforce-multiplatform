@@ -28,12 +28,13 @@ Block::Block() : CObject() {
 	state = inactive; 
 }
 
-Block::Block(const Block &block) {
-	clone(block);
+Block::Block(const Block &src) : CObject(src) {
+	clone(src);
 }
 
-Block & Block::operator =(const Block &block) {
-	clone(block);
+Block & Block::operator =(const Block &src) {
+	__super::operator =(src);
+	clone(src);
 
 	return *this;
 }
