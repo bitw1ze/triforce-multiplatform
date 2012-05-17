@@ -26,6 +26,8 @@ CBaseSprite * GamePlay::blockSprites[nblocktypes];
 CBaseSprite * GamePlay::cursorSprite;
 CBaseSprite * GamePlay::gridBorderSprite;
 CBaseSprite * GamePlay::bonusSprite;
+CBaseSprite * GamePlay::chainFontSprite;
+CBaseSprite * GamePlay::comboFontSprite;
 BMPClass GamePlay::background;
 
 GamePlay::GamePlay() { 
@@ -163,7 +165,7 @@ void GamePlay::loadImages()
 	gridBorderSprite->loadFrame(frame, themeDirectory + gridBorderFile, r, g, b);
 	gridBorderSprite->loadGLTextures();
   
-	char num[3];
+	char num[8];
 	cwd = themeDirectory + "blocks\\";
 	for (int i=0; i<nblocktypes; ++i) {
 		// Block files are designed to not require a color filter. They aren't
@@ -186,8 +188,22 @@ void GamePlay::loadImages()
   }
   cursorSprite->loadGLTextures();
 
-  bonusSprite = new CBaseSprite(1, screen_w, screen_h);
-  bonusSprite->loadFrame(0, themeDirectory + bonusFile, r, g, b);
+  // bonus sprite
+  cwd = themeDirectory + "bonus\\";
+  bonusSprite = new CBaseSprite(0, screen_w, screen_h);
+  bonusSprite->loadFrame(0, cwd + "bonus.bmp", r, g, b);
+
+  chainFontSprite = new CBaseSprite(0, screen_w, screen_h);
+  for (int i = 2; i <= 15; ++i) {
+	  sprintf_s(num, "x%d", i); 
+	  chainFontSprite->loadFrame(0, cwd + num + ".bmp", r, g, b);
+  }
+  
+  // load combo sprite
+  /*for (int i = 4; i <= 10; ++i) {
+	  sprintf_s(num, "%d", i); 
+  }*/
+
   bonusSprite->loadGLTextures();
 
   GamePlay::blockLength = blockSprites[0]->GetHeight();

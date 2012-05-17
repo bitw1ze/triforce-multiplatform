@@ -212,7 +212,8 @@ public:
 	static void *font1;
 	static float fcolor1[3], fcolor2[3];
 	static const string gridBorderFile, bgFile, bonusFile;
-	static CBaseSprite *blockSprites[nblocktypes], *cursorSprite, *gridBorderSprite, *bonusSprite;
+	static CBaseSprite *blockSprites[nblocktypes], *cursorSprite, *gridBorderSprite, 
+		*bonusSprite, *chainFontSprite, *comboFontSprite;
 	// FIXME: once mouse buttons are working in Input, this should be protected
 	Buttons * menuButtons;
 	Grid *grid;
