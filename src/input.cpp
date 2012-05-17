@@ -183,7 +183,6 @@ void ActionQueue::enqueue(Action * action, Action::ActionState state)
 void ActionQueue::doAll()
 {
 	// add all buttons being held down (since repeated GLUT interrupts are ignored)
-#if 0
 	Actions::iterator action;
 	KeyBindings::iterator b;
 	for (KeysDown::const_iterator kd = keysDown.cbegin(); kd != keysDown.cend(); ++kd)
@@ -205,7 +204,6 @@ void ActionQueue::doAll()
 			if ((*action)->hasActiveStateOf(getState()))
 				enqueue(*action, Action::STATE_HOLD);
 	}
-#endif
 
 	// do all actions
 	ActionEntry ae;
