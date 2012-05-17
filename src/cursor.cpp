@@ -39,7 +39,7 @@ void Cursor::doAction(void *cursorInstance, int actionState, int actionType)
 	switch((enum Input::Action::ActionState)actionState)
 	{
 	case Input::Action::STATE_PRESS:
-	case Input::Action::STATE_HOLD:
+	//case Input::Action::STATE_HOLD:
 		switch((enum Actions)actionType)
 		{
 		case UP:

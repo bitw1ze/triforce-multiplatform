@@ -1,6 +1,7 @@
 #include "input.h"
 #include <map>
 #include <list>
+#include <set>
 #include <vector>
 
 namespace Input
@@ -28,6 +29,15 @@ namespace
 	int numStates;
 
 	/*
+	 * Keys currently being held down
+	 */ 
+	typedef set<unsigned char> KeysDown;
+	typedef set<int> SpecialKeysDown;
+
+	KeysDown keysDown;
+	SpecialKeysDown specialKeysDown;
+
+	/*
 	 * Handle mouse motion
 	 */ 
 	class MouseCallback
@@ -46,15 +56,6 @@ namespace
 
 	MouseMotion mouseMotionFuncs;
 	MouseMotion mousePassiveMotionFuncs;
-
-	/*
-	 * Keys currently being held down
-	 */ 
-	typedef list<unsigned char> KeysDown;
-	typedef list<int> SpecialKeysDown;
-
-	KeysDown keysDown;
-	SpecialKeysDown keysSpecialDown;
 
 	// update bindings when adding 2nd, 3rd, etc actions for same scope/state/type
 	void bindUpdateAll(Action * action)
@@ -181,6 +182,30 @@ void ActionQueue::enqueue(Action * action, Action::ActionState state)
 
 void ActionQueue::doAll()
 {
+	// add all buttons being held down (since repeated GLUT interrupts are ignored)
+	Actions::iterator action;
+	KeyBindings::iterator b;
+	for (KeysDown::const_iterator kd = keysDown.cbegin(); kd != keysDown.cend(); ++kd)
+	{
+		b = keyBindings.find(*kd);
+		if (b == keyBindings.end())
+			continue;
+		for (action = b->second.begin(); action != b->second.end(); ++action) 
+			if ((*action)->hasActiveStateOf(getState()))
+				actionQueue.enqueue(*action, Action::STATE_HOLD);
+	}
+	SpecialKeyBindings::iterator sb;
+	for (SpecialKeysDown::const_iterator kd = specialKeysDown.cbegin(); kd != specialKeysDown.cend(); ++kd)
+	{
+		sb = specialKeyBindings.find(*kd);
+		if (sb == specialKeyBindings.end())
+			continue;
+		for (action = sb->second.begin(); action != sb->second.end(); ++action) 
+			if ((*action)->hasActiveStateOf(getState()))
+				actionQueue.enqueue(*action, Action::STATE_HOLD);
+	}
+
+	// do all actions
 	ActionEntry ae;
 	while (actions.size())
 	{
@@ -230,7 +255,14 @@ void keyPress(unsigned char key, int x, int y)
 	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
-			actionQueue.enqueue(*action, Action::STATE_PRESS);
+		{
+			if (keysDown.find(key) == keysDown.end())
+			{
+				actionQueue.enqueue(*action, Action::STATE_PRESS);
+				keysDown.insert(key);
+			}
+			// ignore multiple presses (they're handled using keysDown)
+		}
 }
 
 void keyRelease(unsigned char key, int x, int y)
@@ -243,7 +275,10 @@ void keyRelease(unsigned char key, int x, int y)
 	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
+		{
 			actionQueue.enqueue(*action, Action::STATE_RELEASE);
+			keysDown.erase(*keysDown.find(key));
+		}
 }
 
 void keySpecialPress(int key, int x, int y)
@@ -256,7 +291,14 @@ void keySpecialPress(int key, int x, int y)
 	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
-			actionQueue.enqueue(*action, Action::STATE_PRESS);
+		{
+			if (specialKeysDown.find(key) == specialKeysDown.end())
+			{
+				actionQueue.enqueue(*action, Action::STATE_PRESS);
+				keysDown.insert(key);
+			}
+			// ignore multiple presses (they're handled using keysDown)
+		}
 }
 
 void keySpecialRelease(int key, int x, int y)
@@ -269,7 +311,10 @@ void keySpecialRelease(int key, int x, int y)
 	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
+		{
 			actionQueue.enqueue(*action, Action::STATE_RELEASE);
+			specialKeysDown.erase(*keysDown.find(key));
+		}
 }
 
 void mousePress(int button, int mouseState, int x, int y)
