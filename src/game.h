@@ -61,6 +61,7 @@ public:
 	typedef enum { CHAIN, COMBO } BonusType;
 	static const uint64 moveInterval;
 	static const int moveSpeed, totalMove;
+	CObject text;
 
 	BonusType bonusType;
 	int count;

@@ -23,11 +23,11 @@ void * GamePlay::font1 = GLUT_BITMAP_TIMES_ROMAN_24;
 float GamePlay::fcolor1[3] = {1, 1, 1};
 float GamePlay::fcolor2[3] = {0, 0, 0};
 CBaseSprite * GamePlay::blockSprites[nblocktypes];
-CBaseSprite * GamePlay::cursorSprite;
-CBaseSprite * GamePlay::gridBorderSprite;
-CBaseSprite * GamePlay::bonusSprite;
-CBaseSprite * GamePlay::chainFontSprite;
-CBaseSprite * GamePlay::comboFontSprite;
+CBaseSprite * GamePlay::cursorSprite = NULL;
+CBaseSprite * GamePlay::gridBorderSprite = NULL;
+CBaseSprite * GamePlay::bonusSprite = NULL;
+CBaseSprite * GamePlay::chainFontSprite = NULL;
+CBaseSprite * GamePlay::comboFontSprite = NULL;
 BMPClass GamePlay::background;
 
 GamePlay::GamePlay() { 
@@ -178,7 +178,7 @@ void GamePlay::loadImages()
 		blockSprites[i]->loadFrame(frame+1, cwd + "combo\\" + num + ".bmp", r, g, b);
 		blockSprites[i]->loadFrame(frame+2, cwd + "inactive\\" + num + ".bmp", r, g, b);
 		blockSprites[i]->loadGLTextures();
-  }
+	}
 
   cursorSprite = new CBaseSprite(numCursorFiles, screen_w, screen_h);
   cwd = themeDirectory + "cursor\\";
@@ -190,21 +190,27 @@ void GamePlay::loadImages()
 
   // bonus sprite
   cwd = themeDirectory + "bonus\\";
-  bonusSprite = new CBaseSprite(0, screen_w, screen_h);
+  bonusSprite = new CBaseSprite(1, screen_w, screen_h);
   bonusSprite->loadFrame(0, cwd + "bonus.bmp", r, g, b);
+  bonusSprite->loadGLTextures();
 
-  chainFontSprite = new CBaseSprite(0, screen_w, screen_h);
+  r = 254;
+  g = 0;
+  b = 254;
+  chainFontSprite = new CBaseSprite(15 - 2 + 1, screen_w, screen_h);
   for (int i = 2; i <= 15; ++i) {
 	  sprintf_s(num, "x%d", i); 
-	  chainFontSprite->loadFrame(0, cwd + num + ".bmp", r, g, b);
+	  chainFontSprite->loadFrame(i-2, cwd + num + ".bmp", r, g, b);
   }
+  chainFontSprite->loadGLTextures();
   
   // load combo sprite
-  /*for (int i = 4; i <= 10; ++i) {
+  /* comboFontSprite = new CBaseSprite(15 - 4 + 1, screen_w, screen_h);
+  for (int i = 4; i <= 10; ++i) {
 	  sprintf_s(num, "%d", i); 
-  }*/
-
-  bonusSprite->loadGLTextures();
+	  comboFontSprite->loadFrame(i - 4, cwd + num + ".bmp", r, g, b));
+  }
+  comboFontSprite->loadGLTextures();*/
 
   GamePlay::blockLength = blockSprites[0]->GetHeight();
   GamePlay::gridHeight = GamePlay::blockLength * nrows;
