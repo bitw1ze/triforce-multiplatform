@@ -117,6 +117,7 @@ void GamePlay::display() {
 	int xPos = grid->getX() - 21,
 	yPos = grid->getY() - 35 - gridHeight;
     gridBorderSprite->draw(0, xPos, yPos);
+	grid->displayBonus();
 	menuButtons->display();
 
 	glutSwapBuffers();

@@ -151,8 +151,9 @@ void Grid::display() {
 			blocks[i][j].display();
 	cursor->draw(current_cursor_frame);
 	cursor->alignToMouse();
-	//integerPrintf(.75, .5, GamePlay::font1, chains(), GamePlay::fcolor1);
-	
+}
+
+void Grid::displayBonus() {
 	for (list<Bonus>::iterator it = bonuses.begin(); it != bonuses.end(); ++it)
 		it->display();
 }

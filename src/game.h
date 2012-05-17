@@ -292,6 +292,7 @@ public:
 	void loadImages();
 	void composeFrame();
 	void display();
+	void displayBonus();
 	void updateEvents();
 
 	void pushRow(int speed);
