@@ -259,7 +259,8 @@ class Grid {
 public:
 	Cursor *cursor;
 	deque< vector<Block> > blocks; //i.e. blocks[row][col]
-	enum gameState { play, combo };
+	enum gameState { play, combo, push };
+	static int forcedPushSpeed;
 protected:
 	int	pushOffset, pushSpeed, pushInterval, pushAccelInterval,
 		comboInterval,
@@ -293,7 +294,7 @@ public:
 	void display();
 	void updateEvents();
 
-	void pushRow();
+	void pushRow(int speed);
 	void addRow();
 	void swapBlocks();
 

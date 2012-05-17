@@ -9,6 +9,8 @@ Blocks onto the Grid.
 #include "game.h"
 #include "input.h"
 
+int Grid::forcedPushSpeed;
+
 /*	constructor
 	Initialize objects and vars such as position, dimensions, and speed.
 	Also create the initial rows of the game */
@@ -112,15 +114,18 @@ void Grid::doAction(void *gridInstance, int actionState, int actionType)
 			break;
 		case PUSH:
 			if (g->getState() == Grid::play)
-				g->pushRow();
+				g->pushRow(g->pushSpeed);
+
 			break;
 		case PAUSE:
 			
 			g->printDebug();
 			break;
 		}
+	// Put this once release works correctly.
 	/*
 	case Input::Action::STATE_HOLD:
+		 g->pushRow(Grid::forcedPushSpeed)
 	case Input::Action::STATE_RELEASE:
 	*/
 	}
@@ -174,7 +179,7 @@ void Grid::composeFrame() {
 		}
 
 		if (mainTimer->elapsed(lastPush, pushInterval)) {
-			pushRow();
+			pushRow(pushSpeed);
 			lastPush = mainTimer->time();
 		}
 		break;
@@ -213,13 +218,13 @@ int Grid::countEnabledRows() const {
 
 /*	pushRow
 	Gradually push a new row onto the play area. */
-void Grid::pushRow() {
-	pushOffset += pushSpeed;
+void Grid::pushRow(int speed) {
+	pushOffset += speed;
 
-	cursor->offsetY(-pushSpeed);
+	cursor->offsetY(-speed);
 	for (uint32 i=0; i<blocks.size(); ++i) 
 		for (uint32 j=0; j<ncols; ++j) 
-			blocks[i][j].offsetY(-pushSpeed);
+			blocks[i][j].offsetY(-speed);
 	
 	if (pushOffset >= GamePlay::blockLength) {
 		pushOffset %= GamePlay::blockLength;
