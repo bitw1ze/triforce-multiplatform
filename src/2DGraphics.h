@@ -131,12 +131,12 @@ class CObject //class for a moving object
 	void offsetX(int _x) { x += (float)_x; }
 	void offsetY(int _y) { y += (float)_y; }
 	void offsetXY(int _x, int _y) { x += (float)_x; y += (float)_y; }
-	int getX() { return (int)x; }
-	int getY() { return (int)y; }
+	int getX() const { return (int)x; }
+	int getY() const { return (int)y; }
 	void setX(int _x) { x = (float)x; }
 	void setY(int _y) { y = (float)y; }
-	int getWidth() { return pSprite->GetWidth(); }
-	int getHeight() { return pSprite->GetHeight(); }
+	int getWidth() const { return pSprite->GetWidth(); }
+	int getHeight() const { return pSprite->GetHeight(); }
 	/* END functions added by Gabe Pike */
 };
 
