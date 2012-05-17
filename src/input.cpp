@@ -183,6 +183,7 @@ void ActionQueue::enqueue(Action * action, Action::ActionState state)
 void ActionQueue::doAll()
 {
 	// add all buttons being held down (since repeated GLUT interrupts are ignored)
+#if 0
 	Actions::iterator action;
 	KeyBindings::iterator b;
 	for (KeysDown::const_iterator kd = keysDown.cbegin(); kd != keysDown.cend(); ++kd)
@@ -192,7 +193,7 @@ void ActionQueue::doAll()
 			continue;
 		for (action = b->second.begin(); action != b->second.end(); ++action) 
 			if ((*action)->hasActiveStateOf(getState()))
-				actionQueue.enqueue(*action, Action::STATE_HOLD);
+				enqueue(*action, Action::STATE_HOLD);
 	}
 	SpecialKeyBindings::iterator sb;
 	for (SpecialKeysDown::const_iterator kd = specialKeysDown.cbegin(); kd != specialKeysDown.cend(); ++kd)
@@ -202,8 +203,9 @@ void ActionQueue::doAll()
 			continue;
 		for (action = sb->second.begin(); action != sb->second.end(); ++action) 
 			if ((*action)->hasActiveStateOf(getState()))
-				actionQueue.enqueue(*action, Action::STATE_HOLD);
+				enqueue(*action, Action::STATE_HOLD);
 	}
+#endif
 
 	// do all actions
 	ActionEntry ae;
@@ -251,7 +253,6 @@ void keyPress(unsigned char key, int x, int y)
 	if (b == keyBindings.end())
 		return;
 
-	//TODO: push key to the container that indicates it is being held (then remove it on Release)
 	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
@@ -261,7 +262,7 @@ void keyPress(unsigned char key, int x, int y)
 				actionQueue.enqueue(*action, Action::STATE_PRESS);
 				keysDown.insert(key);
 			}
-			// ignore multiple presses (they're handled using keysDown)
+			// ignore multiple calls for a single press (they're handled using keysDown)
 		}
 }
 
@@ -271,7 +272,6 @@ void keyRelease(unsigned char key, int x, int y)
 	if (b == keyBindings.end())
 		return;
 
-	//TODO: push key to the container that indicates it is being held (then remove it on Release)
 	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
@@ -287,7 +287,6 @@ void keySpecialPress(int key, int x, int y)
 	if (b == specialKeyBindings.end())
 		return;
 
-	//TODO: push key to the container that indicates it is being held (then remove it on Release)
 	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
@@ -295,9 +294,9 @@ void keySpecialPress(int key, int x, int y)
 			if (specialKeysDown.find(key) == specialKeysDown.end())
 			{
 				actionQueue.enqueue(*action, Action::STATE_PRESS);
-				keysDown.insert(key);
+				specialKeysDown.insert(key);
 			}
-			// ignore multiple presses (they're handled using keysDown)
+			// ignore multiple calls for a single press (they're handled using keysDown)
 		}
 }
 
@@ -307,13 +306,12 @@ void keySpecialRelease(int key, int x, int y)
 	if (b == specialKeyBindings.end())
 		return;
 
-	//TODO: push key to the container that indicates it is being held (then remove it on Release)
 	Actions::iterator action;
 	for (action = b->second.begin(); action != b->second.end(); ++action) 
 		if ((*action)->hasActiveStateOf(getState()))
 		{
 			actionQueue.enqueue(*action, Action::STATE_RELEASE);
-			specialKeysDown.erase(*keysDown.find(key));
+			specialKeysDown.erase(*specialKeysDown.find(key));
 		}
 }
 
