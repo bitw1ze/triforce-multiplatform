@@ -1,5 +1,7 @@
 #include "game.h"
 #include "input.h"
+uint64 Cursor::cursorMoveDelay = 30;
+uint64 Cursor::cursorMoveInitialDelay = 300;
 
 void Cursor::declareActions()
 {
@@ -31,6 +33,26 @@ void Cursor::defineActions()
 	defineAction(scope, state, RIGHT, this, doAction);
 }
 
+void Cursor::doActionPress(PlayState::Actions action)
+{
+	move(action); // all declared cursor actions are movements atm
+	cursorMoveInitial[action] = mainTimer->time();
+}
+
+void Cursor::doActionHold(PlayState::Actions action)
+{
+	bool initialWaitIsOver = !cursorMoveInitial[action],
+	     moveDelayElapsed = mainTimer->elapsed(cursorMoveLast[action], cursorMoveDelay),
+		 initialMoveDelayElapsed = mainTimer->elapsed(cursorMoveInitial[action], cursorMoveInitialDelay);
+
+	if ((initialWaitIsOver && moveDelayElapsed) || (!initialWaitIsOver && initialMoveDelayElapsed))
+	{
+		move(action);
+		cursorMoveInitial[action] = 0; // end initial wait
+		cursorMoveLast[action] = mainTimer->time(); // init *or* update last move time
+	}
+}
+
 void Cursor::doAction(void *cursorInstance, int actionState, int actionType)
 {
 	using namespace PlayState;
@@ -38,36 +60,12 @@ void Cursor::doAction(void *cursorInstance, int actionState, int actionType)
 	Cursor *c = (Cursor *)cursorInstance;
 	switch((enum Input::Action::ActionState)actionState)
 	{
-	case Input::Action::STATE_HOLD:
-		switch((enum Actions)actionType)
-		{
-		case UP:
-		case DOWN:
-		case LEFT:
-		case RIGHT:
-			if (!mainTimer->elapsed(c->cursorMoveLast, c->cursorMoveDelay))
-				return;
-		}// else fall through to STATE_PRESS
 	case Input::Action::STATE_PRESS:
-		switch((enum Actions)actionType)
-		{
-		case UP:
-			c->moveUp();
-			c->cursorMoveLast = mainTimer->time();
-			break;
-		case DOWN:
-			c->moveDown();
-			c->cursorMoveLast = mainTimer->time();
-			break;
-		case LEFT:
-			c->moveLeft();
-			c->cursorMoveLast = mainTimer->time();
-			break;
-		case RIGHT:
-			c->moveRight();
-			c->cursorMoveLast = mainTimer->time();
-			break;
-		}
+		c->doActionPress((enum Actions)actionType);
+		break;
+	case Input::Action::STATE_HOLD:
+		c->doActionHold((enum Actions)actionType);
+		break;
 	// case Input::Action::STATE_RELEASE:
 	}
 }
@@ -82,13 +80,28 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	setPos(0, 0);
 	lastMousePos.x = lastMousePos.y = 0;
 	isAlignedToMouse = false;
-	cursorMoveDelay = 100;
 
 	defineActions();
 }
 
 Cursor::~Cursor() {
 	Input::removeMotions(this);
+}
+
+bool Cursor::move(PlayState::Actions action, bool doDraw) {
+	using namespace PlayState;
+	switch (action)
+	{
+	case UP:
+		return moveUp(doDraw);
+	case DOWN:
+		return moveDown(doDraw);
+	case LEFT:
+		return moveLeft(doDraw);
+	case RIGHT:
+		return moveRight(doDraw);
+	}
+	return false; // this should never happen
 }
 
 bool Cursor::moveLeft(bool doDraw) {

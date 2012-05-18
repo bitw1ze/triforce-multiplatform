@@ -335,14 +335,19 @@ protected:
 	int row, col,
 		cursor_delta;
 	Point lastMousePos;
-	uint64 cursorMoveLast, cursorMoveDelay; // for holding
 	Grid *grid;
-
 	static const string spriteFile;
+
+	// for action holding
+	static uint64 cursorMoveDelay, cursorMoveInitialDelay;
+	uint64 cursorMoveInitial[PlayState::_NUMBER_OF_ACTIONS],
+		   cursorMoveLast[PlayState::_NUMBER_OF_ACTIONS];
 
 public:
 	static void declareActions();
 	void defineActions();
+	void doActionPress(PlayState::Actions action);
+	void doActionHold(PlayState::Actions action);
 	static void doAction(void *cursorInstance, int actionState, int actionType);
 	void alignToMouse();
 	bool isAlignedToMouse;
@@ -350,6 +355,7 @@ public:
 
 	Cursor(Grid *, CBaseSprite *);
 	~Cursor();
+	bool move(PlayState::Actions action, bool doDraw=true);
 	bool moveUp(bool doDraw=true);
 	bool moveDown(bool doDraw=true);
 	bool moveLeft(bool doDraw=true);
