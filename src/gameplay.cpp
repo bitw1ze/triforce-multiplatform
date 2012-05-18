@@ -225,12 +225,14 @@ void GamePlay::changeState(gameState gs) {
 		menuButtons->disable(pause);
 		menuButtons->enable(play);
 		state = pause;
+		mainTimer->pause();
 	}
 	else if (state == pause && gs == play)
 	{
 		menuButtons->disable(play);
 		menuButtons->enable(pause);
 		state = play;
+		mainTimer->unpause();
 	}
 	else
 		state = gs;
