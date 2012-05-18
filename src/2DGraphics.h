@@ -84,11 +84,14 @@ class CBaseSprite //simplest sprite
 class CTimer{ //game timer class using ms
   protected:
     DWORD m_nStartTime; //time in ms that timer was started
+	DWORD savedTime;
   public:
     CTimer(); //constructor
     virtual void start(); //start the timer
     virtual DWORD time(); //return the time in ms
     bool elapsed(DWORD last_time,int interval);   //has interval ms elapsed since start?
+	void pause() { savedTime = time(); }
+	void unpause() { m_nStartTime += (time() - savedTime); }
 };
 
 class secTimer{ //game timer class using seconds
