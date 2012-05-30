@@ -189,7 +189,7 @@ int Combo::count() const {
 		return _up->row - _down->row + 1;
 
 	case Combo::MULTI:
-		return (_up->row - _down->row) + (_right->col - _left->col);
+		return (_up->row - _down->row) + (_right->col - _left->col) + 1;
 
 	default:
 		return 0;
