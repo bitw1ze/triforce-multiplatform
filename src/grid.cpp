@@ -13,7 +13,8 @@ methods in Fall, Combo, and Bonus to interact with them.
 #include "game.h"
 #include "input.h"
 
-int Grid::forcedPushSpeed;
+const int Grid::forcedPushSpeed = 1;
+const int Grid::forcedPushinterval = 8;
 
 /*	constructor
 	Initialize objects and vars such as position, dimensions, and speed.
@@ -30,6 +31,7 @@ void Grid::set() {
 	pushInterval = 300;
 	pushOffset = 0;
 	lastPush = 0;
+	lastForcedPush = 0;
 
 	pushAccel = 0.9; // reduces the time it takes to push a row
 	pushAccelInterval = 25 * 1000; // seconds
@@ -129,8 +131,10 @@ void Grid::doAction(void *gridInstance, int actionState, int actionType)
 		switch((enum Actions)actionType)
 		{
 		case PUSH:
-			if (g->getState() == Grid::push)
+			if (g->getState() == Grid::push && mainTimer->elapsed(g->lastForcedPush, forcedPushinterval)) {
 				g->pushRow(Grid::forcedPushSpeed);
+				g->lastForcedPush = mainTimer->time();
+			}
 			break;
 		}
 		break;

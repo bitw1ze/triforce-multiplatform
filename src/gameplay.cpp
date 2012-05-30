@@ -219,7 +219,6 @@ void GamePlay::loadImages()
   GamePlay::blockLength = blockSprites[0]->GetHeight();
   GamePlay::gridHeight = GamePlay::blockLength * nrows;
   GamePlay::gridWidth = GamePlay::blockLength * ncols;
-  Grid::forcedPushSpeed = blockLength / 8;
 }
 
 void GamePlay::changeState(gameState gs) {

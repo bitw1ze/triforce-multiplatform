@@ -260,14 +260,14 @@ public:
 	Cursor *cursor;
 	deque< vector<Block> > blocks; //i.e. blocks[row][col]
 	enum gameState { play, combo, push };
-	static int forcedPushSpeed;
+	static const int forcedPushSpeed, forcedPushinterval;
 protected:
 	int	pushOffset, pushSpeed, pushInterval, pushAccelInterval,
 		comboInterval,
 		current_cursor_frame;
 	float pushAccel;
 	uint64 last_cursor_anim, timer_cursor_anim;
-	uint64 lastPush, lastPushAccel;
+	uint64 lastPush, lastPushAccel, lastForcedPush;
 	Point gridPos;
 	CBaseSprite** blockSprites;
 	gameState state;
