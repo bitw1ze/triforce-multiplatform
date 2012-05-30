@@ -315,15 +315,14 @@ void Grid::swapBlocks() {
 		else if (detectFall(r+1, c1))
 			fallEvents.push_back(FallNode(r+1, c1));
 		else 
-			combo1 = detectCombo(Cell(r, c1), 0, true);
+			combo1 = detectCombo(Cell(r, c1), 0, false);
 
 		if (detectFall(r, c2))
 			fallEvents.push_back(FallNode(r, c2));
 		else if (detectFall(r+1, c2))
 			fallEvents.push_back(FallNode(r+1, c2));
 		else 
-			combo2 = detectCombo(Cell(r, c2), 0, true);
-
+			combo2 = detectCombo(Cell(r, c2), 0, false);
 
 		if (combo1 && combo2) {
 			Cell cell = combo1.getState() == Combo::VERT ? *combo1.up() : *combo1.left();
@@ -333,23 +332,21 @@ void Grid::swapBlocks() {
 			bonuses.push_back(Bonus(cell, combo1.count() + combo2.count(), Bonus::COMBO, *this));
 		}
 		else if (combo1) {
-			if (combo1.count() >= 4) {
-				Cell cell = combo1.getState() == Combo::VERT ? *combo1.up() : *combo1.left();
-				if (combo1.getChainCount() >= 2)
-					++cell.row;
-
-				bonuses.push_back(Bonus(cell, combo1.count(), Bonus::COMBO, *this));
-			}
+			initBonus(combo1);
 		}
 		else if (combo2) {
-			if (combo2.count() >= 4) {
-				Cell cell = combo2.getState() == Combo::VERT ? *combo2.up() : *combo2.left();
-				if (combo2.getChainCount() >= 2)
-					++cell.row;
-
-				bonuses.push_back(Bonus(cell, combo2.count(), Bonus::COMBO, *this));
-			}
+			initBonus(combo2);
 		}
+	}
+}
+
+void Grid::initBonus(const Combo &combo) {
+	if (combo.count() >= 4) {
+		Cell cell = combo.getState() == Combo::VERT ? *combo.up() : *combo.left();
+		if (combo.getChainCount() >= 2)
+			++cell.row;
+
+		bonuses.push_back(Bonus(cell, combo.count(), Bonus::COMBO, *this));
 	}
 }
 
@@ -526,7 +523,7 @@ void Grid::updateEvents() {
 	This function computes the cells by first finding a horizontal match. If a match
 	is found, it will then iteratively search for a vertical from each block in the
 	horizontal match.  */
-Combo Grid::detectCombo(Cell &cell, int chains, bool initialize) {
+Combo Grid::detectCombo(Cell &cell, int chains, bool doBonus) {
 	int r = cell.row;
 	int c = cell.col;
 
@@ -550,12 +547,16 @@ Combo Grid::detectCombo(Cell &cell, int chains, bool initialize) {
 
 				combo.changeState(Combo::MULTI);
 				initCombo(combo);
+				if (doBonus) 
+					initBonus(combo);
 				return combo;
 			}
 		}
 
 		combo.changeState(Combo::HORI);
 		initCombo(combo);
+		if (doBonus) 
+			initBonus(combo);
 		return combo;
 	}
 	else {
@@ -577,11 +578,15 @@ Combo Grid::detectCombo(Cell &cell, int chains, bool initialize) {
 
 					combo.changeState(Combo::MULTI);
 					initCombo(combo);
+					if (doBonus) 
+						initBonus(combo);
 					return combo;
 				} 
 			}
 			combo.changeState(Combo::VERT);
 			initCombo(combo);
+			if (doBonus) 
+				initBonus(combo);
 			return combo;
 		}
 		else {
@@ -589,7 +594,6 @@ Combo Grid::detectCombo(Cell &cell, int chains, bool initialize) {
 			return combo;
 		}
 	}
-
 }
 
 void Grid::initCombo(Combo &combo) {

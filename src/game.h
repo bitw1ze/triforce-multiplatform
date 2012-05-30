@@ -322,6 +322,7 @@ public:
 
 	Combo detectCombo(Cell &cell, int chains, bool initialize);
 	void initCombo(Combo &combo);
+	void initBonus(const Combo &combo);
 
 	void setBlockStates(list<Cell> &, Block::gameState gs);
 
