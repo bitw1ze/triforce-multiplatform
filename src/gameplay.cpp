@@ -191,27 +191,30 @@ void GamePlay::loadImages()
 
   // bonus sprite
   cwd = themeDirectory + "bonus\\";
-  bonusSprite = new CBaseSprite(1, screen_w, screen_h);
-  bonusSprite->loadFrame(0, cwd + "bonus.bmp", r, g, b);
+  bonusSprite = new CBaseSprite(2, screen_w, screen_h);
+  bonusSprite->loadFrame(0, cwd + "chain.bmp", r, g, b);
+  bonusSprite->loadFrame(1, cwd + "combo.bmp", r, g, b);
   bonusSprite->loadGLTextures();
 
   r = 254;
   g = 0;
   b = 254;
-  chainFontSprite = new CBaseSprite(15 - 2 + 1, screen_w, screen_h);
-  for (int i = 2; i <= 15; ++i) {
+  int maxChain = 15, minChain = 2;
+  chainFontSprite = new CBaseSprite(maxChain - minChain + 1, screen_w, screen_h);
+  for (int i = minChain; i <= maxChain; ++i) {
 	  sprintf_s(num, "x%d", i); 
-	  chainFontSprite->loadFrame(i-2, cwd + num + ".bmp", r, g, b);
+	  chainFontSprite->loadFrame(i - minChain, cwd + num + ".bmp", r, g, b);
   }
   chainFontSprite->loadGLTextures();
   
   // load combo sprite
-  /* comboFontSprite = new CBaseSprite(15 - 4 + 1, screen_w, screen_h);
-  for (int i = 4; i <= 10; ++i) {
+  int maxCombo = 10, minCombo = 4;
+  comboFontSprite = new CBaseSprite(maxCombo - minCombo + 1, screen_w, screen_h);
+  for (int i = minCombo; i <= maxCombo; ++i) {
 	  sprintf_s(num, "%d", i); 
-	  comboFontSprite->loadFrame(i - 4, cwd + num + ".bmp", r, g, b));
+	  comboFontSprite->loadFrame(i - minCombo, cwd + num + ".bmp", r, g, b);
   }
-  comboFontSprite->loadGLTextures();*/
+  comboFontSprite->loadGLTextures();
 
   GamePlay::blockLength = blockSprites[0]->GetHeight();
   GamePlay::gridHeight = GamePlay::blockLength * nrows;

@@ -275,8 +275,9 @@ void Grid::addRow() {
 		(*it).adjustRow();
 
 	if (blocks.size() > 3) {
-		for (int i=0; i<ncols; ++i) 
-			detectCombo(Cell(1, i));
+		for (int i=0; i<ncols; ++i) {
+			detectCombo(Cell(1, i), 0, true);
+		}
 	}
 }
 
@@ -306,20 +307,49 @@ void Grid::swapBlocks() {
 	else
 		belowFall = false;
 
+	Combo combo1, combo2;
+
 	if (!belowFall && swap(blocks[r][c1], blocks[r][c2])) {
 		if (detectFall(r, c1)) 
 			fallEvents.push_back(FallNode(r, c1));
 		else if (detectFall(r+1, c1))
 			fallEvents.push_back(FallNode(r+1, c1));
 		else 
-			detectCombo(Cell(r, c1));
+			combo1 = detectCombo(Cell(r, c1), 0, true);
 
 		if (detectFall(r, c2))
 			fallEvents.push_back(FallNode(r, c2));
 		else if (detectFall(r+1, c2))
 			fallEvents.push_back(FallNode(r+1, c2));
 		else 
-			detectCombo(Cell(r, c2));
+			combo2 = detectCombo(Cell(r, c2), 0, true);
+
+
+		if (combo1 && combo2) {
+			Cell cell = combo1.getState() == Combo::VERT ? *combo1.up() : *combo1.left();
+			if (combo1.getChainCount() >= 2)
+				++cell.row;
+
+			bonuses.push_back(Bonus(cell, combo1.count() + combo2.count(), Bonus::COMBO, *this));
+		}
+		else if (combo1) {
+			if (combo1.count() >= 4) {
+				Cell cell = combo1.getState() == Combo::VERT ? *combo1.up() : *combo1.left();
+				if (combo1.getChainCount() >= 2)
+					++cell.row;
+
+				bonuses.push_back(Bonus(cell, combo1.count(), Bonus::COMBO, *this));
+			}
+		}
+		else if (combo2) {
+			if (combo2.count() >= 4) {
+				Cell cell = combo2.getState() == Combo::VERT ? *combo2.up() : *combo2.left();
+				if (combo2.getChainCount() >= 2)
+					++cell.row;
+
+				bonuses.push_back(Bonus(cell, combo2.count(), Bonus::COMBO, *this));
+			}
+		}
 	}
 }
 
@@ -469,7 +499,7 @@ void Grid::updateEvents() {
 
 	if (fallEvents.size() > 0) {
 		for (list<Fall>::iterator fl = fallEvents.begin(); fl != fallEvents.end(); ) {
-			if (!(*fl).update(*this)) 
+			if (!fl->update(*this)) 
 				fallEvents.erase(fl++);
 			else 
 				++fl;
@@ -496,7 +526,7 @@ void Grid::updateEvents() {
 	This function computes the cells by first finding a horizontal match. If a match
 	is found, it will then iteratively search for a vertical from each block in the
 	horizontal match.  */
-const Combo Grid::detectCombo(Cell &cell, int chains) {
+Combo Grid::detectCombo(Cell &cell, int chains, bool initialize) {
 	int r = cell.row;
 	int c = cell.col;
 
@@ -519,12 +549,14 @@ const Combo Grid::detectCombo(Cell &cell, int chains) {
 				combo.up(r + match2, col);
 
 				combo.changeState(Combo::MULTI);
-				goto initCombo;
+				initCombo(combo);
+				return combo;
 			}
 		}
 
 		combo.changeState(Combo::HORI);
-		goto initCombo;
+		initCombo(combo);
+		return combo;
 	}
 	else {
 		match1 = downMatch(r, c);
@@ -544,12 +576,13 @@ const Combo Grid::detectCombo(Cell &cell, int chains) {
 					combo.right(row, c + match2);
 
 					combo.changeState(Combo::MULTI);
-					goto initCombo;
+					initCombo(combo);
+					return combo;
 				} 
 			}
-
 			combo.changeState(Combo::VERT);
-			goto initCombo;
+			initCombo(combo);
+			return combo;
 		}
 		else {
 			combo.changeState(Combo::NONE);
@@ -557,7 +590,11 @@ const Combo Grid::detectCombo(Cell &cell, int chains) {
 		}
 	}
 
-	initCombo: // goto label for cleaner code. all valid combos will go here.
+}
+
+void Grid::initCombo(Combo &combo) {
+	if (combo.getState() == Combo::NONE)
+		return;
 
 	if (combo.getChainCount() >= 2) {
 		Cell *cell = combo.up() ? combo.up() : combo.left();
@@ -566,12 +603,10 @@ const Combo Grid::detectCombo(Cell &cell, int chains) {
 
 	combo.init(*this);
 	comboEvents.push_back(combo);
-	return combo;
 }
 
 /*	detectFall(const Combo &)
 	This fall detection subroutine passes the highest block for each row in the combo */
-
 bool Grid::detectFall(const Combo &combo) {
 	int r, c;
 

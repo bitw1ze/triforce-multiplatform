@@ -132,10 +132,8 @@ void FallNode::cleanup(Grid &grid) {
 		grid.blocks[i][c].changeState(Block::enabled);
 
 	for (i = r-1; i < r + numFalls; ++i) {
-		if (grid.detectCombo(Cell(i, c), chainCount)) {
+		if (grid.detectCombo(Cell(i, c), chainCount, true).count() > 0)
 			++chainCount;
-			cout << "chaincount: " << chainCount << endl;
-		}
 	}
 
 	enabled = false;

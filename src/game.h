@@ -320,7 +320,8 @@ public:
 	bool detectFall(const Combo & combo);
 	bool detectFall(int r, int c, bool initialize = true);
 
-	const Combo detectCombo(Cell &cell, int chains = 0);
+	Combo detectCombo(Cell &cell, int chains, bool initialize);
+	void initCombo(Combo &combo);
 
 	void setBlockStates(list<Cell> &, Block::gameState gs);
 
