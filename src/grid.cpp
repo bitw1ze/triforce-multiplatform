@@ -496,7 +496,7 @@ void Grid::updateEvents() {
 	This function computes the cells by first finding a horizontal match. If a match
 	is found, it will then iteratively search for a vertical from each block in the
 	horizontal match.  */
-bool Grid::detectCombo(Cell &cell, int chains) {
+const Combo Grid::detectCombo(Cell &cell, int chains) {
 	int r = cell.row;
 	int c = cell.col;
 
@@ -553,7 +553,7 @@ bool Grid::detectCombo(Cell &cell, int chains) {
 		}
 		else {
 			combo.changeState(Combo::NONE);
-			return false;
+			return combo;
 		}
 	}
 
@@ -566,7 +566,7 @@ bool Grid::detectCombo(Cell &cell, int chains) {
 
 	combo.init(*this);
 	comboEvents.push_back(combo);
-	return true;
+	return combo;
 }
 
 /*	detectFall(const Combo &)
