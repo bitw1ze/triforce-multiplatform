@@ -206,3 +206,7 @@ bool Combo::update(Grid &grid) {
 	}
 	else return true;
 }
+
+Combo::operator bool() const {
+	return getState() != Combo::NONE;
+}

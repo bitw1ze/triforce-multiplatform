@@ -99,8 +99,8 @@ public:
 	bool operator ==(const Combo &combo);
 	void set(int chains);
 	void clone(const Combo &combo);
-
 	void init(Grid &grid);
+	operator bool () const;
 
 	Cell *left() const { return _left; }
 	Cell *left(int r, int c);
