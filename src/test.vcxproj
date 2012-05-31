@@ -36,7 +36,7 @@
     <Object Include="2DLibrary.obj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
+    <None Include="classDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F55E7844-C13C-4D86-B797-130B3D09E6CD}</ProjectGuid>

@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="BMPClass" Collapsed="true">
+    <Position X="15" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAUEIAABg0AyBIAARQAwEAIQypgAEAAAEAPAAQ=</HashCode>
+      <FileName>2DGraphics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CBaseSprite" Collapsed="true">
+    <Position X="15.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAIAAAgUAwAMBBhBAAkEKIgAQAEADAFgAAQA=</HashCode>
+      <FileName>2DGraphics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CTimer" Collapsed="true">
+    <Position X="15.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAgACQCAAAAAAgAAAAAAAQAAAAAIAA=</HashCode>
+      <FileName>2DGraphics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="secTimer" Collapsed="true">
+    <Position X="15.75" Y="0.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAgACQAAAAAAAAAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>2DGraphics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CObject">
+    <Position X="2.75" Y="0.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>QAAAABAAIAAAAADACRIOAAgBAAAAQgICEABgAGAAAAA=</HashCode>
+      <FileName>2DGraphics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Buttons">
+    <Position X="13" Y="0.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="Buttons::Button" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>buttons.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Typedef Name="Buttons::Btns_t" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>buttons.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+      <Typedef Name="Buttons::BtnIter_t" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>buttons.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>QCBgAgIAAAAgAAgYICIAAAJABAGAAAAIAwCBAAACIQE=</HashCode>
+      <FileName>buttons.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cell">
+    <Position X="5.25" Y="6.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAQACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Bonus">
+    <Position X="0.5" Y="3.75" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Typedef Name="Bonus::BonusType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>game.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+      <Enum Name="Bonus::__unnamed_enum_0006_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>game.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AACAAAAAEAAAAAQBBAQCAQACAgEAACAKAAAAEAAEAAA=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Combo">
+    <Position X="9.75" Y="0.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Combo::comboState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>game.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>QAAEAAAAAAASAABEDASgQQCAAAAIAQoFAAAgEgAEwAA=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FallNode">
+    <Position X="5.25" Y="8.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>QAAEAAAAAAAAAAAAAASAQAACAAAAACIAAAAgEAAEQAA=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Fall">
+    <Position X="9.25" Y="7.25" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>QAAEAAAAAAAAAQAIABQARAgAAgAAAAIAAAAgEAAEAAA=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Block">
+    <Position X="5" Y="3.75" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Protected" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Block::gameState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>game.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>QAgEAAAIAAAEAAAAAAQAAAAAIAEAAAAEAAAgEAAAEIE=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GamePlay">
+    <Position X="7.75" Y="4.25" Width="3" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="GamePlay::gameState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>game.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>UBEAEAkAAAIABAAAEAQAAAgAAEFAQQIECFIAkAAg6EE=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Grid">
+    <Position X="10.75" Y="7.25" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Grid::gameState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>game.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>QNAwQhQAQkSABAFIAAWAQwgAABEAEAIGCAIoEHSiNQA=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cursor">
+    <Position X="2.75" Y="3.75" Width="4" />
+    <Compartments>
+      <Compartment Name="Protected" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ABAAAECFAQJQACCAAAAAAQgCQAggABAACkCAGEAAQgA=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HUD">
+    <Position X="9.5" Y="4.25" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAgAAAAACECAAKAAABgAAAAgIA=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Triforce">
+    <Position X="11.5" Y="2.75" Width="3.75" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Triforce::GameState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>triforce.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>UBBAAAEAACwAAAACEAAAAAgAAAEAAQAECFhIAAAgIEQ=</HashCode>
+      <FileName>triforce.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Input::`anonymous-namespace'::MouseCallback">
+    <Position X="13" Y="7.25" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Typedef Name="Input::`anonymous-namespace'::MouseCallback::MouseMotionFunc" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>input.cpp</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>input.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Input::Action">
+    <Position X="7.25" Y="1.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Input::Action::ActionState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>input.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="Input::Action::ActionScope" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>input.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Typedef Name="Input::Action::ActionFunc" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>input.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ABAQBAAACAAAAAAAAIAgAAAAAAAAAAABCAAEAAEAARQ=</HashCode>
+      <FileName>input.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Input::Player">
+    <Position X="5.25" Y="0.75" Width="2" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAQAAAASAIQACAAAAAAAAAAAAAQAAAAQAAIAA=</HashCode>
+      <FileName>input.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Input::ActionQueue">
+    <Position X="10.5" Y="0.75" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="Input::ActionQueue::ActionEntry" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>input.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAACCAAAEAAAAAAAAQAAAAAAAgAAAAAQAA=</HashCode>
+      <FileName>input.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Point" Collapsed="true">
+    <Position X="14.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAAAAAA=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="PlayState::Actions" Collapsed="true">
+    <Position X="16.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAgAAAEAAAAAgAAIDAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Input::ButtonCodes" Collapsed="true">
+    <Position X="18.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMA=</HashCode>
+      <FileName>input.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MenuState::Actions" Collapsed="true">
+    <Position X="14.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAEAAAAAAAAICAAAgAAABAAAAAEA=</HashCode>
+      <FileName>triforce.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

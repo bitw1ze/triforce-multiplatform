@@ -78,6 +78,6 @@
     </Object>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
+    <None Include="classDiagram.cd" />
   </ItemGroup>
 </Project>
