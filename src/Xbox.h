@@ -14,7 +14,7 @@ public:
 			Vibrate(0,0);
 	}
 
-	XboxController(int player);
+	XboxController(int player = 0);
 	XINPUT_STATE GetState();
 	bool isConnected();
 	void Vibrate(int left=0, int right=0);

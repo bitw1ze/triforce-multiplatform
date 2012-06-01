@@ -3,6 +3,7 @@
 #include <list>
 #include <set>
 #include <vector>
+#include "Xbox.h"
 
 namespace Input
 {
@@ -31,14 +32,18 @@ namespace
 	const string *stateLabels; // array of labels; indices are states returned by getState()
 	int numStates;
 
+	XboxController xboxPlayer1; // only handle 1 xbox ctrl for now
+
 	/*
 	 * Keys currently being held down
 	 */ 
 	typedef set<unsigned char> KeysDown;
 	typedef set<int> SpecialKeysDown;
+	typedef set<int> XboxButtonsDown;
 
 	KeysDown keysDown;
 	SpecialKeysDown specialKeysDown;
+	XboxButtonsDown xboxKeysDown;
 
 	/*
 	 * Handle mouse motion
@@ -222,8 +227,28 @@ void ActionQueue::doAll()
 	}
 }
 
+void handleXboxInput(XboxController &player)
+{
+	if (!player.isConnected())
+		return;
+
+	int state = player.GetState().Gamepad.wButtons;
+	XboxButtonBindings::const_iterator b = xboxButtonBindings.cbegin();
+	Actions::const_iterator action;
+	for (action = b->second.begin(); action != b->second.end(); ++action) 
+		if ((*action)->hasActiveStateOf(getState()))
+		{
+			if (xboxKeysDown.find(key) == xboxKeysDown.end())
+			{
+				actionQueue.enqueue(*action, Action::STATE_PRESS);
+				xboxKeysDown.insert(key);
+			}
+		}
+}
+
 void handleInput()
 {
+	handleXboxInput(xboxPlayer1);
 	actionQueue.doAll();
 }
 
