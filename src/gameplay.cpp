@@ -159,10 +159,10 @@ void GamePlay::loadImages()
 	background.loadGLTextures();
 
 	// r,g,b is background color to be filtered, frameCount and frame number
-	int r=254, g=0, b=254, frameCount=3, frame=0;
+	int r=254, g=0, b=254, frameCount, frame=0;
 
 	// load grid border
-	gridBorderSprite = new CBaseSprite(frameCount, screen_w, screen_h);
+	gridBorderSprite = new CBaseSprite(frameCount=1, screen_w, screen_h);
 	gridBorderSprite->loadFrame(frame, themeDirectory + gridBorderFile, r, g, b);
 	gridBorderSprite->loadGLTextures();
   
@@ -174,10 +174,12 @@ void GamePlay::loadImages()
 		// background image of a different color is used.
 		
 		sprintf_s(num, "%d", i);
-		blockSprites[i] = new CBaseSprite(frameCount, screen_w, screen_h);
+		blockSprites[i] = new CBaseSprite(frameCount = 5, screen_w, screen_h);
 		blockSprites[i]->loadFrame(frame+0, cwd + "normal\\" + num + ".bmp", r, g, b);
-		blockSprites[i]->loadFrame(frame+1, cwd + "combo\\" + num + ".bmp", r, g, b);
-		blockSprites[i]->loadFrame(frame+2, cwd + "inactive\\" + num + ".bmp", r, g, b);
+		blockSprites[i]->loadFrame(frame+1, cwd + "combo\\" + num + "-0.bmp", r, g, b);
+		blockSprites[i]->loadFrame(frame+2, cwd + "combo\\" + num + "-1.bmp", r, g, b);
+		blockSprites[i]->loadFrame(frame+3, cwd + "combo\\" + num + "-0.bmp", r, g, b);
+		blockSprites[i]->loadFrame(frame+4, cwd + "inactive\\" + num + ".bmp", r, g, b);
 		blockSprites[i]->loadGLTextures();
 	}
 

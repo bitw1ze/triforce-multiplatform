@@ -180,11 +180,15 @@ public: enum gameState { inactive, enabled, disabled, combo, fall };
 protected:
 	gameState state;
 	int fallOffset;
+	uint64 lastFrameTransition;
+	static const uint64 frameTransitionInterval;
+	int currentFrame;
 
 public:
 	Block();
 	Block(const Block &block);
 	Block & operator =(const Block &block);
+	void set();
 	void clone(const Block &src);
 	~Block() {}
 
