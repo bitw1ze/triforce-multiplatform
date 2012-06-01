@@ -275,7 +275,9 @@ void keyRelease(unsigned char key, int x, int y)
 		if ((*action)->hasActiveStateOf(getState()))
 		{
 			actionQueue.enqueue(*action, Action::STATE_RELEASE);
-			keysDown.erase(*keysDown.find(key));
+			KeysDown::iterator k = keysDown.find(key);
+			if (k != keysDown.end())
+				keysDown.erase(*k);
 		}
 }
 
