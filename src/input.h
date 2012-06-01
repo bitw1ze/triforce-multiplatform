@@ -157,7 +157,7 @@ namespace Input
 		void clear() {actions.clear();}
 		void doAll();
 	};
-	void doAllQueuedActions();
+	void handleInput();
 
 	// getStateFunc returns state of program, and only uses actions with the same state
 	void setGSFunc(int (*getStateFunc)());
@@ -182,11 +182,10 @@ namespace Input
 
 	// the Triforce constructor binds the default keys for the entire game
 	// TODO: Eventually, a class that loads config files will handle overriding these bindings.
-	void bindKey(Action action, unsigned char key);
 	void bindKey(int player, Action::ActionScope scope, int activeState, int actionType, unsigned char key);
-	void bindSpecialKey(Action action, int key);
 	void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int actionType, int key);
 	void bindButton(Action action, int button);
+	void bindXboxButton(int player, Action::ActionScope scope, int activeState, int actionType, int key);
 
 	/**
 	 * Motion input interface

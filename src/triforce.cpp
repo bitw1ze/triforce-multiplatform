@@ -1,4 +1,5 @@
 #include "triforce.h"
+#include "Xbox.h"
 
 const string Triforce::gameStateLabels[Triforce::_NUMBER_OF_STATES] = {
 	"Menu", "Play", "Pause", "Quit"
@@ -75,6 +76,16 @@ void Triforce::bindDefaultActionKeys()
 	bindSpecialKey(player, scope, MENU, MenuState::LEFT, GLUT_KEY_LEFT);
 	bindSpecialKey(player, scope, MENU, MenuState::RIGHT, GLUT_KEY_RIGHT);
 
+	// xbox bindings
+	/*
+	bindXboxButton(player, scope, MENU, MenuState::UP, XINPUT_GAMEPAD_DPAD_UP);
+	bindXboxButton(player, scope, MENU, MenuState::DOWN, XINPUT_GAMEPAD_DPAD_DOWN);
+	bindXboxButton(player, scope, MENU, MenuState::LEFT, XINPUT_GAMEPAD_DPAD_LEFT);
+	bindXboxButton(player, scope, MENU, MenuState::RIGHT, XINPUT_GAMEPAD_DPAD_RIGHT);
+	bindXboxButton(player, scope, MENU, MenuState::ACTIVATE, XINPUT_GAMEPAD_A);
+	bindXboxButton(player, scope, MENU, MenuState::QUIT, XINPUT_GAMEPAD_B);
+	*/
+
 	/*
 	 * PLAY state
 	 */
@@ -103,6 +114,18 @@ void Triforce::bindDefaultActionKeys()
 	bindKey(player, scope, PLAY, PlayState::SWAP, 'x');
 
 	bindKey(player, scope, PLAY, PlayState::PAUSE, 't');
+
+	// xbox bindings
+	/*
+	bindXboxButton(player, scope, MENU, PlayState::UP, XINPUT_GAMEPAD_DPAD_UP);
+	bindXboxButton(player, scope, MENU, PlayState::DOWN, XINPUT_GAMEPAD_DPAD_DOWN);
+	bindXboxButton(player, scope, MENU, PlayState::LEFT, XINPUT_GAMEPAD_DPAD_LEFT);
+	bindXboxButton(player, scope, MENU, PlayState::RIGHT, XINPUT_GAMEPAD_DPAD_RIGHT);
+	bindXboxButton(player, scope, MENU, PlayState::SWAP, XINPUT_GAMEPAD_A);
+	bindXboxButton(player, scope, MENU, PlayState::SWAP, XINPUT_GAMEPAD_B);
+	bindXboxButton(player, scope, MENU, PlayState::PUSH, XINPUT_GAMEPAD_LEFT_SHOULDER || XINPUT_GAMEPAD_RIGHT_SHOULDER);
+	bindXboxButton(player, scope, MENU, PlayState::PAUSE, XINPUT_GAMEPAD_START);
+	*/
 }
 
 /**

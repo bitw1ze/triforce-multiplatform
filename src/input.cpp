@@ -13,15 +13,18 @@ namespace
 	typedef unsigned char Key;
 	typedef int SpecialKey;
 	typedef int MouseButton;
+	typedef int XboxButton;
 	typedef map<Key, Actions> KeyBindings;
 	typedef map<SpecialKey, Actions> SpecialKeyBindings;
 	typedef map<MouseButton, Actions> MouseButtonBindings;
+	typedef map<XboxButton, Actions> XboxButtonBindings;
 
 	Actions availableActions; // all declared but undefined actions are here
 	Players players;
 	KeyBindings keyBindings;
 	SpecialKeyBindings specialKeyBindings;
 	MouseButtonBindings mouseButtonBindings;
+	XboxButtonBindings xboxButtonBindings;
 	ActionQueue actionQueue;
 
 	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
@@ -219,7 +222,7 @@ void ActionQueue::doAll()
 	}
 }
 
-void doAllQueuedActions()
+void handleInput()
 {
 	actionQueue.doAll();
 }
@@ -447,10 +450,6 @@ Action * findActionDecl(Action::ActionScope scope, int activeState, int actionTy
  * Binding
  */
 
-void bindKey(Action action, unsigned char key)
-{
-}
-
 //FIXME: too much duplicate code in bindKey()/bindSpecialKey()
 void bindKey(int player, Action::ActionScope scope, int activeState, int actionType, unsigned char key)
 {
@@ -469,10 +468,6 @@ void bindKey(int player, Action::ActionScope scope, int activeState, int actionT
 	}
 	else // or a binding for another state for an existing key
 		binding->second.push_back(action);
-}
-
-void bindSpecialKey(Action action, int key)
-{
 }
 
 void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int actionType, int key)
@@ -495,6 +490,29 @@ void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int 
 }
 
 void bindButton(Action action, int button)
+{
+}
+
+void bindXboxButton(int player, Action::ActionScope scope, int activeState, int actionType, int key)
+{
+	// find Action to bind to
+	Action *action = players[player]->getAction(scope, activeState, actionType);
+	if (!action)
+		action = new Action(*findActionDecl(scope, activeState, actionType));
+	players[player]->addAction(action);
+
+	XboxButtonBindings::iterator binding = xboxButtonBindings.find(key);
+	if (binding == xboxButtonBindings.end()) // add binding for a new key
+	{
+		Actions al; // create dummy list to push to k
+		al.push_back(action);
+		xboxButtonBindings.insert(pair<int, Actions>(key, al));
+	}
+	else // or a binding for another state for an existing key
+		binding->second.push_back(action);
+}
+
+void bind(T Bindings, int player, Action::ActionScope scope, int activeState, int actionType, int key)
 {
 }
 

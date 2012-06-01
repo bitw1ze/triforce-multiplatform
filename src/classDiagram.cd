@@ -1,28 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
   <Class Name="BMPClass" Collapsed="true">
-    <Position X="15" Y="3.5" Width="1.5" />
+    <Position X="16.5" Y="10.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAEAAUEIAABg0AyBIAARQAwEAIQypgAEAAAEAPAAQ=</HashCode>
       <FileName>2DGraphics.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CBaseSprite" Collapsed="true">
-    <Position X="15.5" Y="1.5" Width="1.5" />
+    <Position X="16.5" Y="9" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAgAAAAAAIAAAgUAwAMBBhBAAkEKIgAQAEADAFgAAQA=</HashCode>
       <FileName>2DGraphics.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CTimer" Collapsed="true">
-    <Position X="15.25" Y="2.5" Width="1.5" />
+    <Position X="16.5" Y="9.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAABAAAAAAAAAAAgACQCAAAAAAgAAAAAAAQAAAAAIAA=</HashCode>
       <FileName>2DGraphics.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="secTimer" Collapsed="true">
-    <Position X="15.75" Y="0.75" Width="1.5" />
+    <Position X="16.5" Y="8.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -32,7 +32,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="CObject">
-    <Position X="2.75" Y="0.5" Width="2" />
+    <Position X="2.75" Y="5" Width="2" />
     <Compartments>
       <Compartment Name="Private" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
@@ -43,7 +43,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Buttons">
-    <Position X="13" Y="0.5" Width="1.75" />
+    <Position X="12.5" Y="5" Width="1.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -70,7 +70,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Cell">
-    <Position X="5.25" Y="6.5" Width="1.5" />
+    <Position X="3.25" Y="14.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -80,7 +80,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Bonus">
-    <Position X="0.5" Y="3.75" Width="2.25" />
+    <Position X="2" Y="8" Width="2.25" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -102,7 +102,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Combo">
-    <Position X="9.75" Y="0.5" Width="1.75" />
+    <Position X="15.5" Y="12" Width="1.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -119,7 +119,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="FallNode">
-    <Position X="5.25" Y="8.75" Width="1.5" />
+    <Position X="5.75" Y="15.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -129,7 +129,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Fall">
-    <Position X="9.25" Y="7.25" Width="1.75" />
+    <Position X="7.5" Y="15.5" Width="1.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -139,7 +139,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Block">
-    <Position X="5" Y="3.75" Width="1.75" />
+    <Position X="6.5" Y="5.25" Width="1.75" />
     <Compartments>
       <Compartment Name="Protected" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
@@ -157,7 +157,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="GamePlay">
-    <Position X="7.75" Y="4.25" Width="3" />
+    <Position X="9.5" Y="12.25" Width="3" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -174,7 +174,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Grid">
-    <Position X="10.75" Y="7.25" Width="2.5" />
+    <Position X="12.5" Y="11.75" Width="2.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -191,7 +191,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Cursor">
-    <Position X="2.75" Y="3.75" Width="4" />
+    <Position X="4.5" Y="8" Width="4" />
     <Compartments>
       <Compartment Name="Protected" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
@@ -202,7 +202,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="HUD">
-    <Position X="9.5" Y="4.25" Width="1.75" />
+    <Position X="17.5" Y="13.25" Width="1.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -212,7 +212,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Triforce">
-    <Position X="11.5" Y="2.75" Width="3.75" />
+    <Position X="8.25" Y="0.5" Width="3.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -229,7 +229,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Input::`anonymous-namespace'::MouseCallback">
-    <Position X="13" Y="7.25" Width="2.75" />
+    <Position X="14.5" Y="3.5" Width="2.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -246,7 +246,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Input::Action">
-    <Position X="7.25" Y="1.5" Width="2.25" />
+    <Position X="14.75" Y="0.5" Width="2.25" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -273,7 +273,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Input::Player">
-    <Position X="5.25" Y="0.75" Width="2" />
+    <Position X="17" Y="1.25" Width="2" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -283,7 +283,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Input::ActionQueue">
-    <Position X="10.5" Y="0.75" Width="2.25" />
+    <Position X="17.25" Y="4" Width="2.25" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -300,28 +300,28 @@
     </TypeIdentifier>
   </Class>
   <Struct Name="Point" Collapsed="true">
-    <Position X="14.75" Y="4.75" Width="1.5" />
+    <Position X="18.25" Y="8.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAAAAAA=</HashCode>
       <FileName>game.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Enum Name="PlayState::Actions" Collapsed="true">
-    <Position X="16.5" Y="6" Width="1.5" />
+    <Position X="18.25" Y="9.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAIAAAAgAAAEAAAAAgAAIDAAAgAAAAAAAAAAA=</HashCode>
       <FileName>game.h</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="Input::ButtonCodes" Collapsed="true">
-    <Position X="18.25" Y="6" Width="1.5" />
+    <Position X="18.25" Y="10.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMA=</HashCode>
       <FileName>input.h</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="MenuState::Actions" Collapsed="true">
-    <Position X="14.75" Y="6" Width="1.5" />
+    <Position X="18.25" Y="9" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgAAAEAAAAAAAAICAAAgAAABAAAAAEA=</HashCode>
       <FileName>triforce.h</FileName>
