@@ -242,16 +242,16 @@ void addPlayer()
 	players.push_back(new Player());
 }
 
+
 /**
  * Button/key Inputs
  */
 
-//FIXME: whole lot'a redundnancy 'round these here parts
-
-void keyPress(unsigned char key, int x, int y)
+template <class B, class D, class K>
+void anyKeyPress(B &bindings, D &keysDown, K key, int x, int y)
 {
-	KeyBindings::iterator b = keyBindings.find(key);
-	if (b == keyBindings.end())
+	B::iterator b = bindings.find(key);
+	if (b == bindings.end())
 		return;
 
 	Actions::iterator action;
@@ -267,10 +267,12 @@ void keyPress(unsigned char key, int x, int y)
 		}
 }
 
-void keyRelease(unsigned char key, int x, int y)
+template <class B, class D, class K>
+void anyKeyRelease(B &bindings, D &keysDown, K key, int x, int y)
 {
-	KeyBindings::iterator b = keyBindings.find(key);
-	if (b == keyBindings.end())
+	B::iterator b = bindings.find(key);
+	D::iterator k;
+	if (b == bindings.end())
 		return;
 
 	Actions::iterator action;
@@ -278,44 +280,30 @@ void keyRelease(unsigned char key, int x, int y)
 		if ((*action)->hasActiveStateOf(getState()))
 		{
 			actionQueue.enqueue(*action, Action::STATE_RELEASE);
-			KeysDown::iterator k = keysDown.find(key);
+			k = keysDown.find(key);
 			if (k != keysDown.end())
 				keysDown.erase(*k);
 		}
 }
 
+void keyPress(unsigned char key, int x, int y)
+{
+	anyKeyPress(keyBindings, keysDown, key, x, y);
+}
+
+void keyRelease(unsigned char key, int x, int y)
+{
+	anyKeyRelease(keyBindings, keysDown, key, x, y);
+}
+
 void keySpecialPress(int key, int x, int y)
 {
-	SpecialKeyBindings::iterator b = specialKeyBindings.find(key);
-	if (b == specialKeyBindings.end())
-		return;
-
-	Actions::iterator action;
-	for (action = b->second.begin(); action != b->second.end(); ++action) 
-		if ((*action)->hasActiveStateOf(getState()))
-		{
-			if (specialKeysDown.find(key) == specialKeysDown.end())
-			{
-				actionQueue.enqueue(*action, Action::STATE_PRESS);
-				specialKeysDown.insert(key);
-			}
-			// ignore multiple calls for a single press (they're handled using keysDown)
-		}
+	anyKeyPress(specialKeyBindings, specialKeysDown, key, x, y);
 }
 
 void keySpecialRelease(int key, int x, int y)
 {
-	SpecialKeyBindings::iterator b = specialKeyBindings.find(key);
-	if (b == specialKeyBindings.end())
-		return;
-
-	Actions::iterator action;
-	for (action = b->second.begin(); action != b->second.end(); ++action) 
-		if ((*action)->hasActiveStateOf(getState()))
-		{
-			actionQueue.enqueue(*action, Action::STATE_RELEASE);
-			specialKeysDown.erase(*specialKeysDown.find(key));
-		}
+	anyKeyRelease(specialKeyBindings, specialKeysDown, key, x, y);
 }
 
 void mousePress(int button, int mouseState, int x, int y)
@@ -514,8 +502,11 @@ void bindXboxButton(int player, Action::ActionScope scope, int activeState, int 
 		binding->second.push_back(action);
 }
 
+/*
+template <type T>
 void bind(T Bindings, int player, Action::ActionScope scope, int activeState, int actionType, int key)
 {
 }
+*/
 
 } // Input
