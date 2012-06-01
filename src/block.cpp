@@ -22,10 +22,10 @@
 #include "game.h"
 
 const int Block::fallFactor = 8;
+const uint64 Block::frameTransitionInterval = 10;
 
 Block::Block() : CObject() {
-	fallOffset = 0;
-	state = inactive; 
+	set();
 }
 
 Block::Block(const Block &src) {
@@ -38,7 +38,16 @@ Block & Block::operator =(const Block &src) {
 	return *this;
 }
 
+void Block::set() {
+	state = inactive;
+	fallOffset = 0;
+	lastFrameTransition = 0;
+	currentFrame = 0;
+}
+
 void Block::clone(const Block &src) {
+	currentFrame = src.currentFrame;
+	lastFrameTransition = src.lastFrameTransition;
 	changeState(src.getState());
 	setSprite(src.getSprite());
 	fallOffset = src.fallOffset;
@@ -68,26 +77,26 @@ void Block::setFallOffset(int f) {
 
 void Block::changeState(gameState gs) {
 	state = gs;
+	switch (state) {
+	case enabled:
+	case combo:
+		currentFrame = 0;
+		break;
+	case inactive:
+		currentFrame = 4;
+		break;
+
+	}
 }
 
 void Block::composeFrame() {
+	if (state == combo && mainTimer->elapsed(lastFrameTransition, frameTransitionInterval)) {
+		lastFrameTransition = mainTimer->time();
+		currentFrame = (++currentFrame % 4);
+	}
 }
 
 void Block::display() {
-	switch (state) {
-	case enabled:
-		draw(0);
-		break;
-	case combo:
-		draw(1);
-		break;
-	case fall:
-		draw(0);
-		break;
-	case inactive:
-		draw(2);
-		break;
-	case disabled:
-		break;
-	}
+	if (state != disabled)
+		draw(currentFrame);
 }
