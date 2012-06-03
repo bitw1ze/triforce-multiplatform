@@ -50,7 +50,6 @@ private:
 	int current_frame;
 	uint64 last_time;
 
-	XboxController *p1;
 	void bindDefaultActionKeys();
 
 	/**

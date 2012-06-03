@@ -151,6 +151,9 @@ namespace Input
 		int gameStateActionsAreFor; 
 		bool updateGameState();
 
+		template <class D, class B>
+		void queueAllHeldKeys(D keysDown, B bindings);
+
 	public:
 		ActionQueue();
 		void enqueue(Action * action, Action::ActionState state);
@@ -204,7 +207,7 @@ namespace Input
 
 	void addMouseMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
 	void addMousePassiveMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
-	void removeMotions(void *classInstance);
+	void removeMouseMotions(void *classInstance);
 
 	/**
 	 * Actions

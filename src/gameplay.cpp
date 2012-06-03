@@ -70,7 +70,7 @@ void GamePlay::declareActions()
 	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
 	Triforce::GameState state = Triforce::PLAY;
 
-	declareAction(scope, state, PAUSE, actionLabels[PAUSE]);
+	declareAction(scope, state, PAUSE_TOGGLE, actionLabels[PAUSE_TOGGLE]);
 }
 void GamePlay::defineActions()
 {
@@ -80,7 +80,7 @@ void GamePlay::defineActions()
 	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
 	Triforce::GameState state = Triforce::PLAY;
 
-	defineAction(scope, state, PAUSE, this, doAction); // duplicate definition (OK)
+	defineAction(scope, state, PAUSE_TOGGLE, this, doAction); // duplicate definition (OK)
 }
 
 void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
@@ -93,8 +93,11 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 	case Input::Action::STATE_PRESS:
 		switch((enum Actions)actionType)
 		{
-		case PAUSE:
-			g->changeState(pause);
+		case PAUSE_TOGGLE:
+			if (g->state == pause)
+				g->changeState(play);
+			else if (g->state == play)
+				g->changeState(pause);
 			break;
 		}
 	/*

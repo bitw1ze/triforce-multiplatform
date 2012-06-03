@@ -77,14 +77,12 @@ void Triforce::bindDefaultActionKeys()
 	bindSpecialKey(player, scope, MENU, MenuState::RIGHT, GLUT_KEY_RIGHT);
 
 	// xbox bindings
-	/*
 	bindXboxButton(player, scope, MENU, MenuState::UP, XINPUT_GAMEPAD_DPAD_UP);
 	bindXboxButton(player, scope, MENU, MenuState::DOWN, XINPUT_GAMEPAD_DPAD_DOWN);
 	bindXboxButton(player, scope, MENU, MenuState::LEFT, XINPUT_GAMEPAD_DPAD_LEFT);
 	bindXboxButton(player, scope, MENU, MenuState::RIGHT, XINPUT_GAMEPAD_DPAD_RIGHT);
 	bindXboxButton(player, scope, MENU, MenuState::ACTIVATE, XINPUT_GAMEPAD_A);
 	bindXboxButton(player, scope, MENU, MenuState::QUIT, XINPUT_GAMEPAD_B);
-	*/
 
 	/*
 	 * PLAY state
@@ -112,20 +110,17 @@ void Triforce::bindDefaultActionKeys()
 	bindKey(player, scope, PLAY, PlayState::SWAP, BTN_SPACE);
 	bindKey(player, scope, PLAY, PlayState::PUSH, 'z');
 	bindKey(player, scope, PLAY, PlayState::SWAP, 'x');
-
-	bindKey(player, scope, PLAY, PlayState::PAUSE, 't');
+	bindKey(player, scope, PLAY, PlayState::PAUSE_TOGGLE, 't');
 
 	// xbox bindings
-	/*
-	bindXboxButton(player, scope, MENU, PlayState::UP, XINPUT_GAMEPAD_DPAD_UP);
-	bindXboxButton(player, scope, MENU, PlayState::DOWN, XINPUT_GAMEPAD_DPAD_DOWN);
-	bindXboxButton(player, scope, MENU, PlayState::LEFT, XINPUT_GAMEPAD_DPAD_LEFT);
-	bindXboxButton(player, scope, MENU, PlayState::RIGHT, XINPUT_GAMEPAD_DPAD_RIGHT);
-	bindXboxButton(player, scope, MENU, PlayState::SWAP, XINPUT_GAMEPAD_A);
-	bindXboxButton(player, scope, MENU, PlayState::SWAP, XINPUT_GAMEPAD_B);
-	bindXboxButton(player, scope, MENU, PlayState::PUSH, XINPUT_GAMEPAD_LEFT_SHOULDER || XINPUT_GAMEPAD_RIGHT_SHOULDER);
-	bindXboxButton(player, scope, MENU, PlayState::PAUSE, XINPUT_GAMEPAD_START);
-	*/
+	bindXboxButton(player, scope, PLAY, PlayState::UP, XINPUT_GAMEPAD_DPAD_UP);
+	bindXboxButton(player, scope, PLAY, PlayState::DOWN, XINPUT_GAMEPAD_DPAD_DOWN);
+	bindXboxButton(player, scope, PLAY, PlayState::LEFT, XINPUT_GAMEPAD_DPAD_LEFT);
+	bindXboxButton(player, scope, PLAY, PlayState::RIGHT, XINPUT_GAMEPAD_DPAD_RIGHT);
+	bindXboxButton(player, scope, PLAY, PlayState::SWAP, XINPUT_GAMEPAD_A);
+	bindXboxButton(player, scope, PLAY, PlayState::SWAP, XINPUT_GAMEPAD_B);
+	bindXboxButton(player, scope, PLAY, PlayState::PUSH, XINPUT_GAMEPAD_LEFT_SHOULDER | XINPUT_GAMEPAD_RIGHT_SHOULDER);
+	bindXboxButton(player, scope, PLAY, PlayState::PAUSE_TOGGLE, XINPUT_GAMEPAD_START);
 }
 
 /**
@@ -222,7 +217,7 @@ Triforce::Triforce()
 
 Triforce::~Triforce()
 {
-	Input::removeMotions(menuButtons);
+	Input::removeMouseMotions(menuButtons);
 	delete menuButtons;
 }
 

@@ -89,7 +89,7 @@ void Grid::declareActions()
 
 	declareAction(scope, state, SWAP, actionLabels[SWAP]);
 	declareAction(scope, state, PUSH, actionLabels[PUSH]);
-	declareAction(scope, state, PAUSE, actionLabels[PAUSE]);
+	declareAction(scope, state, PAUSE_TOGGLE, actionLabels[PAUSE_TOGGLE]);
 }
 
 void Grid::defineActions()
@@ -102,7 +102,7 @@ void Grid::defineActions()
 
 	defineAction(scope, state, SWAP, this, doAction);
 	defineAction(scope, state, PUSH, this, doAction);
-	defineAction(scope, state, PAUSE, this, doAction); // duplicate definition (OK)
+	defineAction(scope, state, PAUSE_TOGGLE, this, doAction); // duplicate definition (OK)
 }
 
 void Grid::doAction(void *gridInstance, int actionState, int actionType)
@@ -122,7 +122,7 @@ void Grid::doAction(void *gridInstance, int actionState, int actionType)
 			if (g->getState() == Grid::play)
 				g->changeState(push);
 			break;
-		case PAUSE:
+		case PAUSE_TOGGLE:
 			g->printDebug();
 			break;
 		}
