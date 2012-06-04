@@ -81,8 +81,8 @@ void Triforce::bindDefaultActionKeys()
 	bindXboxButton(player, scope, MENU, MenuState::DOWN, XINPUT_GAMEPAD_DPAD_DOWN);
 	bindXboxButton(player, scope, MENU, MenuState::LEFT, XINPUT_GAMEPAD_DPAD_LEFT);
 	bindXboxButton(player, scope, MENU, MenuState::RIGHT, XINPUT_GAMEPAD_DPAD_RIGHT);
-	bindXboxButton(player, scope, MENU, MenuState::ACTIVATE, XINPUT_GAMEPAD_A);
-	bindXboxButton(player, scope, MENU, MenuState::QUIT, XINPUT_GAMEPAD_B);
+	bindXboxButton(player, scope, MENU, MenuState::ACTIVATE, XINPUT_GAMEPAD_A | XINPUT_GAMEPAD_START);
+	bindXboxButton(player, scope, MENU, MenuState::QUIT, XINPUT_GAMEPAD_BACK | XINPUT_GAMEPAD_B);
 
 	/*
 	 * PLAY state
@@ -117,10 +117,11 @@ void Triforce::bindDefaultActionKeys()
 	bindXboxButton(player, scope, PLAY, PlayState::DOWN, XINPUT_GAMEPAD_DPAD_DOWN);
 	bindXboxButton(player, scope, PLAY, PlayState::LEFT, XINPUT_GAMEPAD_DPAD_LEFT);
 	bindXboxButton(player, scope, PLAY, PlayState::RIGHT, XINPUT_GAMEPAD_DPAD_RIGHT);
-	bindXboxButton(player, scope, PLAY, PlayState::SWAP, XINPUT_GAMEPAD_A);
-	bindXboxButton(player, scope, PLAY, PlayState::SWAP, XINPUT_GAMEPAD_B);
+	bindXboxButton(player, scope, PLAY, PlayState::SWAP, XINPUT_GAMEPAD_A | XINPUT_GAMEPAD_B);
 	bindXboxButton(player, scope, PLAY, PlayState::PUSH, XINPUT_GAMEPAD_LEFT_SHOULDER | XINPUT_GAMEPAD_RIGHT_SHOULDER);
 	bindXboxButton(player, scope, PLAY, PlayState::PAUSE_TOGGLE, XINPUT_GAMEPAD_START);
+	bindXboxButton(player, scope, PAUSE, PlayState::PAUSE_TOGGLE, XINPUT_GAMEPAD_START);
+	//bindXboxButton(player, scope, PLAY, PlayState::QUIT, XINPUT_GAMEPAD_BACK);
 }
 
 /**
@@ -228,11 +229,16 @@ void Triforce::display()
 	switch (state)
 	{
 	case MENU: // fall through
+		if (gamePlay)
+		{
+			delete gamePlay;
+			gamePlay = NULL;
+		}
 	case HELP:
-	case PAUSE:
 		displayMenu();
 		break;
 	case PLAY:
+	case PAUSE:
 		gamePlay->display();
 		break;
 	}
@@ -247,12 +253,12 @@ void Triforce::setState(GameState s)
 	switch (s)
 	{
 	case MENU:
-		if (state == PLAY) // state change from play to load
-			delete gamePlay;
+		state = MENU;
 		break;
 	case PLAY:
 		if (state == MENU) // state change from menu to play
 			gamePlay = new GamePlay;
+		state = PLAY;
 		break;
 	case HELP:
 		s = state; //FIXME: temporarily ignore this state

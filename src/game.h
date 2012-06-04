@@ -33,11 +33,13 @@ namespace PlayState {
 	enum Actions {
 		UP, DOWN, LEFT, RIGHT,
 		SWAP, PUSH, PAUSE_TOGGLE,
+		QUIT,
 		_NUMBER_OF_ACTIONS
 	};
     static const string actionLabels[_NUMBER_OF_ACTIONS] = {
 		"Up", "Down", "Left", "Right",
-		"Swap", "Push", "Pause toggle"
+		"Swap", "Push", "Pause toggle",
+		"Quit"
 	};
 }
 

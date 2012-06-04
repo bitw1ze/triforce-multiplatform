@@ -71,6 +71,11 @@ void GamePlay::declareActions()
 	Triforce::GameState state = Triforce::PLAY;
 
 	declareAction(scope, state, PAUSE_TOGGLE, actionLabels[PAUSE_TOGGLE]);
+	declareAction(scope, state, QUIT, actionLabels[QUIT]);
+
+	state = Triforce::PAUSE;
+	declareAction(scope, state, PAUSE_TOGGLE, actionLabels[PAUSE_TOGGLE]);
+
 }
 void GamePlay::defineActions()
 {
@@ -80,7 +85,11 @@ void GamePlay::defineActions()
 	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
 	Triforce::GameState state = Triforce::PLAY;
 
-	defineAction(scope, state, PAUSE_TOGGLE, this, doAction); // duplicate definition (OK)
+	defineAction(scope, state, PAUSE_TOGGLE, this, doAction);
+	defineAction(scope, state, QUIT, this, doAction);
+
+	state = Triforce::PAUSE;
+	defineAction(scope, state, PAUSE_TOGGLE, this, doAction);
 }
 
 void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
@@ -105,13 +114,11 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 	case Input::Action::STATE_RELEASE:
 	*/
 	}
-	// FIXME: safe to remove this?
-	//glutPostRedisplay();
 }
 
 void GamePlay::display() {
 	if (state == GamePlay::quit)
-		Triforce::setState(Triforce::QUIT);
+		Triforce::setState(Triforce::MENU);
 	composeFrame();
 
 	background.drawGLbackground ();
@@ -229,6 +236,7 @@ void GamePlay::loadImages()
 void GamePlay::changeState(gameState gs) {
 	if (state == play && gs == pause)
 	{
+		Triforce::setState(Triforce::PAUSE); // used to disable/enable actions
 		menuButtons->disable(pause);
 		menuButtons->enable(play);
 		state = pause;
@@ -236,6 +244,7 @@ void GamePlay::changeState(gameState gs) {
 	}
 	else if (state == pause && gs == play)
 	{
+		Triforce::setState(Triforce::PLAY); // used to disable/enable actions
 		menuButtons->disable(play);
 		menuButtons->enable(pause);
 		state = play;
