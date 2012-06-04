@@ -472,7 +472,7 @@ void defineAction(Action::ActionScope scope, int activeState, int actionType, vo
 				newAction->define(classInstance, action);
 				(*p)->addAction(newAction);
 
-				// FIXME: update bindings to account for this action
+				// update bindings to account for this action
 				bindUpdateAll(newAction);
 			}
 			else
