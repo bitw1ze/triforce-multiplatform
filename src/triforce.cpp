@@ -121,7 +121,7 @@ void Triforce::bindDefaultActionKeys()
 	bindXboxButton(player, scope, PLAY, PlayState::PUSH, XINPUT_GAMEPAD_LEFT_SHOULDER | XINPUT_GAMEPAD_RIGHT_SHOULDER);
 	bindXboxButton(player, scope, PLAY, PlayState::PAUSE_TOGGLE, XINPUT_GAMEPAD_START);
 	bindXboxButton(player, scope, PAUSE, PlayState::PAUSE_TOGGLE, XINPUT_GAMEPAD_START);
-	//bindXboxButton(player, scope, PLAY, PlayState::QUIT, XINPUT_GAMEPAD_BACK);
+	bindXboxButton(player, scope, PLAY, PlayState::RETURN, XINPUT_GAMEPAD_BACK);
 }
 
 /**

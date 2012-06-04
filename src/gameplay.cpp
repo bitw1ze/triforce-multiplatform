@@ -71,11 +71,10 @@ void GamePlay::declareActions()
 	Triforce::GameState state = Triforce::PLAY;
 
 	declareAction(scope, state, PAUSE_TOGGLE, actionLabels[PAUSE_TOGGLE]);
-	declareAction(scope, state, QUIT, actionLabels[QUIT]);
+	declareAction(scope, state, RETURN, actionLabels[RETURN]);
 
 	state = Triforce::PAUSE;
 	declareAction(scope, state, PAUSE_TOGGLE, actionLabels[PAUSE_TOGGLE]);
-
 }
 void GamePlay::defineActions()
 {
@@ -86,7 +85,7 @@ void GamePlay::defineActions()
 	Triforce::GameState state = Triforce::PLAY;
 
 	defineAction(scope, state, PAUSE_TOGGLE, this, doAction);
-	defineAction(scope, state, QUIT, this, doAction);
+	defineAction(scope, state, RETURN, this, doAction);
 
 	state = Triforce::PAUSE;
 	defineAction(scope, state, PAUSE_TOGGLE, this, doAction);
