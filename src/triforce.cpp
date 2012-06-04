@@ -36,6 +36,7 @@ void Triforce::declareActions()
 	declareAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::ACTIVATE, actionLabels[MenuState::ACTIVATE]);
 	declareAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::QUIT, actionLabels[MenuState::QUIT]);
 
+	GamePlay::declareActions();
 	Grid::declareActions();
 	Cursor::declareActions();
 }
