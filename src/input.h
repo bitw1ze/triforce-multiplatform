@@ -110,10 +110,12 @@ namespace Input
 		bool isSameAction(Action * action);
 		bool isSameAction(ActionScope scope, int activeState, int actionType);
 		bool isRelatedAction(ActionScope scope, int activeState);
+		bool isFor(void *classInstance) {return classInstance == this->actionsClassInstance;}
 		bool hasActiveStateOf(int activeState) {return this->activeState == activeState;}
 
 		void doAction(int actionState);
 	    void define(void *actionsClassInstance, ActionFunc);
+		void undefine();
 	};
 
 	class Player
@@ -127,6 +129,7 @@ namespace Input
 		bool isActionDefined(Action::ActionScope scope, int activeState, int actionType); // should have 1
 		bool hasActionsDefined(Action::ActionScope scope, int activeState); // may have >1
 		Action *getAction(Action::ActionScope scope, int activeState, int actionType);
+		void undefineActions(void *classInstance);
 		void enable();
 		void disable();
 		bool isEnabled() {return enabled;}
@@ -217,6 +220,7 @@ namespace Input
 	void declareAction(Action::ActionScope scope, int activeState, int actionType, string shortDesc); 
 	// define an action function for a particular action
 	void defineAction(Action::ActionScope scope, int activeState, int actionType, void *classInstance, Action::ActionFunc action);
+	void undefineActions(void *classInstance);
 	Action * findActionDecl(Action::ActionScope scope, int activeState, int actionType);
 	void removeActions(void *classInstance);
 	void setActionLabels(int activeState, const string *labels);

@@ -84,7 +84,9 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 	defineActions();
 }
 
-Cursor::~Cursor() {
+Cursor::~Cursor()
+{
+	Input::undefineActions(this);
 	Input::removeMouseMotions(this);
 }
 

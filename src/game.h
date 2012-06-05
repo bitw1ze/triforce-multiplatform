@@ -243,6 +243,7 @@ public:
 	static void doAction(void *gridInstance, int actionState, int actionType);
 
 	GamePlay();
+	~GamePlay();
 	void display();
 	void composeFrame();
 	void init();

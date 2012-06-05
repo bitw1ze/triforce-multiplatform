@@ -65,6 +65,12 @@ GamePlay::GamePlay() {
 	defineActions();
 }
 
+GamePlay::~GamePlay()
+{
+	Input::undefineActions(this);
+	Input::removeMouseMotions(menuButtons);
+}
+
 /* GamePlay methods */
 void GamePlay::declareActions()
 {

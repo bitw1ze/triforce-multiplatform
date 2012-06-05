@@ -222,6 +222,7 @@ Triforce::Triforce()
 
 Triforce::~Triforce()
 {
+	Input::undefineActions(this);
 	Input::removeMouseMotions(menuButtons);
 	delete menuButtons;
 }

@@ -11,6 +11,7 @@ namespace
 {
 	typedef list<Action *> Actions;
 	typedef vector<Player *> Players;
+
 	typedef unsigned char Key;
 	typedef int SpecialKey;
 	typedef int MouseButton;
@@ -53,9 +54,12 @@ namespace
 	private:
 		typedef void (*MouseMotionFunc)(void *classInstance, int x, int y);
 	public:
+		MouseCallback(void *classInstance) : classInstance(classInstance) {}
 		MouseCallback(void *classInstance, MouseMotionFunc mouseMotionFunc) : classInstance(classInstance), mouseMotionFunc(mouseMotionFunc) {}
 		void *classInstance;
 		MouseMotionFunc mouseMotionFunc;
+		bool operator== (const MouseCallback &other) const {return classInstance == other.classInstance;}
+		bool operator!= (const MouseCallback &other) const {return classInstance != other.classInstance;}
 	};
 
 	typedef int ActiveState;
@@ -164,10 +168,9 @@ namespace
 	template <class M>
 	void removeMouseMotionFuncs(M &mouseMotionFuncs, void *classInstance)
 	{
+		MouseCallback tmp(classInstance);
 		for (M::iterator m = mouseMotionFuncs.begin(); m != mouseMotionFuncs.end(); ++m)
-			for (MouseCallbacks::iterator mc = m->second.begin(); mc != m->second.end(); ++mc)
-				if (mc->classInstance == classInstance)
-					m->second.erase(mc);
+			m->second.remove(tmp);
 	}
 
 	template <class B, class K>
@@ -196,6 +199,12 @@ void Action::define(void * actionClassInstance, ActionFunc action)
 {
 	this->actionsClassInstance = actionClassInstance;
 	this->action = action;
+}
+
+void Action::undefine()
+{
+	actionsClassInstance = NULL;
+	action = NULL;
 }
 
 bool Action::isSameAction(Action * action)
@@ -255,6 +264,13 @@ Action * Player::getAction(Action::ActionScope scope, int activeState, int actio
 		if ((*a)->isSameAction(scope, activeState, actionType))
 			return *a;
 	return (Action *)NULL;
+}
+
+void Player::undefineActions(void *classInstance)
+{
+	for (Actions::iterator a = actions.begin(); a != actions.end(); ++a)
+		if ((*a)->isFor(classInstance))
+			(*a)->undefine();
 }
 
 ActionQueue::ActionQueue()
@@ -489,6 +505,12 @@ void defineAction(Action::ActionScope scope, int activeState, int actionType, vo
 	//case Action::SCOPE_CURRENT_PLAYER:
 	//case Action::SCOPE_ALL_PLAYERS:
 	}
+}
+
+void undefineActions(void *classInstance)
+{
+	for (Players::iterator p = players.begin(); p != players.end(); ++p)
+		(*p)->undefineActions(classInstance);
 }
 
 Action * findActionDecl(Action::ActionScope scope, int activeState, int actionType)

@@ -428,6 +428,7 @@ int Grid::downMatch(int r, int c, bool ignoreActive) {
 /* destructor */
 Grid::~Grid() {
 	delete cursor;
+	Input::undefineActions(this);
 }
 
 /*	swap
