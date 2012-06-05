@@ -279,8 +279,15 @@ void Triforce::setStateWrapper(void *tfInstance, int gameState)
 }
 
 void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
-	if (state == PLAY)
+	switch (state)
 	{
+	case PAUSE:
+		if (mouseState == GLUT_DOWN)
+			gamePlay->menuButtons->clickDown(x, y);
+		else // implicit GLUT_UP
+			gamePlay->menuButtons->clickUp(x, y);
+		break;
+	case PLAY:
 		switch (button) {
 		case GLUT_LEFT_BUTTON:
 			if (mouseState == GLUT_DOWN)
@@ -291,16 +298,18 @@ void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
 			}
 			else // implicit GLUT_UP
 				gamePlay->menuButtons->clickUp(x, y);
+			break;
 		}
-	}
-	else if (state == MENU)
-	{
+		break;
+	case MENU:
 		switch (button) {
 		case GLUT_LEFT_BUTTON:
 			if (mouseState == GLUT_DOWN)
 				menuButtons->clickDown(x, y);
 			else
 				menuButtons->clickUp(x, y);
+			break;
 		}
+		break;
 	}
 }

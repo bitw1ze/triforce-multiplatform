@@ -57,10 +57,10 @@ GamePlay::GamePlay() {
 								 	 menuButtons->mousePassiveMotion);
 	Input::addMousePassiveMotionFunc(menuButtons, Triforce::PAUSE,
 								 	 menuButtons->mousePassiveMotion);
-
-	Input::addMouseMotionFunc(menuButtons, Triforce::PLAY, // same as passive
+	// same as passive
+	Input::addMouseMotionFunc(menuButtons, Triforce::PLAY,
 	                          menuButtons->mousePassiveMotion);
-	Input::addMouseMotionFunc(menuButtons, Triforce::PAUSE, // same as passive
+	Input::addMouseMotionFunc(menuButtons, Triforce::PAUSE,
 	                          menuButtons->mousePassiveMotion);
 	defineActions();
 }
@@ -100,7 +100,6 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 	using namespace PlayState;
 
 	GamePlay *g = (GamePlay *)gamePlayInstance;
-			cout << "SHIT" << endl;
 	switch((enum Input::Action::ActionState)actionState)
 	{
 	case Input::Action::STATE_PRESS:
