@@ -24,6 +24,8 @@ const string Triforce::pauseBtns[] = {
 
 Triforce::GameState Triforce::state = MENU;
 GamePlay * Triforce::gamePlay = NULL;
+CBaseSprite * Triforce::logoSprite = NULL;
+
 
 /**
  * Input actions routines
@@ -133,9 +135,27 @@ void Triforce::bindDefaultActionKeys()
  */
 void Triforce::displayMenu()
 {
+	static int currentFrameLogo = 0;
+	static uint64 lastTimeLogo = mainTimer->time();;
+	static int delayLogo = 50;
+
 	glutPostRedisplay();
 	background.drawGLbackground();
 	menuButtons->display();
+
+	if (mainTimer->elapsed(lastTimeLogo, delayLogo))
+	{
+		if(++currentFrameLogo >= 65)
+		{
+			currentFrameLogo = 0;
+			delayLogo = 5000;
+		}
+		else
+			delayLogo = 50;
+		lastTimeLogo = mainTimer->time();
+	}
+	logoSprite->draw(currentFrameLogo, 130, 0);
+
 	glutSwapBuffers();
 }
 
@@ -143,6 +163,17 @@ void Triforce::loadImages()
 {
   background.load(themeDirectory + bgFile);
   background.loadGLTextures();
+
+  //string cwd = themeDirectory + "logo\\";
+  char num[8];
+  int r=254, g=0, b=254;
+
+  logoSprite = new CBaseSprite(65, screen_w, screen_h);
+  for (int i = 1; i <= 65; ++i) {
+	  sprintf_s(num, "%d", i); 
+	  logoSprite->loadFrame(i-1, themeDirectory + "logo\\" + num + ".bmp", r, g, b);
+  }
+  logoSprite->loadGLTextures();
 }
 
 void Triforce::doAction(void *tfInstance, int actionState, int actionType) {

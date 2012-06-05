@@ -41,15 +41,13 @@ public :
 
 private:
 	const static string gameStateLabels[_NUMBER_OF_STATES];
+	static CBaseSprite *logoSprite;
 
 	static GameState state;
 	static GamePlay *gamePlay;
 	
 	Buttons * menuButtons;
 	BMPClass background;
-
-	int current_frame;
-	uint64 last_time;
 
 	void bindDefaultActionKeys();
 
