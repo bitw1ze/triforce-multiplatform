@@ -10,8 +10,10 @@ of the game. It is also responsible for cleaning up when the game is finished.
 #include "input.h"
 
 // Constants
-const string GamePlay::bgFile = "bg-play.bmp";
+//const string GamePlay::bgFile = "bg-play.bmp";
+const string GamePlay::bgFile = "bg-play1.bmp";
 const string GamePlay::gridBorderFile = "gridborder.bmp";
+const string GamePlay::menuBarFile = "menubar.bmp";
 const string GamePlay::bonusFile = "bonus.bmp";
 
 const int GamePlay::numCursorFiles = 10;
@@ -25,6 +27,7 @@ float GamePlay::fcolor2[3] = {0, 0, 0};
 CBaseSprite * GamePlay::blockSprites[nblocktypes];
 CBaseSprite * GamePlay::cursorSprite = NULL;
 CBaseSprite * GamePlay::gridBorderSprite = NULL;
+CBaseSprite * GamePlay::menuBarSprite = NULL;
 CBaseSprite * GamePlay::bonusSprite = NULL;
 CBaseSprite * GamePlay::chainFontSprite = NULL;
 CBaseSprite * GamePlay::comboFontSprite = NULL;
@@ -40,13 +43,14 @@ GamePlay::GamePlay() {
 
 	loadImages(); 
 	grid = new Grid();
-	hud = new HUD(grid->getX() + (float)gridWidth * 1.15, grid->getY() + .03 * (float)gridHeight);
+	//hud = new HUD(grid->getX() + (float)gridWidth * 1.15, grid->getY() + .03 * (float)gridHeight);
+	hud = new HUD(getWidth() - 115, grid->getY() + .03 * (float)gridHeight);
 
-	menuButtons = new Buttons(this->getWidth(), this->getHeight());
+	menuButtons = new Buttons(getWidth(), getHeight());
 	int yOffset = 85,
 		xOffset = 150,
-		xpos = this->getWidth() - xOffset,
-		ypos = this->getHeight() - yOffset;
+		xpos = getWidth() - xOffset,
+		ypos = getHeight() - yOffset;
 	menuButtons->add(this, GamePlay::quit, changeStateWrapper, Triforce::backBtns, xpos, ypos);
 	ypos -= yOffset;
 	menuButtons->add(this, GamePlay::play, changeStateWrapper, Triforce::playBtns, xpos, ypos);
@@ -132,12 +136,13 @@ void GamePlay::display() {
 
 	background.drawGLbackground ();
 	grid->display();
-	hud->display();
 	int xPos = grid->getX() - 21,
 	yPos = grid->getY() - 35 - gridHeight;
     gridBorderSprite->draw(0, xPos, yPos);
+    menuBarSprite->draw(0, getWidth() - 200, 0);
 	grid->displayBonus();
 	menuButtons->display();
+	hud->display();
 
 	glutSwapBuffers();
 }
@@ -177,6 +182,11 @@ void GamePlay::loadImages()
 	gridBorderSprite = new CBaseSprite(frameCount=1, screen_w, screen_h);
 	gridBorderSprite->loadFrame(frame, themeDirectory + gridBorderFile, r, g, b);
 	gridBorderSprite->loadGLTextures();
+
+	// menu bar
+	menuBarSprite = new CBaseSprite(frameCount=1, screen_w, screen_h);
+	menuBarSprite->loadFrame(frame, themeDirectory + menuBarFile, r, g, b);
+	menuBarSprite->loadGLTextures();
   
 	char num[8];
 	cwd = themeDirectory + "blocks\\";
@@ -210,9 +220,6 @@ void GamePlay::loadImages()
   bonusSprite->loadFrame(1, cwd + "combo.bmp", r, g, b);
   bonusSprite->loadGLTextures();
 
-  r = 254;
-  g = 0;
-  b = 254;
   int maxChain = 15, minChain = 2;
   chainFontSprite = new CBaseSprite(maxChain - minChain + 1, screen_w, screen_h);
   for (int i = minChain; i <= maxChain; ++i) {

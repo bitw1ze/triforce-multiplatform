@@ -5,7 +5,7 @@ const string Triforce::gameStateLabels[Triforce::_NUMBER_OF_STATES] = {
 	"Menu", "Play", "Pause", "Quit"
 };
 
-const string Triforce::bgFile = "bg-menu.bmp";
+const string Triforce::bgFile = "bg-menu3.bmp";
 const string Triforce::playBtns[] = {
 	"playBtn.bmp", "playBtnHover.bmp", "playBtnPressed.bmp"
 };
@@ -186,7 +186,6 @@ void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
 
 Triforce::Triforce()
 { 
-	current_frame = 0; 
 	loadImages(); 
 
 	/*
@@ -194,7 +193,7 @@ Triforce::Triforce()
 	 */
 	int vpWidth = background.getViewportWidth(),
  	    vpHeight = background.getViewportHeight(),
-		midHeight = vpHeight/2;
+		midHeight = vpHeight*.75;
 	menuButtons = new Buttons(vpWidth, vpHeight);
 	menuButtons->add(this, PLAY, setStateWrapper, playBtns, vpWidth*.5 - 64, midHeight - vpHeight*.1);
 	menuButtons->add(this, HELP, setStateWrapper, helpBtns, vpWidth*.5 - 64, midHeight);
