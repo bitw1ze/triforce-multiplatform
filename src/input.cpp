@@ -3,6 +3,7 @@
 #include <list>
 #include <set>
 #include <vector>
+#include "Xbox.h"
 
 namespace Input
 {
@@ -13,29 +14,36 @@ namespace
 	typedef unsigned char Key;
 	typedef int SpecialKey;
 	typedef int MouseButton;
+	typedef int XboxButton;
 	typedef map<Key, Actions> KeyBindings;
 	typedef map<SpecialKey, Actions> SpecialKeyBindings;
 	typedef map<MouseButton, Actions> MouseButtonBindings;
+	typedef map<XboxButton, Actions> XboxButtonBindings;
 
 	Actions availableActions; // all declared but undefined actions are here
 	Players players;
 	KeyBindings keyBindings;
 	SpecialKeyBindings specialKeyBindings;
 	MouseButtonBindings mouseButtonBindings;
+	XboxButtonBindings xboxButtonBindings;
 	ActionQueue actionQueue;
 
 	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
 	const string *stateLabels; // array of labels; indices are states returned by getState()
 	int numStates;
 
+	XboxController xboxPlayer1; // only handle 1 xbox ctrl for now
+
 	/*
 	 * Keys currently being held down
 	 */ 
 	typedef set<unsigned char> KeysDown;
 	typedef set<int> SpecialKeysDown;
+	typedef set<int> XboxButtonsDown;
 
 	KeysDown keysDown;
 	SpecialKeysDown specialKeysDown;
+	XboxButtonsDown xboxButtonsDown;
 
 	/*
 	 * Handle mouse motion
@@ -57,29 +65,17 @@ namespace
 	MouseMotion mouseMotionFuncs;
 	MouseMotion mousePassiveMotionFuncs;
 
-	// update bindings when adding 2nd, 3rd, etc actions for same scope/state/type
-	void bindUpdateAll(Action * action)
+
+	/*
+	 * Private Input functions
+	 */
+
+	// subroutine for bindUpdateAll()
+	template <class B>
+	void bindUpdate(B &bindings, Action * action)
 	{
 		Actions::iterator a;
-		for (KeyBindings::iterator k = keyBindings.begin(); k != keyBindings.end(); ++k)
-		{
-			a = k->second.begin();
-			if ((*a)->isSameAction(action))
-			{
-				k->second.push_back(action);
-				break;
-			}
-		}
-		for (SpecialKeyBindings::iterator k = specialKeyBindings.begin(); k != specialKeyBindings.end(); ++k)
-		{
-			a = k->second.begin();
-			if ((*a)->isSameAction(action))
-			{
-				k->second.push_back(action);
-				break;
-			}
-		}
-		for (MouseButtonBindings::iterator k = mouseButtonBindings.begin(); k != mouseButtonBindings.end(); ++k)
+		for (B::iterator k = bindings.begin(); k != bindings.end(); ++k)
 		{
 			a = k->second.begin();
 			if ((*a)->isSameAction(action))
@@ -89,7 +85,112 @@ namespace
 			}
 		}
 	}
-} // unnamed
+
+	// update bindings when adding 2nd, 3rd, etc actions for same scope/state/type
+	void bindUpdateAll(Action * action)
+	{
+		bindUpdate(keyBindings, action);
+		bindUpdate(specialKeyBindings, action);
+		bindUpdate(xboxButtonBindings, action);
+		bindUpdate(mouseButtonBindings, action);
+	}
+
+	template <class M>
+	void anyMouseMotion(M &mouseMotionFuncs, int x, int y)
+	{
+		if (!getState)
+			return;
+
+		M::iterator mm = mouseMotionFuncs.find(getState());
+		if (mm != mouseMotionFuncs.end())
+			for (MouseCallbacks::iterator mc = mm->second.begin(); mc != mm->second.end(); ++mc)
+				mc->mouseMotionFunc(mc->classInstance, x, y);
+	}
+
+	template <class B, class D, class K>
+	void anyKeyPress(B &bindings, D &keysDown, K key, int x, int y)
+	{
+		B::iterator b = bindings.find(key);
+		if (b == bindings.end())
+			return;
+
+		Actions::iterator action;
+		for (action = b->second.begin(); action != b->second.end(); ++action) 
+			if ((*action)->hasActiveStateOf(getState()))
+			{
+				if (keysDown.find(key) == keysDown.end())
+				{
+					actionQueue.enqueue(*action, Action::STATE_PRESS);
+					keysDown.insert(key);
+				}
+				// ignore multiple calls for a single press (they're handled using keysDown)
+			}
+	}
+
+	template <class B, class D, class K>
+	void anyKeyRelease(B &bindings, D &keysDown, K key, int x, int y)
+	{
+		B::iterator b = bindings.find(key);
+		D::iterator k;
+		if (b == bindings.end())
+			return;
+
+		Actions::iterator action;
+		for (action = b->second.begin(); action != b->second.end(); ++action) 
+			if ((*action)->hasActiveStateOf(getState()))
+			{
+				actionQueue.enqueue(*action, Action::STATE_RELEASE);
+				k = keysDown.find(key);
+				if (k != keysDown.end())
+					keysDown.erase(*k);
+			}
+	}
+
+	template <class M>
+	void addAnyMouseMotionFunc(M &mouseMotionFuncs, void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
+	{
+		MouseCallback cb(classInstance, mouseMotion);
+		M::iterator mm = mouseMotionFuncs.find(activeState);
+		if (mm == mouseMotionFuncs.end())
+		{
+			MouseCallbacks cbs; // create dummy list to push to
+			cbs.push_back(cb);
+			mouseMotionFuncs.insert(pair<ActiveState, MouseCallbacks>(activeState, cbs));
+		}
+		else
+			mm->second.push_back(cb);
+	}
+
+	template <class M>
+	void removeMouseMotionFuncs(M &mouseMotionFuncs, void *classInstance)
+	{
+		for (M::iterator m = mouseMotionFuncs.begin(); m != mouseMotionFuncs.end(); ++m)
+			for (MouseCallbacks::iterator mc = m->second.begin(); mc != m->second.end(); ++mc)
+				if (mc->classInstance == classInstance)
+					m->second.erase(mc);
+	}
+
+	template <class B, class K>
+	void bind(B &bindings, int player, Action::ActionScope scope, int activeState, int actionType, K key)
+	{
+		// find Action to bind to
+		Action *action = players[player]->getAction(scope, activeState, actionType);
+		if (!action)
+			action = new Action(*findActionDecl(scope, activeState, actionType));
+		players[player]->addAction(action);
+
+		B::iterator binding = bindings.find(key);
+		if (binding == bindings.end()) // add binding for a new key
+		{
+			Actions al; // create dummy list to push to k
+			al.push_back(action);
+			bindings.insert(pair<int, Actions>(key, al));
+		}
+		else // or a binding for another state for an existing key
+			binding->second.push_back(action);
+	}
+
+} // unnamed namespace
 
 void Action::define(void * actionClassInstance, ActionFunc action)
 {
@@ -180,30 +281,27 @@ void ActionQueue::enqueue(Action * action, Action::ActionState state)
 	actions.push_back(entry);
 }
 
-void ActionQueue::doAll()
+template <class D, class B>
+void ActionQueue::queueAllHeldKeys(D keysDown, B bindings)
 {
-	// add all buttons being held down (since repeated GLUT interrupts are ignored)
 	Actions::iterator action;
-	KeyBindings::iterator b;
-	for (KeysDown::const_iterator kd = keysDown.cbegin(); kd != keysDown.cend(); ++kd)
+	B::iterator b;
+	for (D::const_iterator kd = keysDown.cbegin(); kd != keysDown.cend(); ++kd)
 	{
-		b = keyBindings.find(*kd);
-		if (b == keyBindings.end())
+		b = bindings.find(*kd);
+		if (b == bindings.end())
 			continue;
 		for (action = b->second.begin(); action != b->second.end(); ++action) 
 			if ((*action)->hasActiveStateOf(getState()))
 				enqueue(*action, Action::STATE_HOLD);
 	}
-	SpecialKeyBindings::iterator sb;
-	for (SpecialKeysDown::const_iterator kd = specialKeysDown.cbegin(); kd != specialKeysDown.cend(); ++kd)
-	{
-		sb = specialKeyBindings.find(*kd);
-		if (sb == specialKeyBindings.end())
-			continue;
-		for (action = sb->second.begin(); action != sb->second.end(); ++action) 
-			if ((*action)->hasActiveStateOf(getState()))
-				enqueue(*action, Action::STATE_HOLD);
-	}
+}
+
+void ActionQueue::doAll()
+{
+	// repeated GLUT 'press' interrupts are ignored, so add held btns manually
+	queueAllHeldKeys(keysDown, keyBindings);
+	queueAllHeldKeys(specialKeysDown, specialKeyBindings);
 
 	// do all actions
 	ActionEntry ae;
@@ -219,8 +317,54 @@ void ActionQueue::doAll()
 	}
 }
 
-void doAllQueuedActions()
+void handleXboxInput(XboxController &player)
 {
+	if (!player.isConnected())
+		return;
+	const int pressed = player.GetState().Gamepad.wButtons;
+	Action::ActionState actionState;
+	XboxButtonBindings::const_iterator binding;
+	XboxButton boundButton;
+	XboxButtonsDown newXboxButtonsDown; // used to determine when btns are released
+
+	// we're looking for bindings in an active state that match the buttons pressed
+	for (binding = xboxButtonBindings.cbegin(); binding != xboxButtonBindings.cend(); ++binding)
+	{
+		boundButton = binding->first;
+		if (!(pressed & boundButton))
+			continue;
+
+		if (xboxButtonsDown.find(boundButton) == xboxButtonsDown.cend())
+			actionState = Action::STATE_PRESS;
+		else
+			actionState = Action::STATE_HOLD;
+
+		for (Actions::const_iterator action = binding->second.begin(); action != binding->second.end(); ++action) 
+		{
+			if (!(*action)->hasActiveStateOf(getState()))
+				continue;
+			newXboxButtonsDown.insert(boundButton);
+			actionQueue.enqueue(*action, actionState);
+		}
+	}
+
+	// determine which buttons were released
+	Actions::const_iterator action;
+	for (XboxButtonsDown::const_iterator x = xboxButtonsDown.cbegin(); x != xboxButtonsDown.cend(); ++x)
+	{
+		if (newXboxButtonsDown.find(*x) != newXboxButtonsDown.end())
+			continue;
+
+		binding = xboxButtonBindings.find(*x);
+		for (Actions::const_iterator action = binding->second.begin(); action != binding->second.end(); ++action) 
+			actionQueue.enqueue(*action, Action::STATE_RELEASE);
+	}
+	xboxButtonsDown = newXboxButtonsDown;
+}
+
+void handleInput()
+{
+	handleXboxInput(xboxPlayer1);
 	actionQueue.doAll();
 }
 
@@ -239,80 +383,29 @@ void addPlayer()
 	players.push_back(new Player());
 }
 
+
 /**
  * Button/key Inputs
  */
 
-//FIXME: whole lot'a redundnancy 'round these here parts
-
 void keyPress(unsigned char key, int x, int y)
 {
-	KeyBindings::iterator b = keyBindings.find(key);
-	if (b == keyBindings.end())
-		return;
-
-	Actions::iterator action;
-	for (action = b->second.begin(); action != b->second.end(); ++action) 
-		if ((*action)->hasActiveStateOf(getState()))
-		{
-			if (keysDown.find(key) == keysDown.end())
-			{
-				actionQueue.enqueue(*action, Action::STATE_PRESS);
-				keysDown.insert(key);
-			}
-			// ignore multiple calls for a single press (they're handled using keysDown)
-		}
+	anyKeyPress(keyBindings, keysDown, key, x, y);
 }
 
 void keyRelease(unsigned char key, int x, int y)
 {
-	KeyBindings::iterator b = keyBindings.find(key);
-	if (b == keyBindings.end())
-		return;
-
-	Actions::iterator action;
-	for (action = b->second.begin(); action != b->second.end(); ++action) 
-		if ((*action)->hasActiveStateOf(getState()))
-		{
-			actionQueue.enqueue(*action, Action::STATE_RELEASE);
-			KeysDown::iterator k = keysDown.find(key);
-			if (k != keysDown.end())
-				keysDown.erase(*k);
-		}
+	anyKeyRelease(keyBindings, keysDown, key, x, y);
 }
 
 void keySpecialPress(int key, int x, int y)
 {
-	SpecialKeyBindings::iterator b = specialKeyBindings.find(key);
-	if (b == specialKeyBindings.end())
-		return;
-
-	Actions::iterator action;
-	for (action = b->second.begin(); action != b->second.end(); ++action) 
-		if ((*action)->hasActiveStateOf(getState()))
-		{
-			if (specialKeysDown.find(key) == specialKeysDown.end())
-			{
-				actionQueue.enqueue(*action, Action::STATE_PRESS);
-				specialKeysDown.insert(key);
-			}
-			// ignore multiple calls for a single press (they're handled using keysDown)
-		}
+	anyKeyPress(specialKeyBindings, specialKeysDown, key, x, y);
 }
 
 void keySpecialRelease(int key, int x, int y)
 {
-	SpecialKeyBindings::iterator b = specialKeyBindings.find(key);
-	if (b == specialKeyBindings.end())
-		return;
-
-	Actions::iterator action;
-	for (action = b->second.begin(); action != b->second.end(); ++action) 
-		if ((*action)->hasActiveStateOf(getState()))
-		{
-			actionQueue.enqueue(*action, Action::STATE_RELEASE);
-			specialKeysDown.erase(*specialKeysDown.find(key));
-		}
+	anyKeyRelease(specialKeyBindings, specialKeysDown, key, x, y);
 }
 
 void mousePress(int button, int mouseState, int x, int y)
@@ -327,66 +420,31 @@ void mousePress(int button, int mouseState, int x, int y)
 // Activated when mouse moves while a mouse button IS held down.
 void mouseMotion(int x, int y)
 {
-	if (!getState)
-		return;
-
-	MouseMotion::iterator mm = mouseMotionFuncs.find(getState());
-	if (mm != mouseMotionFuncs.end())
-		for (MouseCallbacks::iterator mc = mm->second.begin(); mc != mm->second.end(); ++mc)
-			mc->mouseMotionFunc(mc->classInstance, x, y);
+	anyMouseMotion(mouseMotionFuncs, x, y);
 }
 
 // Activated when mouse moves while a mouse button ISN'T held down.
 void mousePassiveMotion(int x, int y)
 {
-	if (!getState)
-		return;
-
-	MouseMotion::iterator mm = mousePassiveMotionFuncs.find(getState());
-	if (mm != mousePassiveMotionFuncs.end())
-		for (MouseCallbacks::iterator mc = mm->second.begin(); mc != mm->second.end(); ++mc)
-			mc->mouseMotionFunc(mc->classInstance, x, y);
+	anyMouseMotion(mousePassiveMotionFuncs, x, y);
 }
 
 void addMouseMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
 {
-	MouseCallback cb(classInstance, mouseMotion);
-	MouseMotion::iterator mm = mouseMotionFuncs.find(activeState);
-	if (mm == mouseMotionFuncs.end())
-	{
-		MouseCallbacks cbs; // create dummy list to push to
-		cbs.push_back(cb);
-		mouseMotionFuncs.insert(pair<ActiveState, MouseCallbacks>(activeState, cbs));
-	}
-	else
-		mm->second.push_back(cb);
+	addAnyMouseMotionFunc(mouseMotionFuncs, classInstance, activeState, mouseMotion);
 }
 
 void addMousePassiveMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
 {
-	MouseCallback cb(classInstance, mouseMotion);
-	MouseMotion::iterator mm = mousePassiveMotionFuncs.find(activeState);
-	if (mm == mousePassiveMotionFuncs.end())
-	{
-		MouseCallbacks cbs; // create dummy list to push to
-		cbs.push_back(cb);
-		mousePassiveMotionFuncs.insert(pair<ActiveState, MouseCallbacks>(activeState, cbs));
-	}
-	else
-		mm->second.push_back(cb);
+	addAnyMouseMotionFunc(mousePassiveMotionFuncs, classInstance, activeState, mouseMotion);
 }
 
-void removeMotions(void *classInstance)
+void removeMouseMotions(void *classInstance)
 {
-	for (MouseMotion::iterator m = mouseMotionFuncs.begin(); m != mouseMotionFuncs.end(); ++m)
-		for (MouseCallbacks::iterator mc = m->second.begin(); mc != m->second.end(); ++mc)
-			if (mc->classInstance == classInstance)
-				m->second.erase(mc);
-	for (MouseMotion::iterator m = mousePassiveMotionFuncs.begin(); m != mousePassiveMotionFuncs.end(); ++m)
-		for (MouseCallbacks::iterator mc = m->second.begin(); mc != m->second.end(); ++mc)
-			if (mc->classInstance == classInstance)
-				m->second.erase(mc);
+	removeMouseMotionFuncs(mouseMotionFuncs, classInstance);
+	removeMouseMotionFuncs(mousePassiveMotionFuncs, classInstance);
 }
+
 
 /**
  * Actions
@@ -414,7 +472,7 @@ void defineAction(Action::ActionScope scope, int activeState, int actionType, vo
 				newAction->define(classInstance, action);
 				(*p)->addAction(newAction);
 
-				// FIXME: update bindings to account for this action
+				// update bindings to account for this action
 				bindUpdateAll(newAction);
 			}
 			else
@@ -449,55 +507,25 @@ Action * findActionDecl(Action::ActionScope scope, int activeState, int actionTy
  * Binding
  */
 
-void bindKey(Action action, unsigned char key)
-{
-}
-
-//FIXME: too much duplicate code in bindKey()/bindSpecialKey()
 void bindKey(int player, Action::ActionScope scope, int activeState, int actionType, unsigned char key)
 {
-	// find Action to bind to
-	Action *action = players[player]->getAction(scope, activeState, actionType);
-	if (!action)
-		action = new Action(*findActionDecl(scope, activeState, actionType));
-	players[player]->addAction(action);
-
-	KeyBindings::iterator binding = keyBindings.find(key);
-	if (binding == keyBindings.end()) // add binding for a new key
-	{
-		Actions al; // create dummy list to push to k
-		al.push_back(action);
-		keyBindings.insert(pair<unsigned char, Actions>(key, al));
-	}
-	else // or a binding for another state for an existing key
-		binding->second.push_back(action);
-}
-
-void bindSpecialKey(Action action, int key)
-{
+	bind(keyBindings, player, scope, activeState, actionType, key);
 }
 
 void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int actionType, int key)
 {
-	// find Action to bind to
-	Action *action = players[player]->getAction(scope, activeState, actionType);
-	if (!action)
-		action = new Action(*findActionDecl(scope, activeState, actionType));
-	players[player]->addAction(action);
+	bind(specialKeyBindings, player, scope, activeState, actionType, key);
+}
 
-	SpecialKeyBindings::iterator binding = specialKeyBindings.find(key);
-	if (binding == specialKeyBindings.end()) // add binding for a new key
-	{
-		Actions al; // create dummy list to push to k
-		al.push_back(action);
-		specialKeyBindings.insert(pair<int, Actions>(key, al));
-	}
-	else // or a binding for another state for an existing key
-		binding->second.push_back(action);
+
+void bindXboxButton(int player, Action::ActionScope scope, int activeState, int actionType, int key)
+{
+	bind(xboxButtonBindings, player, scope, activeState, actionType, key);
 }
 
 void bindButton(Action action, int button)
 {
+	//TODO
 }
 
 } // Input

@@ -24,12 +24,11 @@ void reshape2(int w, int h) {
 }
 
 void display() {
-	// Unfortunatley, this contains many necessary loops. It might be possible
+	// Unfortunatley, this contains many (necessary) loops. It might be possible
 	//   for the user to intentionally lag the game, if there are *many* actions.
-	Input::doAllQueuedActions();
+	Input::handleInput();
 
-	triforce->display();
-}
+	triforce->display();}
 
 void specialKeys(int key, int x, int y) {
 	Input::keySpecialPress(key, x, y);

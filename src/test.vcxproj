@@ -23,6 +23,7 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="triforce.cpp" />
+    <ClCompile Include="xbox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2DGraphics.h" />
@@ -31,6 +32,7 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="triforce.h" />
+    <ClInclude Include="xbox.h" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="2DLibrary.obj" />

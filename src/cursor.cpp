@@ -85,7 +85,7 @@ Cursor::Cursor(Grid *gr, CBaseSprite *sprite) {
 }
 
 Cursor::~Cursor() {
-	Input::removeMotions(this);
+	Input::removeMouseMotions(this);
 }
 
 bool Cursor::move(PlayState::Actions action, bool doDraw) {

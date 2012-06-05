@@ -151,13 +151,16 @@ namespace Input
 		int gameStateActionsAreFor; 
 		bool updateGameState();
 
+		template <class D, class B>
+		void queueAllHeldKeys(D keysDown, B bindings);
+
 	public:
 		ActionQueue();
 		void enqueue(Action * action, Action::ActionState state);
 		void clear() {actions.clear();}
 		void doAll();
 	};
-	void doAllQueuedActions();
+	void handleInput();
 
 	// getStateFunc returns state of program, and only uses actions with the same state
 	void setGSFunc(int (*getStateFunc)());
@@ -182,11 +185,10 @@ namespace Input
 
 	// the Triforce constructor binds the default keys for the entire game
 	// TODO: Eventually, a class that loads config files will handle overriding these bindings.
-	void bindKey(Action action, unsigned char key);
 	void bindKey(int player, Action::ActionScope scope, int activeState, int actionType, unsigned char key);
-	void bindSpecialKey(Action action, int key);
 	void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int actionType, int key);
 	void bindButton(Action action, int button);
+	void bindXboxButton(int player, Action::ActionScope scope, int activeState, int actionType, int key);
 
 	/**
 	 * Motion input interface
@@ -205,7 +207,7 @@ namespace Input
 
 	void addMouseMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
 	void addMousePassiveMotionFunc(void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y));
-	void removeMotions(void *classInstance);
+	void removeMouseMotions(void *classInstance);
 
 	/**
 	 * Actions

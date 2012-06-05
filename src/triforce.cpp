@@ -1,4 +1,5 @@
 #include "triforce.h"
+#include "Xbox.h"
 
 const string Triforce::gameStateLabels[Triforce::_NUMBER_OF_STATES] = {
 	"Menu", "Play", "Pause", "Quit"
@@ -35,6 +36,7 @@ void Triforce::declareActions()
 	declareAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::ACTIVATE, actionLabels[MenuState::ACTIVATE]);
 	declareAction(Action::SCOPE_FIRST_PLAYER, MENU, MenuState::QUIT, actionLabels[MenuState::QUIT]);
 
+	GamePlay::declareActions();
 	Grid::declareActions();
 	Cursor::declareActions();
 }
@@ -75,6 +77,14 @@ void Triforce::bindDefaultActionKeys()
 	bindSpecialKey(player, scope, MENU, MenuState::LEFT, GLUT_KEY_LEFT);
 	bindSpecialKey(player, scope, MENU, MenuState::RIGHT, GLUT_KEY_RIGHT);
 
+	// xbox bindings
+	bindXboxButton(player, scope, MENU, MenuState::UP, XINPUT_GAMEPAD_DPAD_UP);
+	bindXboxButton(player, scope, MENU, MenuState::DOWN, XINPUT_GAMEPAD_DPAD_DOWN);
+	bindXboxButton(player, scope, MENU, MenuState::LEFT, XINPUT_GAMEPAD_DPAD_LEFT);
+	bindXboxButton(player, scope, MENU, MenuState::RIGHT, XINPUT_GAMEPAD_DPAD_RIGHT);
+	bindXboxButton(player, scope, MENU, MenuState::ACTIVATE, XINPUT_GAMEPAD_A | XINPUT_GAMEPAD_START);
+	bindXboxButton(player, scope, MENU, MenuState::QUIT, XINPUT_GAMEPAD_BACK | XINPUT_GAMEPAD_B);
+
 	/*
 	 * PLAY state
 	 */
@@ -101,8 +111,18 @@ void Triforce::bindDefaultActionKeys()
 	bindKey(player, scope, PLAY, PlayState::SWAP, BTN_SPACE);
 	bindKey(player, scope, PLAY, PlayState::PUSH, 'z');
 	bindKey(player, scope, PLAY, PlayState::SWAP, 'x');
+	bindKey(player, scope, PLAY, PlayState::PAUSE_TOGGLE, 't');
 
-	bindKey(player, scope, PLAY, PlayState::PAUSE, 't');
+	// xbox bindings
+	bindXboxButton(player, scope, PLAY, PlayState::UP, XINPUT_GAMEPAD_DPAD_UP);
+	bindXboxButton(player, scope, PLAY, PlayState::DOWN, XINPUT_GAMEPAD_DPAD_DOWN);
+	bindXboxButton(player, scope, PLAY, PlayState::LEFT, XINPUT_GAMEPAD_DPAD_LEFT);
+	bindXboxButton(player, scope, PLAY, PlayState::RIGHT, XINPUT_GAMEPAD_DPAD_RIGHT);
+	bindXboxButton(player, scope, PLAY, PlayState::SWAP, XINPUT_GAMEPAD_A | XINPUT_GAMEPAD_B);
+	bindXboxButton(player, scope, PLAY, PlayState::PUSH, XINPUT_GAMEPAD_LEFT_SHOULDER | XINPUT_GAMEPAD_RIGHT_SHOULDER);
+	bindXboxButton(player, scope, PLAY, PlayState::PAUSE_TOGGLE, XINPUT_GAMEPAD_START);
+	bindXboxButton(player, scope, PAUSE, PlayState::PAUSE_TOGGLE, XINPUT_GAMEPAD_START);
+	bindXboxButton(player, scope, PLAY, PlayState::RETURN, XINPUT_GAMEPAD_BACK);
 }
 
 /**
@@ -199,7 +219,7 @@ Triforce::Triforce()
 
 Triforce::~Triforce()
 {
-	Input::removeMotions(menuButtons);
+	Input::removeMouseMotions(menuButtons);
 	delete menuButtons;
 }
 
@@ -210,11 +230,16 @@ void Triforce::display()
 	switch (state)
 	{
 	case MENU: // fall through
+		if (gamePlay)
+		{
+			delete gamePlay;
+			gamePlay = NULL;
+		}
 	case HELP:
-	case PAUSE:
 		displayMenu();
 		break;
 	case PLAY:
+	case PAUSE:
 		gamePlay->display();
 		break;
 	}
@@ -229,12 +254,12 @@ void Triforce::setState(GameState s)
 	switch (s)
 	{
 	case MENU:
-		if (state == PLAY) // state change from play to load
-			delete gamePlay;
+		state = MENU;
 		break;
 	case PLAY:
 		if (state == MENU) // state change from menu to play
 			gamePlay = new GamePlay;
+		state = PLAY;
 		break;
 	case HELP:
 		s = state; //FIXME: temporarily ignore this state
@@ -254,8 +279,15 @@ void Triforce::setStateWrapper(void *tfInstance, int gameState)
 }
 
 void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
-	if (state == PLAY)
+	switch (state)
 	{
+	case PAUSE:
+		if (mouseState == GLUT_DOWN)
+			gamePlay->menuButtons->clickDown(x, y);
+		else // implicit GLUT_UP
+			gamePlay->menuButtons->clickUp(x, y);
+		break;
+	case PLAY:
 		switch (button) {
 		case GLUT_LEFT_BUTTON:
 			if (mouseState == GLUT_DOWN)
@@ -266,16 +298,18 @@ void Triforce::mouseButtons(int button, int mouseState, int x, int y) {
 			}
 			else // implicit GLUT_UP
 				gamePlay->menuButtons->clickUp(x, y);
+			break;
 		}
-	}
-	else if (state == MENU)
-	{
+		break;
+	case MENU:
 		switch (button) {
 		case GLUT_LEFT_BUTTON:
 			if (mouseState == GLUT_DOWN)
 				menuButtons->clickDown(x, y);
 			else
 				menuButtons->clickUp(x, y);
+			break;
 		}
+		break;
 	}
 }

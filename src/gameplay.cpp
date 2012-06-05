@@ -55,9 +55,13 @@ GamePlay::GamePlay() {
 
 	Input::addMousePassiveMotionFunc(menuButtons, Triforce::PLAY,
 								 	 menuButtons->mousePassiveMotion);
-	Input::addMouseMotionFunc(menuButtons, Triforce::PLAY, // same as passive
+	Input::addMousePassiveMotionFunc(menuButtons, Triforce::PAUSE,
+								 	 menuButtons->mousePassiveMotion);
+	// same as passive
+	Input::addMouseMotionFunc(menuButtons, Triforce::PLAY,
 	                          menuButtons->mousePassiveMotion);
-
+	Input::addMouseMotionFunc(menuButtons, Triforce::PAUSE,
+	                          menuButtons->mousePassiveMotion);
 	defineActions();
 }
 
@@ -70,7 +74,11 @@ void GamePlay::declareActions()
 	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
 	Triforce::GameState state = Triforce::PLAY;
 
-	declareAction(scope, state, PAUSE, actionLabels[PAUSE]);
+	declareAction(scope, state, PAUSE_TOGGLE, actionLabels[PAUSE_TOGGLE]);
+	declareAction(scope, state, RETURN, actionLabels[RETURN]);
+
+	state = Triforce::PAUSE;
+	declareAction(scope, state, PAUSE_TOGGLE, actionLabels[PAUSE_TOGGLE]);
 }
 void GamePlay::defineActions()
 {
@@ -80,7 +88,11 @@ void GamePlay::defineActions()
 	Action::ActionScope scope = Action::SCOPE_FIRST_PLAYER;
 	Triforce::GameState state = Triforce::PLAY;
 
-	defineAction(scope, state, PAUSE, this, doAction); // duplicate definition (OK)
+	defineAction(scope, state, PAUSE_TOGGLE, this, doAction);
+	defineAction(scope, state, RETURN, this, doAction);
+
+	state = Triforce::PAUSE;
+	defineAction(scope, state, PAUSE_TOGGLE, this, doAction);
 }
 
 void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
@@ -93,8 +105,11 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 	case Input::Action::STATE_PRESS:
 		switch((enum Actions)actionType)
 		{
-		case PAUSE:
-			g->changeState(pause);
+		case PAUSE_TOGGLE:
+			if (g->state == pause)
+				g->changeState(play);
+			else if (g->state == play)
+				g->changeState(pause);
 			break;
 		}
 	/*
@@ -102,13 +117,11 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 	case Input::Action::STATE_RELEASE:
 	*/
 	}
-	// FIXME: safe to remove this?
-	//glutPostRedisplay();
 }
 
 void GamePlay::display() {
 	if (state == GamePlay::quit)
-		Triforce::setState(Triforce::QUIT);
+		Triforce::setState(Triforce::MENU);
 	composeFrame();
 
 	background.drawGLbackground ();
@@ -136,13 +149,6 @@ void GamePlay::composeFrame()
 	case play:
 		grid->composeFrame();
 		hud->composeFrame();
-		if(mainTimer->elapsed(last_time,300))
-		{
-			//processFrame();
-			last_time=mainTimer->time();
-			if(++current_frame>=1)
-				current_frame=0;
-		}
 
 		break;
 	}
@@ -226,6 +232,7 @@ void GamePlay::loadImages()
 void GamePlay::changeState(gameState gs) {
 	if (state == play && gs == pause)
 	{
+		Triforce::setState(Triforce::PAUSE); // used to disable/enable actions
 		menuButtons->disable(pause);
 		menuButtons->enable(play);
 		state = pause;
@@ -233,6 +240,7 @@ void GamePlay::changeState(gameState gs) {
 	}
 	else if (state == pause && gs == play)
 	{
+		Triforce::setState(Triforce::PLAY); // used to disable/enable actions
 		menuButtons->disable(play);
 		menuButtons->enable(pause);
 		state = play;
