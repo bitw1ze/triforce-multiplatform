@@ -52,6 +52,7 @@ GamePlay::GamePlay() {
 	menuButtons->add(this, GamePlay::play, changeStateWrapper, Triforce::playBtns, xpos, ypos);
 	menuButtons->add(this, GamePlay::pause, changeStateWrapper, Triforce::pauseBtns, xpos, ypos);
 	menuButtons->disable(GamePlay::play);
+	menuButtons->unhoverAll();
 
 	Input::addMousePassiveMotionFunc(menuButtons, Triforce::PLAY,
 								 	 menuButtons->mousePassiveMotion);
