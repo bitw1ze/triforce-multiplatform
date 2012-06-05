@@ -13,8 +13,10 @@ methods in Fall, Combo, and Bonus to interact with them.
 #include "game.h"
 #include "input.h"
 
-const int Grid::forcedPushSpeed = 1;
 const int Grid::forcedPushinterval = 8;
+const int Grid::startPushIntervals[NUMDIFFICULTIES] = {225, 175, 125, 75};
+const int Grid::endPushIntervals[NUMDIFFICULTIES] = {150, 100, 50, 15};
+const int Grid::pushAccelInterval = 15000;
 
 /*	constructor
 	Initialize objects and vars such as position, dimensions, and speed.
@@ -27,15 +29,12 @@ Grid::Grid() {
 void Grid::set() {
 	blockSprites = GamePlay::blockSprites;
 	
-	pushSpeed = 2;
-	pushInterval = 300;
 	pushOffset = 0;
 	lastPush = 0;
+	lastPushAccel = 0;
 	lastForcedPush = 0;
 
-	pushAccel = 0.9; // reduces the time it takes to push a row
-	pushAccelInterval = 25 * 1000; // seconds
-	lastPushAccel = 0;
+	setDifficulty(MEDIUM);
 
 	comboInterval = 0; // FIXME: put in Combo
 
@@ -77,6 +76,13 @@ Grid & Grid::operator =(const Grid &g) {
 
 void Grid::clone(const Grid &g) {
 	// TODO
+}
+
+void Grid::setDifficulty(Difficulty diff) {
+	difficulty = diff;
+	pushInterval = startPushIntervals[diff];
+	// it will always take 4 minutes to reach minimum interval (max push speed)
+	pushAccelDelta = (pushInterval - endPushIntervals[diff]) / ((60000 * 4) / pushAccelInterval);
 }
 
 void Grid::declareActions()
@@ -138,7 +144,7 @@ void Grid::doAction(void *gridInstance, int actionState, int actionType)
 		{
 		case PUSH:
 			if (g->getState() == Grid::push && mainTimer->elapsed(g->lastForcedPush, forcedPushinterval)) {
-				g->pushRow(Grid::forcedPushSpeed);
+				g->pushRow();
 				g->lastForcedPush = mainTimer->time();
 			}
 			break;
@@ -198,13 +204,13 @@ void Grid::composeFrame() {
 	switch (state) {
 	case play:
 		// accelerate the speed that blocks are pushed
-		if (mainTimer->elapsed(lastPushAccel, pushAccelInterval)) {
-			pushInterval = (int)( (float)pushInterval * pushAccel );
+		if (pushInterval > endPushIntervals[difficulty] && mainTimer->elapsed(lastPushAccel, pushAccelInterval)) {
+			pushInterval -= pushAccelDelta;
 			lastPushAccel = mainTimer->time();
 		}
 
 		if (mainTimer->elapsed(lastPush, pushInterval)) {
-			pushRow(pushSpeed);
+			pushRow();
 			lastPush = mainTimer->time();
 		}
 		break;
@@ -243,13 +249,13 @@ int Grid::countEnabledRows() const {
 
 /*	pushRow
 	Gradually push a new row onto the play area. */
-void Grid::pushRow(int speed) {
-	pushOffset += speed;
+void Grid::pushRow() {
+	++pushOffset;
 
-	cursor->offsetY(-speed);
+	cursor->offsetY(-1);
 	for (uint32 i=0; i<blocks.size(); ++i) 
 		for (uint32 j=0; j<ncols; ++j) 
-			blocks[i][j].offsetY(-speed);
+			blocks[i][j].offsetY(-1);
 	
 	if (pushOffset >= GamePlay::blockLength) {
 		pushOffset %= GamePlay::blockLength;

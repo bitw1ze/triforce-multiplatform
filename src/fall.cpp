@@ -12,7 +12,7 @@ FallNode member variables:
 #include "game.h"
 #include <list>
 
-int Fall::fallInterval = 10;
+int Fall::fallInterval = 8;
 
 Fall::Fall(int chains) : list<FallNode>() {
 	__super::list();

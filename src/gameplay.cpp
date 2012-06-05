@@ -36,6 +36,7 @@ GamePlay::GamePlay() {
 	state = play;
 	loadImages(); 
 	grid = new Grid();
+	grid->setDifficulty(Grid::MEDIUM); // should be dynamically set
 	hud = new HUD(grid->getX() + (float)gridWidth * 1.15, grid->getY() + .03 * (float)gridHeight);
 
 	menuButtons = new Buttons(this->getWidth(), this->getHeight());

@@ -224,6 +224,7 @@ public:
 	// FIXME: once mouse buttons are working in Input, this should be protected
 	Buttons * menuButtons;
 	Grid *grid;
+
 protected:
 	/* bitmap files */
 	static const int numCursorFiles;
@@ -259,12 +260,20 @@ public:
 class Grid {
 
 public:
+	enum Difficulty {EASY, MEDIUM, HARD, YODA, NUMDIFFICULTIES};
 	Cursor *cursor;
 	deque< vector<Block> > blocks; //i.e. blocks[row][col]
 	enum gameState { play, combo, push };
-	static const int forcedPushSpeed, forcedPushinterval;
+	
+
 protected:
-	int	pushOffset, pushSpeed, pushInterval, pushAccelInterval,
+	static const int forcedPushinterval;
+	static const int startPushIntervals[NUMDIFFICULTIES];
+	static const int endPushIntervals[NUMDIFFICULTIES];
+	static const int pushAccelInterval;
+	int pushAccelDelta;
+
+	int	pushOffset, pushInterval,
 		comboInterval,
 		current_cursor_frame;
 	float pushAccel;
@@ -273,6 +282,7 @@ protected:
 	Point gridPos;
 	CBaseSprite** blockSprites;
 	gameState state;
+	Difficulty difficulty;
 	
 	list<Combo> comboEvents;
 	list<Fall> fallEvents;	
@@ -297,12 +307,15 @@ public:
 	void displayBonus();
 	void updateEvents();
 
-	void pushRow(int speed);
+	void pushRow();
 	void addRow();
 	void swapBlocks();
 
 	void changeState(gameState gs);
 	gameState getState() const { return state; }
+
+	void setDifficulty(Difficulty diff);
+	Difficulty getDifficulty() const { return difficulty; }
 
 	/* set/get properties */
 	int getYOffset() { return pushOffset; }
