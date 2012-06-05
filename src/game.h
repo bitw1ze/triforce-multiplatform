@@ -228,10 +228,6 @@ protected:
 	/* bitmap files */
 	static const int numCursorFiles;
 
-	/* frame stuff */
-	int current_frame;
-	uint64 last_time;
-
 	static BMPClass background;
 
 	gameState state;

@@ -436,9 +436,6 @@ bool swap(Block &left, Block &right) {
 	Block::gameState ls = left.getState();
 	Block::gameState rs = right.getState();
 
-	//cout << "left yoff: " << left.getFallOffset() << endl;
-	//cout << "right yoff: " << right.getFallOffset() << endl;
-
 	if ( ls == Block::combo || rs == Block::combo ||
 		ls == Block::fall || rs == Block::fall)
 		return false;
@@ -447,11 +444,9 @@ bool swap(Block &left, Block &right) {
 		return false;
 	}
 	
-	//printf("states: (%d, %d)\n", left.getState(), right.getState());
 	Block temp = left;
 	left = right;
 	right = temp;
-	//printf("states: (%d, %d)\n\n", left.getState(), right.getState());
 
 	return true;
 }

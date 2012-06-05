@@ -186,7 +186,6 @@ void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
 
 Triforce::Triforce()
 { 
-	current_frame = 0; 
 	loadImages(); 
 
 	/*
