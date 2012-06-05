@@ -47,7 +47,7 @@ GamePlay::GamePlay() {
 		xOffset = 150,
 		xpos = this->getWidth() - xOffset,
 		ypos = this->getHeight() - yOffset;
-	menuButtons->add(this, GamePlay::quit, changeStateWrapper, Triforce::quitBtns, xpos, ypos);
+	menuButtons->add(this, GamePlay::quit, changeStateWrapper, Triforce::backBtns, xpos, ypos);
 	ypos -= yOffset;
 	menuButtons->add(this, GamePlay::play, changeStateWrapper, Triforce::playBtns, xpos, ypos);
 	menuButtons->add(this, GamePlay::pause, changeStateWrapper, Triforce::pauseBtns, xpos, ypos);

@@ -12,6 +12,9 @@ const string Triforce::playBtns[] = {
 const string Triforce::quitBtns[] = {
 	"quitBtn.bmp", "quitBtnHover.bmp", "quitBtnPressed.bmp"
 };
+const string Triforce::backBtns[] = {
+	"backBtn.bmp", "backBtnHover.bmp", "backBtnPressed.bmp"
+};
 const string Triforce::helpBtns[] = {
 	"helpBtn.bmp", "helpBtnHover.bmp", "helpBtnPressed.bmp"
 };

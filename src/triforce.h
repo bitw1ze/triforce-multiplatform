@@ -36,6 +36,7 @@ public :
 		                playBtns[],
 		                pauseBtns[],
 		                helpBtns[],
+		                backBtns[],
 		                quitBtns[];
 
 private:
