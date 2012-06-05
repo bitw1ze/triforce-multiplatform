@@ -28,8 +28,7 @@ void display() {
 	//   for the user to intentionally lag the game, if there are *many* actions.
 	Input::handleInput();
 
-	triforce->display();
-}
+	triforce->display();}
 
 void specialKeys(int key, int x, int y) {
 	Input::keySpecialPress(key, x, y);

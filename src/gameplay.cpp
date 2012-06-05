@@ -55,9 +55,13 @@ GamePlay::GamePlay() {
 
 	Input::addMousePassiveMotionFunc(menuButtons, Triforce::PLAY,
 								 	 menuButtons->mousePassiveMotion);
+	Input::addMousePassiveMotionFunc(menuButtons, Triforce::PAUSE,
+								 	 menuButtons->mousePassiveMotion);
+
 	Input::addMouseMotionFunc(menuButtons, Triforce::PLAY, // same as passive
 	                          menuButtons->mousePassiveMotion);
-
+	Input::addMouseMotionFunc(menuButtons, Triforce::PAUSE, // same as passive
+	                          menuButtons->mousePassiveMotion);
 	defineActions();
 }
 
@@ -96,6 +100,7 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 	using namespace PlayState;
 
 	GamePlay *g = (GamePlay *)gamePlayInstance;
+			cout << "SHIT" << endl;
 	switch((enum Input::Action::ActionState)actionState)
 	{
 	case Input::Action::STATE_PRESS:
@@ -145,13 +150,6 @@ void GamePlay::composeFrame()
 	case play:
 		grid->composeFrame();
 		hud->composeFrame();
-		if(mainTimer->elapsed(last_time,300))
-		{
-			//processFrame();
-			last_time=mainTimer->time();
-			if(++current_frame>=1)
-				current_frame=0;
-		}
 
 		break;
 	}
