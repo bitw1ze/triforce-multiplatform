@@ -37,14 +37,10 @@ GamePlay::GamePlay() {
 	srand(time(NULL));
 
 	state = play;
-	current_frame = 0; 
-	
-	last_time=mainTimer->time();
-
 	loadImages(); 
 	grid = new Grid();
-	//hud = new HUD(grid->getX() + (float)gridWidth * 1.15, grid->getY() + .03 * (float)gridHeight);
 	hud = new HUD(getWidth() - 115, grid->getY() + .03 * (float)gridHeight);
+	grid->setDifficulty(Grid::MEDIUM); // should be dynamically set
 
 	menuButtons = new Buttons(getWidth(), getHeight());
 	int yOffset = 85,
