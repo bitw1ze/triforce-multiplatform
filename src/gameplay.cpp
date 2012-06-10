@@ -144,7 +144,8 @@ void GamePlay::display() {
     gridBorderSprite->draw(0, xPos, yPos);
     menuBarSprite->draw(0, getWidth() - 200, 0);
 	grid->displayBonus();
-	menuButtons->display();
+	if (grid->getState() != Grid::gameover)
+		menuButtons->display();
 	hud->display();
 
 	glutSwapBuffers();

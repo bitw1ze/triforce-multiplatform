@@ -186,12 +186,13 @@ void Grid::display() {
 }
 
 void Grid::displayBonus() {
-	for (list<Bonus>::iterator it = bonuses.begin(); it != bonuses.end(); ++it)
-		it->display();
+	if (state != pause && state != gameover)
+		for (list<Bonus>::iterator it = bonuses.begin(); it != bonuses.end(); ++it)
+			it->display();
 }
 
 void Grid::composeFrame() {
-	if (state != gameover) {
+	if (state != gameover && state != pause) {
 		updateEvents();
 
 		for (uint32 i=0; i<blocks.size(); ++i) 
