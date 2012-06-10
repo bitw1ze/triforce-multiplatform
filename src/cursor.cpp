@@ -58,6 +58,7 @@ void Cursor::doAction(void *cursorInstance, int actionState, int actionType)
 	using namespace PlayState;
 
 	Cursor *c = (Cursor *)cursorInstance;
+	
 	switch((enum Input::Action::ActionState)actionState)
 	{
 	case Input::Action::STATE_PRESS:
@@ -91,6 +92,9 @@ Cursor::~Cursor()
 }
 
 bool Cursor::move(PlayState::Actions action, bool doDraw) {
+	if (grid->getState() == Grid::gameover)
+		return false;	
+
 	using namespace PlayState;
 	switch (action)
 	{
@@ -167,7 +171,7 @@ void Cursor::shiftRow() {
 
 void Cursor::alignToMouse() {
 	const float x_threshold = 0.49;
-	if (!grid->containsPoint(lastMousePos) || isAlignedToMouse)
+	if (grid->getState() == Grid::gameover || !grid->containsPoint(lastMousePos) || isAlignedToMouse)
 		return;
 
 	if (getX() + 2*GamePlay::blockLength - x_threshold * GamePlay::blockLength < lastMousePos.x && col < ncols - 2)

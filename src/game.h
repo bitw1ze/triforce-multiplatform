@@ -218,7 +218,7 @@ public:
 	static float fcolor1[3], fcolor2[3];
 	static const string bgFile, gridBorderFile, menuBarFile, bonusFile;
 	static CBaseSprite *blockSprites[nblocktypes], *cursorSprite, *gridBorderSprite, 
-		*menuBarSprite, *bonusSprite, *chainFontSprite, *comboFontSprite;
+		*menuBarSprite, *bonusSprite, *chainFontSprite, *comboFontSprite, *gameOverSprite;
 	// FIXME: once mouse buttons are working in Input, this should be protected
 	Buttons * menuButtons;
 	Grid *grid;
@@ -242,7 +242,6 @@ public:
 	void display();
 	void composeFrame();
 	void init();
-	void processFrame();
 	void loadImages();
 
 	static int getWidth() { return background.getViewportWidth();} 
@@ -262,7 +261,7 @@ public:
 	enum Difficulty {EASY, MEDIUM, HARD, YODA, NUMDIFFICULTIES};
 	Cursor *cursor;
 	deque< vector<Block> > blocks; //i.e. blocks[row][col]
-	enum gameState { play, combo, push };
+	enum gameState { play, combo, push, gameover, quit };
 	
 
 protected:
@@ -270,6 +269,7 @@ protected:
 	static const int startPushIntervals[NUMDIFFICULTIES];
 	static const int endPushIntervals[NUMDIFFICULTIES];
 	static const int pushAccelInterval;
+	static const int gameOverDuration;
 	int pushAccelDelta;
 
 	int	pushOffset, pushInterval,
@@ -278,6 +278,7 @@ protected:
 	float pushAccel;
 	uint64 last_cursor_anim, timer_cursor_anim;
 	uint64 lastPush, lastPushAccel, lastForcedPush;
+	uint64 startGameOver;
 	Point gridPos;
 	CBaseSprite** blockSprites;
 	gameState state;

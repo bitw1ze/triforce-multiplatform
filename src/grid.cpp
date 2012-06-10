@@ -17,6 +17,7 @@ const int Grid::forcedPushinterval = 8;
 const int Grid::startPushIntervals[NUMDIFFICULTIES] = {225, 175, 125, 75};
 const int Grid::endPushIntervals[NUMDIFFICULTIES] = {150, 100, 50, 15};
 const int Grid::pushAccelInterval = 15000;
+const int Grid::gameOverDuration = 5000;
 
 /*	constructor
 	Initialize objects and vars such as position, dimensions, and speed.
@@ -33,6 +34,7 @@ void Grid::set() {
 	lastPush = 0;
 	lastPushAccel = 0;
 	lastForcedPush = 0;
+	startGameOver = 0;
 
 	setDifficulty(MEDIUM);
 
@@ -181,6 +183,10 @@ void Grid::display() {
 			blocks[i][j].display();
 	cursor->draw(current_cursor_frame);
 	cursor->alignToMouse();
+
+	if (state == gameover) 
+		GamePlay::gameOverSprite->draw(0, getX(), getY() -  (float)GamePlay::gridHeight * .9f);
+	
 }
 
 void Grid::displayBonus() {
@@ -189,20 +195,21 @@ void Grid::displayBonus() {
 }
 
 void Grid::composeFrame() {
-	updateEvents();
+	if (state != gameover) {
+		updateEvents();
 
-	for (uint32 i=0; i<blocks.size(); ++i) 
-		for (uint32 j=0; j<ncols; ++j)
-			blocks[i][j].composeFrame();
+		for (uint32 i=0; i<blocks.size(); ++i) 
+			for (uint32 j=0; j<ncols; ++j)
+				blocks[i][j].composeFrame();
 
-	if (mainTimer->elapsed(last_cursor_anim, timer_cursor_anim)) {
-		if (++current_cursor_frame >= 10)
-			current_cursor_frame = 0;
-		last_cursor_anim = mainTimer->time();
+		if (mainTimer->elapsed(last_cursor_anim, timer_cursor_anim)) {
+			if (++current_cursor_frame >= 10)
+				current_cursor_frame = 0;
+			last_cursor_anim = mainTimer->time();
+		}
 	}
 
-	switch (state) {
-	case play:
+	if (state == play) {
 		// accelerate the speed that blocks are pushed
 		if (pushInterval > endPushIntervals[difficulty] && mainTimer->elapsed(lastPushAccel, pushAccelInterval)) {
 			pushInterval -= pushAccelDelta;
@@ -213,8 +220,11 @@ void Grid::composeFrame() {
 			pushRow();
 			lastPush = mainTimer->time();
 		}
-		break;
 
+	}
+	else if (state == gameover) {
+		if (mainTimer->elapsed(startGameOver, gameOverDuration))
+			state = quit;
 	}
 }
 
@@ -269,8 +279,16 @@ void Grid::pushRow() {
 	matrix (front of deque). It will make sure not to generate combos since
 	that is the player's job.	*/
 void Grid::addRow() {
-	if (blocks.size() > nrows - 1) 
+	if (blocks.size() >= nrows) {
+		for (int i = 0; i < ncols; ++i)
+			if (blocks[nrows-1][i].getState() == Block::enabled) {
+				startGameOver = mainTimer->time();
+				state = gameover;
+				return;
+			}
+
 		blocks.pop_back();
+	}
 
 	if (blocks.size() > 0)
 		for (vector<Block>::iterator it = blocks[0].begin(); it != blocks[0].cend(); ++it)
@@ -307,6 +325,8 @@ void Grid::incComboInterval(int interval) {
 	have the full effect. After the swap, combo detection is done and if there is a combo
 	it is handled by the onCombo() subroutine.	*/
 void Grid::swapBlocks() {
+	if (state == gameover)
+		return;
 	unsigned int c1, c2, r;
 	c1 = cursor->getCol();
 	c2 = c1 + 1;

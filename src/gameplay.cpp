@@ -31,6 +31,7 @@ CBaseSprite * GamePlay::menuBarSprite = NULL;
 CBaseSprite * GamePlay::bonusSprite = NULL;
 CBaseSprite * GamePlay::chainFontSprite = NULL;
 CBaseSprite * GamePlay::comboFontSprite = NULL;
+CBaseSprite * GamePlay::gameOverSprite = NULL;
 BMPClass GamePlay::background;
 
 GamePlay::GamePlay() { 
@@ -107,6 +108,9 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 	using namespace PlayState;
 
 	GamePlay *g = (GamePlay *)gamePlayInstance;
+	if (g->grid->getState() == Grid::gameover)
+		return;
+
 	switch((enum Input::Action::ActionState)actionState)
 	{
 	case Input::Action::STATE_PRESS:
@@ -127,9 +131,11 @@ void GamePlay::doAction(void *gamePlayInstance, int actionState, int actionType)
 }
 
 void GamePlay::display() {
-	if (state == GamePlay::quit)
-		Triforce::setState(Triforce::MENU);
 	composeFrame();
+	if (state == GamePlay::quit) {
+		Triforce::setState(Triforce::MENU);
+		return;
+	}
 
 	background.drawGLbackground ();
 	grid->display();
@@ -144,22 +150,23 @@ void GamePlay::display() {
 	glutSwapBuffers();
 }
 
-#if 0
-void GamePlay::processFrame()
-{
-	//grid->setCoords();
-}
-#endif
-
 void GamePlay::composeFrame()
 {
 	switch (state) {
 	case play:
 		grid->composeFrame();
-		hud->composeFrame();
+		if (grid->getState() != Grid::gameover)
+			hud->composeFrame();
 
 		break;
 	}
+
+	if (grid->getState() == Grid::quit) {
+		state = quit;
+		delete grid;
+		grid = NULL;
+	}
+
 	glutPostRedisplay();
 }
 
@@ -233,6 +240,11 @@ void GamePlay::loadImages()
 	  comboFontSprite->loadFrame(i - minCombo, cwd + num + ".bmp", r, g, b);
   }
   comboFontSprite->loadGLTextures();
+
+  cwd = themeDirectory;
+  gameOverSprite = new CBaseSprite(1, screen_w, screen_h);
+  gameOverSprite->loadFrame(0, cwd + "gameover.bmp", r, g, b);
+  gameOverSprite->loadGLTextures();
 
   GamePlay::blockLength = blockSprites[0]->GetHeight();
   GamePlay::gridHeight = GamePlay::blockLength * nrows;
