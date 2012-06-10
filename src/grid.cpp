@@ -667,7 +667,6 @@ bool Grid::detectFall(const Combo &combo) {
 
 	}
 
-	fall.possibleChain = true;
 	fall.init(*this);
 	fallEvents.push_back(fall);
 	

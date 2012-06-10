@@ -29,7 +29,6 @@ Fall::Fall(const Cell & cell, int chains) : list<FallNode>() {
 Fall::Fall(const list<FallNode> &lst, int chains) {
 	__super::operator =(lst);
 	set(chains);
-	possibleChain = true;
 }
 
 Fall & Fall::operator =(const Fall &src) {
@@ -39,12 +38,10 @@ Fall & Fall::operator =(const Fall &src) {
 }
 
 void Fall::set(int chains) {
-	possibleChain = false;
 	chainCount = chains;
 }
 
 void Fall::clone(const Fall &src) {
-	possibleChain = src.possibleChain;
 	chainCount = src.chainCount;
 }
 

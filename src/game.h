@@ -70,7 +70,6 @@ public:
 	int row, col;
 	uint64 lastMove;
 	int offset;
-	char str[5];
 
 public:
 	Bonus(const Cell &cell, int cnt, BonusType bt, Grid &g);
@@ -157,7 +156,6 @@ protected:
 
 public:
 	static int fallInterval;
-	bool possibleChain;  // FIXME: put in protected section
 
 	Fall(int chains = 1);
 	Fall(const Cell &, int chains = 0);
