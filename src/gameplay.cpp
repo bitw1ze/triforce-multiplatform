@@ -258,6 +258,7 @@ void GamePlay::changeState(gameState gs) {
 		menuButtons->disable(pause);
 		menuButtons->enable(play);
 		state = pause;
+		grid->changeState(Grid::pause);
 		mainTimer->pause();
 	}
 	else if (state == pause && gs == play)
@@ -266,6 +267,7 @@ void GamePlay::changeState(gameState gs) {
 		menuButtons->disable(play);
 		menuButtons->enable(pause);
 		state = play;
+		grid->changeState(Grid::play);
 		mainTimer->unpause();
 	}
 	else

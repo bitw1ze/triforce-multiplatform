@@ -165,24 +165,20 @@ void Grid::doAction(void *gridInstance, int actionState, int actionType)
 }
 
 void Grid::changeState(gameState gs) {
-	switch (gs) {
-	case combo:
-		break;
-	case play:
-		lastPush = mainTimer->time();
-		break;
-	}
 	state = gs;
 }
 
 /*	display
 	Call the draw function on all blocks, then draw the cursor over it. */
 void Grid::display() {
-	for (uint32 i=0; i<blocks.size(); ++i)
-		for (uint32 j=0; j<ncols; ++j)
-			blocks[i][j].display();
-	cursor->draw(current_cursor_frame);
-	cursor->alignToMouse();
+	if (state != pause) {
+		for (uint32 i=0; i<blocks.size(); ++i)
+			for (uint32 j=0; j<ncols; ++j)
+				blocks[i][j].display();
+
+		cursor->draw(current_cursor_frame);
+		cursor->alignToMouse();
+	}
 
 	if (state == gameover) 
 		GamePlay::gameOverSprite->draw(0, getX(), getY() -  (float)GamePlay::gridHeight * .9f);

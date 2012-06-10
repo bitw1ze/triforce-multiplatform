@@ -261,7 +261,7 @@ public:
 	enum Difficulty {EASY, MEDIUM, HARD, YODA, NUMDIFFICULTIES};
 	Cursor *cursor;
 	deque< vector<Block> > blocks; //i.e. blocks[row][col]
-	enum gameState { play, combo, push, gameover, quit };
+	enum gameState { play, combo, push, pause, gameover, quit };
 	
 
 protected:
