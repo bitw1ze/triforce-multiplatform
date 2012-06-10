@@ -22,7 +22,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="secTimer" Collapsed="true">
-    <Position X="15.5" Y="0.75" Width="1.5" />
+    <Position X="16.25" Y="0.75" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -43,7 +43,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Buttons">
-    <Position X="13.75" Y="0.5" Width="1.75" />
+    <Position X="12.5" Y="3.25" Width="1.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -102,7 +102,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Combo">
-    <Position X="15.5" Y="12" Width="1.75" />
+    <Position X="16.5" Y="12" Width="1.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -157,7 +157,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="GamePlay">
-    <Position X="9.5" Y="12.25" Width="3" />
+    <Position X="9.5" Y="11.75" Width="3" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -174,7 +174,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Grid">
-    <Position X="12.5" Y="11.75" Width="2.5" />
+    <Position X="13.5" Y="11.75" Width="2.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -207,7 +207,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="HUD">
-    <Position X="17.5" Y="13.25" Width="1.75" />
+    <Position X="18.5" Y="13.25" Width="1.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -217,7 +217,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Triforce">
-    <Position X="8.25" Y="0.5" Width="3.75" />
+    <Position X="5.5" Y="0.5" Width="3.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -234,7 +234,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Input::`anonymous-namespace'::MouseCallback">
-    <Position X="14.5" Y="3.5" Width="2.75" />
+    <Position X="15" Y="3.5" Width="2.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -251,7 +251,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Input::Action">
-    <Position X="14.75" Y="0.5" Width="2.25" />
+    <Position X="13.5" Y="0.5" Width="2.25" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -278,7 +278,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Input::Player">
-    <Position X="5" Y="0.5" Width="2" />
+    <Position X="2.5" Y="0.5" Width="2" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -288,7 +288,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Input::ActionQueue">
-    <Position X="11.25" Y="0.5" Width="2.25" />
+    <Position X="10.25" Y="0.5" Width="2.25" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
