@@ -281,6 +281,7 @@ void Grid::addRow() {
 			if (blocks[nrows-1][i].getState() == Block::enabled) {
 				startGameOver = mainTimer->time();
 				state = gameover;
+				glutSetCursor(GLUT_CURSOR_INHERIT);
 				return;
 			}
 

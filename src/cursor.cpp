@@ -187,7 +187,7 @@ void Cursor::alignToMouse() {
 void Cursor::mousePassiveMotion(void *cursorInstance, int x, int y) {
 	Cursor *c = (Cursor *)cursorInstance;
 
-	if (!c->grid->containsPoint(x, y))
+	if (!c->grid->containsPoint(x, y) || c->grid->getState() == Grid::gameover)
 		glutSetCursor(GLUT_CURSOR_INHERIT);
 	else
 		glutSetCursor(GLUT_CURSOR_LEFT_SIDE);
