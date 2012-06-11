@@ -69,6 +69,8 @@ GamePlay::GamePlay() {
 
 GamePlay::~GamePlay()
 {
+	delete grid;
+
 	Input::undefineActions(this);
 	Input::removeMouseMotions(menuButtons);
 }
@@ -162,11 +164,8 @@ void GamePlay::composeFrame()
 		break;
 	}
 
-	if (grid->getState() == Grid::quit) {
+	if (grid->getState() == Grid::quit)
 		state = quit;
-		delete grid;
-		grid = NULL;
-	}
 
 	glutPostRedisplay();
 }
