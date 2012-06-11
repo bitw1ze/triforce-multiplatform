@@ -218,6 +218,7 @@ void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
 Triforce::Triforce()
 { 
 	loadImages(); 
+	playSound("themes\\classic\\music\\thatsong.wav");
 
 	/*
 	 * Create menu buttons
