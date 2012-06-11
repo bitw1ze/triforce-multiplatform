@@ -181,7 +181,7 @@ void Grid::display() {
 	}
 
 	if (state == gameover) 
-		GamePlay::gameOverSprite->draw(0, getX(), getY() -  (float)GamePlay::gridHeight * .9f);
+		GamePlay::gameOverSprite->draw(0, getX(), getY()-GamePlay::gridHeight);
 	
 }
 
