@@ -1,1 +1,2 @@
-Remake of classic tetris attack game for software engineering class
+This is a remake of Tetris Attack, a classic SNES game released in 1996. Compliation requires Glut.
+http://www.opengl.org/resources/libraries/glut/
