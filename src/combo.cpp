@@ -9,6 +9,7 @@ Combo member variables:
 
 #include "game.h"
 #include <list>
+#include <cstdio>
 
 int Combo::comboInterval = 500;
 
@@ -79,7 +80,7 @@ void Combo::init(Grid &grid) {
 }
 
 const list<Cell> Combo::getList() {
-	int r, c;
+	unsigned int r, c;
 
 	list<Cell> cells;
 
@@ -87,7 +88,7 @@ const list<Cell> Combo::getList() {
 	case Combo::VERT:
 		r = down()->row;
 		c = down()->col;
-		for (r; r <= up()->row; ++r) {
+		for (; r <= up()->row; ++r) {
 			cells.push_back(Cell(r, c));
 		}
 		break;
@@ -95,7 +96,7 @@ const list<Cell> Combo::getList() {
 	case Combo::HORI:
 		r = left()->row;
 		c = left()->col;
-		for (c; c <= right()->col; ++c) {
+		for (; c <= right()->col; ++c) {
 			cells.push_back(Cell(r, c));
 		}
 		break;
@@ -103,15 +104,19 @@ const list<Cell> Combo::getList() {
 	case Combo::MULTI:
 		r = left()->row;
 		c = left()->col;
-		for (c; c <= right()->col; ++c) {
+		for (; c <= right()->col; ++c) {
 			cells.push_back(Cell(r, c));
 		}
 		
 		c = down()->col;
 		r = down()->row;
-		for (r; r <= up()->row; ++r) {
+		for (; r <= up()->row; ++r) {
 			cells.push_back(Cell(r, c));
 		}
+
+  case NONE:
+  default:
+    break;
 	}
 
 	return cells;
@@ -132,6 +137,9 @@ void Combo::printDebug() {
 			left()->row, left()->col, right()->row, right()->col,
 			down()->row, down()->col, up()->row, up()->col);
 		break;
+  
+  default:
+    break;
 	}
 }
 

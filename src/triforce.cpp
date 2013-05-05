@@ -1,5 +1,6 @@
 #include "triforce.h"
-#include "Xbox.h"
+#include <cstdio>
+//#include "Xbox.h"
 
 const string Triforce::gameStateLabels[Triforce::_NUMBER_OF_STATES] = {
 	"Menu", "Play", "Pause", "Quit"
@@ -83,12 +84,14 @@ void Triforce::bindDefaultActionKeys()
 	bindSpecialKey(player, scope, MENU, MenuState::RIGHT, GLUT_KEY_RIGHT);
 
 	// xbox bindings
+  /*
 	bindXboxButton(player, scope, MENU, MenuState::UP, XINPUT_GAMEPAD_DPAD_UP);
 	bindXboxButton(player, scope, MENU, MenuState::DOWN, XINPUT_GAMEPAD_DPAD_DOWN);
 	bindXboxButton(player, scope, MENU, MenuState::LEFT, XINPUT_GAMEPAD_DPAD_LEFT);
 	bindXboxButton(player, scope, MENU, MenuState::RIGHT, XINPUT_GAMEPAD_DPAD_RIGHT);
 	bindXboxButton(player, scope, MENU, MenuState::ACTIVATE, XINPUT_GAMEPAD_A | XINPUT_GAMEPAD_START);
 	bindXboxButton(player, scope, MENU, MenuState::QUIT, XINPUT_GAMEPAD_BACK | XINPUT_GAMEPAD_B);
+  */
 
 	/*
 	 * PLAY state
@@ -119,6 +122,7 @@ void Triforce::bindDefaultActionKeys()
 	bindKey(player, scope, PLAY, PlayState::PAUSE_TOGGLE, 't');
 
 	// xbox bindings
+  /*
 	bindXboxButton(player, scope, PLAY, PlayState::UP, XINPUT_GAMEPAD_DPAD_UP);
 	bindXboxButton(player, scope, PLAY, PlayState::DOWN, XINPUT_GAMEPAD_DPAD_DOWN);
 	bindXboxButton(player, scope, PLAY, PlayState::LEFT, XINPUT_GAMEPAD_DPAD_LEFT);
@@ -128,6 +132,7 @@ void Triforce::bindDefaultActionKeys()
 	bindXboxButton(player, scope, PLAY, PlayState::PAUSE_TOGGLE, XINPUT_GAMEPAD_START);
 	bindXboxButton(player, scope, PAUSE, PlayState::PAUSE_TOGGLE, XINPUT_GAMEPAD_START);
 	bindXboxButton(player, scope, PLAY, PlayState::RETURN, XINPUT_GAMEPAD_BACK);
+  */
 }
 
 /**
@@ -164,14 +169,14 @@ void Triforce::loadImages()
   background.load(themeDirectory + bgFile);
   background.loadGLTextures();
 
-  //string cwd = themeDirectory + "logo\\";
+  //string cwd = themeDirectory + "logo/";
   char num[8];
   int r=254, g=0, b=254;
 
   logoSprite = new CBaseSprite(65, screen_w, screen_h);
   for (int i = 1; i <= 65; ++i) {
-	  sprintf_s(num, "%d", i); 
-	  logoSprite->loadFrame(i-1, themeDirectory + "logo\\" + num + ".bmp", r, g, b);
+	  snprintf(num, 8, "%d", i); 
+	  logoSprite->loadFrame(i-1, themeDirectory + "logo/" + num + ".bmp", r, g, b);
   }
   logoSprite->loadGLTextures();
 }
@@ -182,7 +187,7 @@ void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
 	switch ((enum Input::Action::ActionState)actionState)
 	{
 	case Input::Action::STATE_PRESS:
-		switch((enum Actions)actionType)
+		switch(actionType)
 		{
 			case MenuState::ACTIVATE:
 				t->menuButtons->pressCurrent();
@@ -190,7 +195,7 @@ void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
 		}
 		break;
 	case Input::Action::STATE_RELEASE:
-		switch((enum Actions)actionType)
+		switch(actionType)
 		{
 			case MenuState::LEFT:
 			case MenuState::UP:
@@ -218,7 +223,7 @@ void Triforce::doAction(void *tfInstance, int actionState, int actionType) {
 Triforce::Triforce()
 { 
 	loadImages(); 
-	playSound("themes\\classic\\music\\thatsong.wav");
+	playSound("themes/classic/music/thatsong.wav");
 
 	/*
 	 * Create menu buttons

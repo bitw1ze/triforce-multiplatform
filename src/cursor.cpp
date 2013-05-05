@@ -67,7 +67,11 @@ void Cursor::doAction(void *cursorInstance, int actionState, int actionType)
 	case Input::Action::STATE_HOLD:
 		c->doActionHold((enum Actions)actionType);
 		break;
-	// case Input::Action::STATE_RELEASE:
+  case Input::Action::STATE_RELEASE:
+    // TODO?
+    break;
+  default:
+    break;
 	}
 }
 
@@ -106,6 +110,8 @@ bool Cursor::move(PlayState::Actions action, bool doDraw) {
 		return moveLeft(doDraw);
 	case RIGHT:
 		return moveRight(doDraw);
+  default:
+    break;
 	}
 	return false; // this should never happen
 }

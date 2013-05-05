@@ -8,6 +8,7 @@ of the game. It is also responsible for cleaning up when the game is finished.
 
 #include "game.h"
 #include "input.h"
+#include <cstdio>
 
 // Constants
 //const string GamePlay::bgFile = "bg-play.bmp";
@@ -193,32 +194,32 @@ void GamePlay::loadImages()
 	menuBarSprite->loadGLTextures();
   
 	char num[8];
-	cwd = themeDirectory + "blocks\\";
-	for (int i=0; i<nblocktypes; ++i) {
+	cwd = themeDirectory + "blocks/";
+	for (unsigned int i=0; i<nblocktypes; ++i) {
 		// Block files are designed to not require a color filter. They aren't
 		// guaranteed to work as expected when their bg's are filtered out and a
 		// background image of a different color is used.
 		
-		sprintf_s(num, "%d", i);
+		snprintf(num, 8, "%d", i);
 		blockSprites[i] = new CBaseSprite(frameCount = 5, screen_w, screen_h);
-		blockSprites[i]->loadFrame(frame+0, cwd + "normal\\" + num + ".bmp", r, g, b);
-		blockSprites[i]->loadFrame(frame+1, cwd + "combo\\" + num + "-0.bmp", r, g, b);
-		blockSprites[i]->loadFrame(frame+2, cwd + "combo\\" + num + "-1.bmp", r, g, b);
-		blockSprites[i]->loadFrame(frame+3, cwd + "combo\\" + num + "-0.bmp", r, g, b);
-		blockSprites[i]->loadFrame(frame+4, cwd + "inactive\\" + num + ".bmp", r, g, b);
+		blockSprites[i]->loadFrame(frame+0, cwd + "normal/" + num + ".bmp", r, g, b);
+		blockSprites[i]->loadFrame(frame+1, cwd + "combo/" + num + "-0.bmp", r, g, b);
+		blockSprites[i]->loadFrame(frame+2, cwd + "combo/" + num + "-1.bmp", r, g, b);
+		blockSprites[i]->loadFrame(frame+3, cwd + "combo/" + num + "-0.bmp", r, g, b);
+		blockSprites[i]->loadFrame(frame+4, cwd + "inactive/" + num + ".bmp", r, g, b);
 		blockSprites[i]->loadGLTextures();
 	}
 
   cursorSprite = new CBaseSprite(numCursorFiles, screen_w, screen_h);
-  cwd = themeDirectory + "cursor\\";
+  cwd = themeDirectory + "cursor/";
   for (int i = 0; i < numCursorFiles; ++i) {
-	  sprintf_s(num, "%d", i);
+	  snprintf(num, 8, "%d", i);
 	  cursorSprite->loadFrame(i, cwd + num + ".bmp", r, g, b);
   }
   cursorSprite->loadGLTextures();
 
   // bonus sprite
-  cwd = themeDirectory + "bonus\\";
+  cwd = themeDirectory + "bonus/";
   bonusSprite = new CBaseSprite(2, screen_w, screen_h);
   bonusSprite->loadFrame(0, cwd + "chain.bmp", r, g, b);
   bonusSprite->loadFrame(1, cwd + "combo.bmp", r, g, b);
@@ -227,7 +228,7 @@ void GamePlay::loadImages()
   int maxChain = 15, minChain = 2;
   chainFontSprite = new CBaseSprite(maxChain - minChain + 1, screen_w, screen_h);
   for (int i = minChain; i <= maxChain; ++i) {
-	  sprintf_s(num, "x%d", i); 
+	  snprintf(num, 8, "x%d", i); 
 	  chainFontSprite->loadFrame(i - minChain, cwd + num + ".bmp", r, g, b);
   }
   chainFontSprite->loadGLTextures();
@@ -236,7 +237,7 @@ void GamePlay::loadImages()
   int maxCombo = 10, minCombo = 4;
   comboFontSprite = new CBaseSprite(maxCombo - minCombo + 1, screen_w, screen_h);
   for (int i = minCombo; i <= maxCombo; ++i) {
-	  sprintf_s(num, "%d", i); 
+	  snprintf(num, 8, "%d", i); 
 	  comboFontSprite->loadFrame(i - minCombo, cwd + num + ".bmp", r, g, b);
   }
   comboFontSprite->loadGLTextures();

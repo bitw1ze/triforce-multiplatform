@@ -55,21 +55,21 @@ public:
 	friend bool operator ==(const Cell left, const Cell right) { 
 		return left.row == right.row && left.col == right.col;
 	}
-	int row, col;
+	unsigned int row, col;
 };
 
 class Bonus : public CObject {
 public:
 	typedef enum { CHAIN, COMBO } BonusType;
 	static const uint64 moveInterval;
-	static const int moveSpeed, totalMove;
+	static const unsigned int moveSpeed, totalMove;
 	CObject text;
 
 	BonusType bonusType;
-	int count;
-	int row, col;
+	unsigned int count;
+	unsigned int row, col;
 	uint64 lastMove;
-	int offset;
+	unsigned int offset;
 
 public:
 	Bonus(const Cell &cell, int cnt, BonusType bt, Grid &g);
@@ -349,8 +349,8 @@ public:
 
 class Cursor : public CObject {
 protected:
-	int row, col,
-		cursor_delta;
+	unsigned int row, col;
+	int cursor_delta;
 	Point lastMousePos;
 	Grid *grid;
 	static const string spriteFile;

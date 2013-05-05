@@ -85,14 +85,18 @@ void Block::changeState(gameState gs) {
 	case inactive:
 		currentFrame = 4;
 		break;
+  case disabled:
+    break;
 
+  default:
+    break;
 	}
 }
 
 void Block::composeFrame() {
 	if (state == combo && mainTimer->elapsed(lastFrameTransition, frameTransitionInterval)) {
 		lastFrameTransition = mainTimer->time();
-		currentFrame = (++currentFrame % 4);
+		currentFrame = ((currentFrame + 1) % 4);
 	}
 }
 

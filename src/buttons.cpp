@@ -31,7 +31,7 @@ void Buttons::add(void *classInstance, int actionArg,
 				  void (*action)(void *classInstance, int actionArg), 
 			      const string btnFiles[3], int xpos, int ypos)
 {
-	string cwd = themeDirectory + "buttons\\";
+	string cwd = themeDirectory + "buttons/";
 	// load image
 	const int frameCount = 3;
     CBaseSprite * sprite = new CBaseSprite(frameCount, vpWidth, vpHeight);

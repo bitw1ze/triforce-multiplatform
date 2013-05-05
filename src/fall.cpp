@@ -15,24 +15,22 @@ FallNode member variables:
 int Fall::fallInterval = 8;
 
 Fall::Fall(int chains) : list<FallNode>() {
-	__super::list();
 	set(chains);
 }
 
 Fall::Fall(const Cell & cell, int chains) : list<FallNode>() {
-	__super::list();
 	set(chains);
 
 	push_back((const FallNode &)cell);
 }
 
 Fall::Fall(const list<FallNode> &lst, int chains) {
-	__super::operator =(lst);
+	list<FallNode>::operator =(lst);
 	set(chains);
 }
 
 Fall & Fall::operator =(const Fall &src) {
-	__super::operator =( (const list<FallNode> &)src );
+	list<FallNode>::operator =( (const list<FallNode> &)src );
 	clone(src);
 	return *this;
 }
@@ -84,7 +82,7 @@ FallNode::FallNode(const FallNode &src) : Cell(src) {
 }
 
 FallNode & FallNode::operator =(const FallNode &src) { 
-	__super::operator =(src); 
+	Cell::operator =(src); 
 	clone(src); 
 	return *this;
 }
@@ -129,7 +127,8 @@ void FallNode::cleanup(Grid &grid) {
 		grid.blocks[i][c].changeState(Block::enabled);
 
 	for (i = r-1; i < r + numFalls; ++i) {
-		if (grid.detectCombo(Cell(i, c), chainCount, true).count() > 0)
+    Cell cell = Cell(i, c);
+		if (grid.detectCombo(cell, chainCount, true).count() > 0)
 			++chainCount;
 	}
 
@@ -139,9 +138,9 @@ void FallNode::cleanup(Grid &grid) {
 // return true while the block is still falling
 bool FallNode::update(Grid &grid) {
 	// row and column begin at the block immediately above a broken combo block
-	int & r = row;
-	int c = col;
-	int i;
+	unsigned int & r = row;
+	unsigned int c = col;
+	unsigned int i;
 
 	if (r >= nrows)
 		return true;

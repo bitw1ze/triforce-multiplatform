@@ -7,8 +7,8 @@
 #include "game.h"
 
 const uint64 Bonus::moveInterval = 50;
-const int Bonus::totalMove = 24;
-const int Bonus::moveSpeed = 1;
+const unsigned int Bonus::totalMove = 24;
+const unsigned int Bonus::moveSpeed = 1;
 
 Bonus::Bonus(const Cell &cell, int cnt, BonusType bt, Grid &grid) : CObject() {
 	set(cell, cnt, bt, grid);

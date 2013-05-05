@@ -12,6 +12,7 @@ methods in Fall, Combo, and Bonus to interact with them.
 
 #include "game.h"
 #include "input.h"
+#include <cstdio>
 
 const int Grid::forcedPushinterval = 8;
 const int Grid::startPushIntervals[NUMDIFFICULTIES] = {225, 175, 125, 75};
@@ -289,7 +290,7 @@ void Grid::addRow() {
 	}
 
 	if (blocks.size() > 0)
-		for (vector<Block>::iterator it = blocks[0].begin(); it != blocks[0].cend(); ++it)
+		for (vector<Block>::iterator it = blocks[0].begin(); it != blocks[0].end(); ++it)
 			(*it).changeState(Block::enabled);
 	
 	vector<Block> newRow(ncols);
@@ -308,7 +309,8 @@ void Grid::addRow() {
 
 	if (blocks.size() > 3) {
 		for (int i=0; i<ncols; ++i) {
-			detectCombo(Cell(1, i), 0, true);
+      Cell cell = Cell(1, i);
+			detectCombo(cell, 0, true);
 		}
 	}
 }
@@ -348,15 +350,19 @@ void Grid::swapBlocks() {
 			fallEvents.push_back(FallNode(r, c1));
 		else if (detectFall(r+1, c1))
 			fallEvents.push_back(FallNode(r+1, c1));
-		else 
-			combo1 = detectCombo(Cell(r, c1), 0, false);
+		else {
+      Cell cell = Cell(r, c1);
+			combo1 = detectCombo(cell, 0, false);
+    }
 
 		if (detectFall(r, c2))
 			fallEvents.push_back(FallNode(r, c2));
 		else if (detectFall(r+1, c2))
 			fallEvents.push_back(FallNode(r+1, c2));
-		else 
-			combo2 = detectCombo(Cell(r, c2), 0, false);
+		else {
+      Cell cell = Cell(r, c2);
+			combo2 = detectCombo(cell, 0, false);
+    }
 
 		if (combo1 && combo2) {
 			Cell cell = combo1.getState() == Combo::VERT ? *combo1.up() : *combo1.left();

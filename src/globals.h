@@ -12,5 +12,5 @@ namespace Globals {
 		nrows			= 12,
 		ncols			= 6,
 		nblocktypes		= 7;
-	const string themeDirectory = "themes\\classic\\";
+	const string themeDirectory = "themes/classic/";
 };

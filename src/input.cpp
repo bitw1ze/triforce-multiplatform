@@ -3,7 +3,7 @@
 #include <list>
 #include <set>
 #include <vector>
-#include "Xbox.h"
+//#include "Xbox.h"
 
 namespace Input
 {
@@ -15,36 +15,36 @@ namespace
 	typedef unsigned char Key;
 	typedef int SpecialKey;
 	typedef int MouseButton;
-	typedef int XboxButton;
+//	typedef int XboxButton;
 	typedef map<Key, Actions> KeyBindings;
 	typedef map<SpecialKey, Actions> SpecialKeyBindings;
 	typedef map<MouseButton, Actions> MouseButtonBindings;
-	typedef map<XboxButton, Actions> XboxButtonBindings;
+//	typedef map<XboxButton, Actions> XboxButtonBindings;
 
 	Actions availableActions; // all declared but undefined actions are here
 	Players players;
 	KeyBindings keyBindings;
 	SpecialKeyBindings specialKeyBindings;
 	MouseButtonBindings mouseButtonBindings;
-	XboxButtonBindings xboxButtonBindings;
+//	XboxButtonBindings xboxButtonBindings;
 	ActionQueue actionQueue;
 
 	int (*getState)() = NULL; // used to determine which actions are currently valid for Triforce
 	const string *stateLabels; // array of labels; indices are states returned by getState()
 	int numStates;
 
-	XboxController xboxPlayer1; // only handle 1 xbox ctrl for now
+//	XboxController xboxPlayer1; // only handle 1 xbox ctrl for now
 
 	/*
 	 * Keys currently being held down
 	 */ 
 	typedef set<unsigned char> KeysDown;
 	typedef set<int> SpecialKeysDown;
-	typedef set<int> XboxButtonsDown;
+	//typedef set<int> XboxButtonsDown;
 
 	KeysDown keysDown;
 	SpecialKeysDown specialKeysDown;
-	XboxButtonsDown xboxButtonsDown;
+	//XboxButtonsDown xboxButtonsDown;
 
 	/*
 	 * Handle mouse motion
@@ -79,7 +79,7 @@ namespace
 	void bindUpdate(B &bindings, Action * action)
 	{
 		Actions::iterator a;
-		for (B::iterator k = bindings.begin(); k != bindings.end(); ++k)
+		for (typename B::iterator k = bindings.begin(); k != bindings.end(); ++k)
 		{
 			a = k->second.begin();
 			if ((*a)->isSameAction(action))
@@ -95,7 +95,7 @@ namespace
 	{
 		bindUpdate(keyBindings, action);
 		bindUpdate(specialKeyBindings, action);
-		bindUpdate(xboxButtonBindings, action);
+		//bindUpdate(xboxButtonBindings, action);
 		bindUpdate(mouseButtonBindings, action);
 	}
 
@@ -105,7 +105,7 @@ namespace
 		if (!getState)
 			return;
 
-		M::iterator mm = mouseMotionFuncs.find(getState());
+		typename M::iterator mm = mouseMotionFuncs.find(getState());
 		if (mm != mouseMotionFuncs.end())
 			for (MouseCallbacks::iterator mc = mm->second.begin(); mc != mm->second.end(); ++mc)
 				mc->mouseMotionFunc(mc->classInstance, x, y);
@@ -114,7 +114,7 @@ namespace
 	template <class B, class D, class K>
 	void anyKeyPress(B &bindings, D &keysDown, K key, int x, int y)
 	{
-		B::iterator b = bindings.find(key);
+		typename B::iterator b = bindings.find(key);
 		if (b == bindings.end())
 			return;
 
@@ -134,8 +134,8 @@ namespace
 	template <class B, class D, class K>
 	void anyKeyRelease(B &bindings, D &keysDown, K key, int x, int y)
 	{
-		B::iterator b = bindings.find(key);
-		D::iterator k;
+		typename B::iterator b = bindings.find(key);
+		typename D::iterator k;
 		if (b == bindings.end())
 			return;
 
@@ -154,7 +154,7 @@ namespace
 	void addAnyMouseMotionFunc(M &mouseMotionFuncs, void *classInstance, int activeState, void (*mouseMotion)(void *classInstance, int x, int y))
 	{
 		MouseCallback cb(classInstance, mouseMotion);
-		M::iterator mm = mouseMotionFuncs.find(activeState);
+		typename M::iterator mm = mouseMotionFuncs.find(activeState);
 		if (mm == mouseMotionFuncs.end())
 		{
 			MouseCallbacks cbs; // create dummy list to push to
@@ -169,7 +169,7 @@ namespace
 	void removeMouseMotionFuncs(M &mouseMotionFuncs, void *classInstance)
 	{
 		MouseCallback tmp(classInstance);
-		for (M::iterator m = mouseMotionFuncs.begin(); m != mouseMotionFuncs.end(); ++m)
+		for (typename M::iterator m = mouseMotionFuncs.begin(); m != mouseMotionFuncs.end(); ++m)
 			m->second.remove(tmp);
 	}
 
@@ -182,7 +182,7 @@ namespace
 			action = new Action(*findActionDecl(scope, activeState, actionType));
 		players[player]->addAction(action);
 
-		B::iterator binding = bindings.find(key);
+		typename B::iterator binding = bindings.find(key);
 		if (binding == bindings.end()) // add binding for a new key
 		{
 			Actions al; // create dummy list to push to k
@@ -301,8 +301,8 @@ template <class D, class B>
 void ActionQueue::queueAllHeldKeys(D keysDown, B bindings)
 {
 	Actions::iterator action;
-	B::iterator b;
-	for (D::const_iterator kd = keysDown.cbegin(); kd != keysDown.cend(); ++kd)
+	typename B::iterator b;
+	for (typename D::const_iterator kd = keysDown.begin(); kd != keysDown.end(); ++kd)
 	{
 		b = bindings.find(*kd);
 		if (b == bindings.end())
@@ -333,6 +333,7 @@ void ActionQueue::doAll()
 	}
 }
 
+/*
 void handleXboxInput(XboxController &player)
 {
 	if (!player.isConnected())
@@ -377,10 +378,11 @@ void handleXboxInput(XboxController &player)
 	}
 	xboxButtonsDown = newXboxButtonsDown;
 }
+*/
 
 void handleInput()
 {
-	handleXboxInput(xboxPlayer1);
+	//handleXboxInput(xboxPlayer1);
 	actionQueue.doAll();
 }
 
@@ -539,11 +541,12 @@ void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int 
 	bind(specialKeyBindings, player, scope, activeState, actionType, key);
 }
 
-
+/*
 void bindXboxButton(int player, Action::ActionScope scope, int activeState, int actionType, int key)
 {
 	bind(xboxButtonBindings, player, scope, activeState, actionType, key);
 }
+*/
 
 void bindButton(Action action, int button)
 {

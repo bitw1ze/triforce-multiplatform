@@ -191,7 +191,7 @@ namespace Input
 	void bindKey(int player, Action::ActionScope scope, int activeState, int actionType, unsigned char key);
 	void bindSpecialKey(int player, Action::ActionScope scope, int activeState, int actionType, int key);
 	void bindButton(Action action, int button);
-	void bindXboxButton(int player, Action::ActionScope scope, int activeState, int actionType, int key);
+	//void bindXboxButton(int player, Action::ActionScope scope, int activeState, int actionType, int key);
 
 	/**
 	 * Motion input interface

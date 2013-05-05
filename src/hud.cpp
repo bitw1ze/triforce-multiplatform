@@ -1,4 +1,6 @@
 #include "game.h"
+#include <cstdio>
+#include <string>
 
 HUD::HUD(int _x, int _y) {
 	init(_x, _y);
@@ -21,6 +23,6 @@ void HUD::calcTime() {
 }
 
 void HUD::display() {
-	sprintf_s(timeStr, "%02d:%02d\0", currentMinutes, currentSeconds);
+	snprintf(timeStr, 10, "%02d:%02d\0", currentMinutes, currentSeconds);
 	textPrintf(x, y, (void *)GamePlay::font1, timeStr, GamePlay::fcolor1);
 }
